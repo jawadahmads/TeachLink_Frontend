@@ -112,6 +112,7 @@ export default function SignupPage() {
                   {...register("name")}
                   placeholder="John Doe"
                   className={`pl-10 ${inputClass(!!errors.name, touchedFields.name)}`}
+                  autoComplete="username"
                 />
               </div>
               {errors.name && touchedFields.name && (
@@ -130,6 +131,7 @@ export default function SignupPage() {
                   type="email"
                   placeholder="you@example.com"
                   className={`pl-10 ${inputClass(!!errors.email, touchedFields.email)}`}
+                  autoComplete="email"
                 />
               </div>
               {errors.email && touchedFields.email && (
@@ -148,6 +150,7 @@ export default function SignupPage() {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   className={`pl-10 pr-10 ${inputClass(!!errors.password, touchedFields.password)}`}
+                  autoComplete="new-password"
                 />
                 <button
                   type="button"
@@ -180,6 +183,7 @@ export default function SignupPage() {
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="••••••••"
                   className={`pl-10 pr-10 ${inputClass(!!errors.confirmPassword, touchedFields.confirmPassword)}`}
+                  autoComplete="confirm-password"
                 />
                 <button
                   type="button"

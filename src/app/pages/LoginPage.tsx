@@ -16,10 +16,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 const loginSchema = z.object({
   userType: z.enum(["student", "teacher"]),
-  email: z.string().email({ message: "Invalid email address" }),
+  email: z.string().min(1, "Email is required").email("Invalid email address"),
   password: z
     .string()
-    .min(6, { message: "Password must be at least 6 characters" }),
+    .min(1, "Password is required")
+    .min(6, "Password must be at least 6 characters"),
   remember: z.boolean().optional(),
 });
 
@@ -27,15 +28,16 @@ type LoginForm = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  // preserve initial UI-state if needed, but form will manage values
+
   const {
     register,
     handleSubmit,
     setValue,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors, touchedFields, isSubmitting, isValid },
   } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
+    mode: "onChange",
     defaultValues: {
       userType: "student",
       email: "",
@@ -47,12 +49,18 @@ export default function LoginPage() {
   const userType = watch("userType");
 
   const onSubmit = (data: LoginForm) => {
-    // Mock login - in real app, this would authenticate
     if (data.userType === "student") {
       navigate("/student/dashboard");
     } else {
       navigate("/teacher/dashboard");
     }
+  };
+
+  // No border when untouched, red on error, green when schema passes
+  const inputClass = (hasError: boolean, isTouched: boolean | undefined) => {
+    if (!isTouched) return "";
+    if (hasError) return "border-red-600 focus-visible:ring-red-600";
+    return "border-green-600 focus-visible:ring-green-600";
   };
 
   return (
@@ -66,14 +74,18 @@ export default function LoginPage() {
           <CardTitle className="text-2xl">Welcome Back</CardTitle>
           <CardDescription>Sign in to your account to continue</CardDescription>
         </CardHeader>
+
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* USER TYPE */}
             <div className="flex gap-2 mb-6">
               <Button
                 type="button"
                 variant={userType === "student" ? "default" : "outline"}
                 className="flex-1"
-                onClick={() => setValue("userType", "student")}
+                onClick={() =>
+                  setValue("userType", "student", { shouldValidate: true })
+                }
               >
                 Student
               </Button>
@@ -81,12 +93,15 @@ export default function LoginPage() {
                 type="button"
                 variant={userType === "teacher" ? "default" : "outline"}
                 className="flex-1"
-                onClick={() => setValue("userType", "teacher")}
+                onClick={() =>
+                  setValue("userType", "teacher", { shouldValidate: true })
+                }
               >
                 Teacher
               </Button>
             </div>
 
+            {/* EMAIL */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
@@ -95,18 +110,18 @@ export default function LoginPage() {
                   id="email"
                   type="email"
                   placeholder="you@example.com"
-                  className={`pl-10 ${errors.email ? "border-red-600" : ""}`}
                   {...register("email")}
+                  className={`pl-10 ${inputClass(!!errors.email, touchedFields.email)}`}
                   aria-invalid={errors.email ? "true" : "false"}
+                  autoComplete="email"
                 />
               </div>
-              {errors.email && (
-                <p className="text-sm text-red-600 mt-1">
-                  {errors.email.message}
-                </p>
+              {errors.email && touchedFields.email && (
+                <p className="text-sm text-red-600">{errors.email.message}</p>
               )}
             </div>
 
+            {/* PASSWORD */}
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <div className="relative">
@@ -115,18 +130,20 @@ export default function LoginPage() {
                   id="password"
                   type="password"
                   placeholder="••••••••"
-                  className={`pl-10 ${errors.password ? "border-red-600" : ""}`}
                   {...register("password")}
+                  className={`pl-10 ${inputClass(!!errors.password, touchedFields.password)}`}
                   aria-invalid={errors.password ? "true" : "false"}
+                  autoComplete="current-password"
                 />
               </div>
-              {errors.password && (
-                <p className="text-sm text-red-600 mt-1">
+              {errors.password && touchedFields.password && (
+                <p className="text-sm text-red-600">
                   {errors.password.message}
                 </p>
               )}
             </div>
 
+            {/* REMEMBER + FORGOT */}
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-2 text-sm cursor-pointer">
                 <input
@@ -141,7 +158,12 @@ export default function LoginPage() {
               </a>
             </div>
 
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {/* SUBMIT */}
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={!isValid || isSubmitting}
+            >
               {isSubmitting ? "Signing in..." : "Sign In"}
             </Button>
           </form>
