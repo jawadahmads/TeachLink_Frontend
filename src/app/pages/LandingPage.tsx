@@ -19,10 +19,10 @@ export default function LandingPage() {
       <nav className="border-b border-border bg-white sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2">
               <BookOpen className="h-8 w-8 text-primary" />
               <span className="text-2xl font-bold text-primary">TeachLink</span>
-            </div>
+            </Link>
             <div className="hidden md:flex items-center gap-8">
               <a
                 href="#features"
@@ -337,19 +337,19 @@ export default function LandingPage() {
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-2 text-gray-400">
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <Link to="/about" className="hover:text-white">
                     About Us
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <Link to="/contact" className="hover:text-white">
                     Contact
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <Link to="/privacy" className="hover:text-white">
                     Privacy Policy
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
