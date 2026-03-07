@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
-import { BookOpen, Mail, Lock, User } from "lucide-react";
+import { BookOpen, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -13,52 +14,24 @@ import {
 } from "../components/ui/card";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-export const signupSchema = z
-  .object({
-    userType: z.enum(["student", "teacher"]),
-
-    name: z
-      .string()
-      .min(3, "Name must be at least 3 characters")
-      .max(50, "Name too long")
-      .regex(/^[a-zA-Z\s]+$/, "Name can only contain letters"),
-
-    email: z.string().email("Invalid email address").toLowerCase().trim(),
-
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .max(100)
-      .regex(/[A-Z]/, "Must contain at least one uppercase letter")
-      .regex(/[a-z]/, "Must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Must contain at least one number")
-      .regex(/[^A-Za-z0-9]/, "Must contain one special character"),
-
-    confirmPassword: z.string(),
-
-    terms: z.literal(true, {
-      errorMap: () => ({ message: "You must accept the terms" }),
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    path: ["confirmPassword"],
-    message: "Passwords do not match",
-  });
+import { signupSchema } from "../schema/signUpSchema";
 
 type SignupForm = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
     handleSubmit,
     setValue,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors, touchedFields, isSubmitting, isValid },
   } = useForm<SignupForm>({
     resolver: zodResolver(signupSchema),
+    mode: "onChange",
     defaultValues: {
       userType: "student",
       name: "",
@@ -69,15 +42,24 @@ export default function SignupPage() {
     },
   });
 
+  // watch for the state of the userType field
   const userType = watch("userType");
 
   const onSubmit = (data: SignupForm) => {
-    // Mock signup - replace with real API call
+    console.log(data);
     if (data.userType === "student") {
       navigate("/student/dashboard");
     } else {
       navigate("/teacher/dashboard");
     }
+  };
+
+  // FIX: touched is boolean | undefined — coerce explicitly.
+  // Green only when touched AND no error; red only when touched AND has error.
+  const inputClass = (hasError: boolean, isTouched: boolean | undefined) => {
+    if (!isTouched) return "";
+    if (hasError) return "border-red-600 focus-visible:ring-red-600";
+    return "border-green-600 focus-visible:ring-green-600";
   };
 
   return (
@@ -93,14 +75,18 @@ export default function SignupPage() {
             Join TeachLink and start your learning journey
           </CardDescription>
         </CardHeader>
+
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* USER TYPE */}
             <div className="flex gap-2 mb-6">
               <Button
                 type="button"
                 variant={userType === "student" ? "default" : "outline"}
                 className="flex-1"
-                onClick={() => setValue("userType", "student")}
+                onClick={() =>
+                  setValue("userType", "student", { shouldValidate: true })
+                }
               >
                 Student
               </Button>
@@ -108,12 +94,15 @@ export default function SignupPage() {
                 type="button"
                 variant={userType === "teacher" ? "default" : "outline"}
                 className="flex-1"
-                onClick={() => setValue("userType", "teacher")}
+                onClick={() =>
+                  setValue("userType", "teacher", { shouldValidate: true })
+                }
               >
                 Teacher
               </Button>
             </div>
 
+            {/* NAME */}
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
               <div className="relative">
@@ -121,19 +110,16 @@ export default function SignupPage() {
                 <Input
                   id="name"
                   {...register("name")}
-                  type="text"
                   placeholder="John Doe"
-                  className={`pl-10 ${errors.name ? "border-red-600" : ""}`}
-                  aria-invalid={errors.name ? "true" : "false"}
+                  className={`pl-10 ${inputClass(!!errors.name, touchedFields.name)}`}
                 />
               </div>
-              {errors.name && (
-                <p className="text-sm text-red-600 mt-1">
-                  {errors.name.message}
-                </p>
+              {errors.name && touchedFields.name && (
+                <p className="text-sm text-red-600">{errors.name.message}</p>
               )}
             </div>
 
+            {/* EMAIL */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
@@ -143,17 +129,15 @@ export default function SignupPage() {
                   {...register("email")}
                   type="email"
                   placeholder="you@example.com"
-                  className={`pl-10 ${errors.email ? "border-red-600" : ""}`}
-                  aria-invalid={errors.email ? "true" : "false"}
+                  className={`pl-10 ${inputClass(!!errors.email, touchedFields.email)}`}
                 />
               </div>
-              {errors.email && (
-                <p className="text-sm text-red-600 mt-1">
-                  {errors.email.message}
-                </p>
+              {errors.email && touchedFields.email && (
+                <p className="text-sm text-red-600">{errors.email.message}</p>
               )}
             </div>
 
+            {/* PASSWORD */}
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <div className="relative">
@@ -161,19 +145,31 @@ export default function SignupPage() {
                 <Input
                   id="password"
                   {...register("password")}
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className={`pl-10 ${errors.password ? "border-red-600" : ""}`}
-                  aria-invalid={errors.password ? "true" : "false"}
+                  className={`pl-10 pr-10 ${inputClass(!!errors.password, touchedFields.password)}`}
                 />
+                <button
+                  type="button"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-3 top-2.5 inline-flex items-center justify-center h-6 w-6 text-muted-foreground hover:text-primary"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
               </div>
-              {errors.password && (
-                <p className="text-sm text-red-600 mt-1">
+              {errors.password && touchedFields.password && (
+                <p className="text-sm text-red-600">
                   {errors.password.message}
                 </p>
               )}
             </div>
 
+            {/* CONFIRM PASSWORD */}
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
               <div className="relative">
@@ -181,27 +177,42 @@ export default function SignupPage() {
                 <Input
                   id="confirmPassword"
                   {...register("confirmPassword")}
-                  type="password"
+                  type={showConfirmPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className={`pl-10 ${errors.confirmPassword ? "border-red-600" : ""}`}
-                  aria-invalid={errors.confirmPassword ? "true" : "false"}
+                  className={`pl-10 pr-10 ${inputClass(!!errors.confirmPassword, touchedFields.confirmPassword)}`}
                 />
+                <button
+                  type="button"
+                  aria-label={
+                    showConfirmPassword
+                      ? "Hide confirm password"
+                      : "Show confirm password"
+                  }
+                  onClick={() => setShowConfirmPassword((v) => !v)}
+                  className="absolute right-3 top-2.5 inline-flex items-center justify-center h-6 w-6 text-muted-foreground hover:text-primary"
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
               </div>
-              {errors.confirmPassword && (
-                <p className="text-sm text-red-600 mt-1">
+              {errors.confirmPassword && touchedFields.confirmPassword && (
+                <p className="text-sm text-red-600">
                   {errors.confirmPassword.message}
                 </p>
               )}
             </div>
 
+            {/* TERMS */}
             <div className="flex items-start gap-2">
               <input
-                id="terms"
                 type="checkbox"
-                className="mt-1 rounded border-gray-300"
                 {...register("terms")}
+                className="mt-1 rounded border-gray-300"
               />
-              <label htmlFor="terms" className="text-sm text-muted-foreground">
+              <label className="text-sm text-muted-foreground">
                 I agree to the{" "}
                 <a href="#" className="text-primary hover:underline">
                   Terms of Service
@@ -213,12 +224,15 @@ export default function SignupPage() {
               </label>
             </div>
             {errors.terms && (
-              <p className="text-sm text-red-600 mt-1">
-                {errors.terms.message}
-              </p>
+              <p className="text-sm text-red-600">{errors.terms.message}</p>
             )}
 
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {/* SUBMIT */}
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={!isValid || isSubmitting}
+            >
               {isSubmitting ? "Creating account..." : "Create Account"}
             </Button>
           </form>
