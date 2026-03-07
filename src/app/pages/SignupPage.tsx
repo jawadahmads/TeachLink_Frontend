@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import { BookOpen, Mail, Lock, User, Eye, EyeOff, Home } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -16,16 +16,26 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signupSchema } from "../schema/signUpSchema";
 import { getQueryParam, setQueryParam } from "../utils/queryParams";
+import { FaGoogle } from "react-icons/fa";
 
 type SignupForm = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // extract query parameters
-  const role = getQueryParam("role");
+  // compute initial role once from the URL so useForm defaultValues are correct
+  const [role, setRole] = useState<string>(() => {
+    return getQueryParam("role") === "teacher" ? "teacher" : "student";
+  });
+
+  // add OAuth handler
+  const handleGoogle = () => {
+    // redirect to your OAuth endpoint; change to your backend route if different
+    window.location.href = "/auth/google";
+  };
 
   const {
     register,
@@ -37,7 +47,7 @@ export default function SignupPage() {
     resolver: zodResolver(signupSchema),
     mode: "onChange",
     defaultValues: {
-      userType: role === "teacher" ? "teacher" : "student",
+      userType: role as "student" | "teacher",
       name: "",
       email: "",
       password: "",
@@ -48,6 +58,13 @@ export default function SignupPage() {
 
   // watch for the state of the userType field
   let userType = watch("userType");
+
+  // keep role state and form field in sync when the URL changes
+  useEffect(() => {
+    const q = getQueryParam("role");
+    const newRole = q === "teacher" ? "teacher" : "student";
+    setRole(newRole);
+  }, [location.search, role]);
 
   const onSubmit = (data: SignupForm) => {
     console.log(data);
@@ -253,6 +270,24 @@ export default function SignupPage() {
               disabled={!isValid || isSubmitting}
             >
               {isSubmitting ? "Creating account..." : "Create Account"}
+            </Button>
+
+            {/* OR separator */}
+            <div className="mt-1 flex items-center gap-3">
+              <div className="flex-1 h-px bg-border" />
+              <span className="text-sm text-muted-foreground">or</span>
+              <div className="flex-1 h-px bg-border" />
+            </div>
+
+            {/* Google OAuth */}
+            <Button
+              type="button"
+              variant="default"
+              className="w-full mt-3 flex items-center justify-center gap-3"
+              onClick={handleGoogle}
+            >
+              <FaGoogle />
+              <span className="text-sm font-medium">Sign up with Google</span>
             </Button>
           </form>
 

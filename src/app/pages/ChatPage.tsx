@@ -1,67 +1,80 @@
-import { useState } from 'react';
-import { Send, Search, MoreVertical, Paperclip, Image, Phone, Video } from 'lucide-react';
-import Header from '../components/Header';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Card } from '../components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
-import { Badge } from '../components/ui/badge';
-import { ScrollArea } from '../components/ui/scroll-area';
-import { mockMessages, mockTeachers, currentStudent } from '../data/mockData';
+import { useState } from "react";
+import {
+  Send,
+  Search,
+  MoreVertical,
+  Paperclip,
+  Image,
+  Phone,
+  Video,
+} from "lucide-react";
+import Header from "../components/Header";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Card } from "../components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
+import { Badge } from "../components/ui/badge";
+import { ScrollArea } from "../components/ui/scroll-area";
+import { mockMessages, mockTeachers, currentStudent } from "../data/mockData";
 
 export default function ChatPage() {
-  const [selectedChatId, setSelectedChatId] = useState('1');
-  const [newMessage, setNewMessage] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedChatId, setSelectedChatId] = useState("1");
+  const [newMessage, setNewMessage] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Group messages by conversation
-  const conversations = mockTeachers.slice(0, 3).map(teacher => {
+  const conversations = mockTeachers.slice(0, 3).map((teacher) => {
     const messages = mockMessages.filter(
-      m => m.senderId === teacher.id || m.receiverId === teacher.id
+      (m) => m.senderId === teacher.id || m.receiverId === teacher.id,
     );
     const lastMessage = messages[messages.length - 1];
-    const unreadCount = messages.filter(m => !m.read && m.senderId === teacher.id).length;
+    const unreadCount = messages.filter(
+      (m) => !m.read && m.senderId === teacher.id,
+    ).length;
 
     return {
       id: teacher.id,
       name: teacher.name,
       avatar: teacher.avatar,
-      lastMessage: lastMessage?.content || 'No messages yet',
-      timestamp: lastMessage?.timestamp || '',
+      lastMessage: lastMessage?.content || "No messages yet",
+      timestamp: lastMessage?.timestamp || "",
       unread: unreadCount,
       online: Math.random() > 0.5,
     };
   });
 
-  const selectedConversation = conversations.find(c => c.id === selectedChatId);
+  const selectedConversation = conversations.find(
+    (c) => c.id === selectedChatId,
+  );
   const currentMessages = mockMessages.filter(
-    m => m.senderId === selectedChatId || m.receiverId === selectedChatId
+    (m) => m.senderId === selectedChatId || m.receiverId === selectedChatId,
   );
 
   const handleSendMessage = () => {
     if (!newMessage.trim()) return;
     // Mock send message
-    setNewMessage('');
+    setNewMessage("");
   };
 
-  const filteredConversations = conversations.filter(c =>
-    c.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredConversations = conversations.filter((c) =>
+    c.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
-    <div className="min-h-screen bg-muted">
-      <Header 
-        userType="student" 
-        userName={currentStudent.name} 
+    <div className="min-h-screen bg-muted flex flex-col">
+      <Header
+        userType="student"
+        userName={currentStudent.name}
         userAvatar={currentStudent.avatar}
         unreadNotifications={2}
         unreadMessages={1}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card className="h-[calc(100vh-12rem)] flex overflow-hidden">
-          {/* Conversations List */}
-          <div className="w-80 border-r border-border flex flex-col">
+      {/* Main chat layout: takes all remaining width/height below header */}
+      <div className="flex-1 flex">
+        <Card className="flex flex-row gap-0 w-full h-full overflow-hidden shadow-none rounded-none border-0">
+          {/* LEFT: Conversations list */}
+          <div className="w-80 max-w-[320px] flex-shrink-0 border-r border-border flex flex-col bg-card">
             <div className="p-4 border-b border-border">
               <h2 className="text-xl font-semibold mb-4">Messages</h2>
               <div className="relative">
@@ -76,71 +89,89 @@ export default function ChatPage() {
             </div>
 
             <ScrollArea className="flex-1">
-              {filteredConversations.map((conversation) => (
-                <button
-                  key={conversation.id}
-                  onClick={() => setSelectedChatId(conversation.id)}
-                  className={`w-full p-4 flex items-center gap-3 hover:bg-muted transition-colors border-b border-border ${
-                    selectedChatId === conversation.id ? 'bg-muted' : ''
-                  }`}
-                >
-                  <div className="relative">
-                    <Avatar>
-                      <AvatarImage src={conversation.avatar} alt={conversation.name} />
-                      <AvatarFallback>{conversation.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    {conversation.online && (
-                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
-                    )}
-                  </div>
-                  <div className="flex-1 text-left overflow-hidden">
-                    <div className="flex items-center justify-between mb-1">
-                      <h3 className="font-semibold truncate">{conversation.name}</h3>
-                      {conversation.timestamp && (
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(conversation.timestamp).toLocaleTimeString('en-US', {
-                            hour: 'numeric',
-                            minute: '2-digit',
-                          })}
-                        </span>
+              <div className="divide-y divide-border">
+                {filteredConversations.map((conversation) => (
+                  <button
+                    key={conversation.id}
+                    onClick={() => setSelectedChatId(conversation.id)}
+                    className={`w-full p-4 flex items-center gap-3 hover:bg-muted transition-colors ${
+                      selectedChatId === conversation.id ? "bg-muted" : ""
+                    }`}
+                  >
+                    <div className="relative">
+                      <Avatar>
+                        <AvatarImage
+                          src={conversation.avatar}
+                          alt={conversation.name}
+                        />
+                        <AvatarFallback>
+                          {conversation.name.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      {conversation.online && (
+                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
                       )}
                     </div>
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-muted-foreground truncate pr-2">
-                        {conversation.lastMessage}
-                      </p>
-                      {conversation.unread > 0 && (
-                        <Badge className="h-5 w-5 flex items-center justify-center p-0 text-xs">
-                          {conversation.unread}
-                        </Badge>
-                      )}
+                    <div className="flex-1 text-left overflow-hidden">
+                      <div className="flex items-center justify-between mb-1">
+                        <h3 className="font-semibold truncate">
+                          {conversation.name}
+                        </h3>
+                        {conversation.timestamp && (
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(
+                              conversation.timestamp,
+                            ).toLocaleTimeString("en-US", {
+                              hour: "numeric",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm text-muted-foreground truncate pr-2">
+                          {conversation.lastMessage}
+                        </p>
+                        {conversation.unread > 0 && (
+                          <Badge className="h-5 w-5 flex items-center justify-center p-0 text-xs">
+                            {conversation.unread}
+                          </Badge>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                ))}
+              </div>
             </ScrollArea>
           </div>
 
-          {/* Chat Area */}
+          {/* RIGHT: Chat area (header, messages, input) */}
           <div className="flex-1 flex flex-col">
             {selectedConversation ? (
               <>
-                {/* Chat Header */}
-                <div className="p-4 border-b border-border flex items-center justify-between">
+                {/* Chat Header (sticky) */}
+                <div className="p-4 border-b border-border flex items-center justify-between bg-card z-10">
                   <div className="flex items-center gap-3">
                     <div className="relative">
                       <Avatar>
-                        <AvatarImage src={selectedConversation.avatar} alt={selectedConversation.name} />
-                        <AvatarFallback>{selectedConversation.name.charAt(0)}</AvatarFallback>
+                        <AvatarImage
+                          src={selectedConversation.avatar}
+                          alt={selectedConversation.name}
+                        />
+                        <AvatarFallback>
+                          {selectedConversation.name.charAt(0)}
+                        </AvatarFallback>
                       </Avatar>
                       {selectedConversation.online && (
                         <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
                       )}
                     </div>
                     <div>
-                      <h3 className="font-semibold">{selectedConversation.name}</h3>
+                      <h3 className="font-semibold">
+                        {selectedConversation.name}
+                      </h3>
                       <p className="text-sm text-muted-foreground">
-                        {selectedConversation.online ? 'Active now' : 'Offline'}
+                        {selectedConversation.online ? "Active now" : "Offline"}
                       </p>
                     </div>
                   </div>
@@ -157,7 +188,7 @@ export default function ChatPage() {
                   </div>
                 </div>
 
-                {/* Messages */}
+                {/* Messages area (scrollable) */}
                 <ScrollArea className="flex-1 p-4">
                   <div className="space-y-4">
                     {currentMessages.map((message) => {
@@ -165,27 +196,33 @@ export default function ChatPage() {
                       return (
                         <div
                           key={message.id}
-                          className={`flex gap-3 ${isSent ? 'flex-row-reverse' : 'flex-row'}`}
+                          className={`flex gap-3 ${isSent ? "flex-row-reverse" : "flex-row"}`}
                         >
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={message.senderAvatar} alt={message.senderName} />
-                            <AvatarFallback>{message.senderName.charAt(0)}</AvatarFallback>
+                            <AvatarImage
+                              src={message.senderAvatar}
+                              alt={message.senderName}
+                            />
+                            <AvatarFallback>
+                              {message.senderName.charAt(0)}
+                            </AvatarFallback>
                           </Avatar>
-                          <div className={`flex flex-col ${isSent ? 'items-end' : 'items-start'} max-w-[70%]`}>
+                          <div
+                            className={`flex flex-col ${isSent ? "items-end" : "items-start"} max-w-[70%]`}
+                          >
                             <div
-                              className={`rounded-2xl px-4 py-2 ${
-                                isSent
-                                  ? 'bg-primary text-white'
-                                  : 'bg-muted text-foreground'
-                              }`}
+                              className={`rounded-2xl px-4 py-2 ${isSent ? "bg-primary text-white" : "bg-muted text-foreground"}`}
                             >
                               <p>{message.content}</p>
                             </div>
                             <span className="text-xs text-muted-foreground mt-1">
-                              {new Date(message.timestamp).toLocaleTimeString('en-US', {
-                                hour: 'numeric',
-                                minute: '2-digit',
-                              })}
+                              {new Date(message.timestamp).toLocaleTimeString(
+                                "en-US",
+                                {
+                                  hour: "numeric",
+                                  minute: "2-digit",
+                                },
+                              )}
                             </span>
                           </div>
                         </div>
@@ -194,8 +231,8 @@ export default function ChatPage() {
                   </div>
                 </ScrollArea>
 
-                {/* Message Input */}
-                <div className="p-4 border-t border-border">
+                {/* Message input (sticky at bottom) */}
+                <div className="p-4 border-t border-border bg-card">
                   <div className="flex items-center gap-2">
                     <Button variant="ghost" size="icon">
                       <Paperclip className="h-5 w-5" />
@@ -207,10 +244,15 @@ export default function ChatPage() {
                       placeholder="Type a message..."
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                      onKeyPress={(e) =>
+                        e.key === "Enter" && handleSendMessage()
+                      }
                       className="flex-1"
                     />
-                    <Button onClick={handleSendMessage} disabled={!newMessage.trim()}>
+                    <Button
+                      onClick={handleSendMessage}
+                      disabled={!newMessage.trim()}
+                    >
                       <Send className="h-5 w-5" />
                     </Button>
                   </div>

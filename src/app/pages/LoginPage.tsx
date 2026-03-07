@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { BookOpen, Mail, Lock, Home } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -13,9 +13,9 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { FaGoogle } from "react-icons/fa";
 
 const loginSchema = z.object({
-  userType: z.enum(["student", "teacher"]),
   email: z.string().min(1, "Email is required").email("Invalid email address"),
   password: z
     .string()
@@ -27,8 +27,6 @@ const loginSchema = z.object({
 type LoginForm = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-  const navigate = useNavigate();
-
   const {
     register,
     handleSubmit,
@@ -39,25 +37,21 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
     mode: "onChange",
     defaultValues: {
-      userType: "student",
       email: "",
       password: "",
       remember: false,
     },
   });
 
-  const userType = watch("userType");
-
   const onSubmit = (data: LoginForm) => {
-    if (data.userType === "student") {
-      navigate("/student/dashboard");
-    } else {
-      navigate("/teacher/dashboard");
-    }
+    console.log(data);
   };
-
+  const handleGoogle = () => {
+    // redirect to your OAuth endpoint; change to your backend route if different
+    window.location.href = "/auth/google";
+  };
   // No border when untouched, red on error, green when schema passes
-  const inputClass = (hasError: boolean, isTouched: boolean | undefined) => {
+  const inputClass = (hasError: boolean, isTouched: boolean) => {
     if (!isTouched) return "";
     if (hasError) return "border-red-600 focus-visible:ring-red-600";
     return "border-green-600 focus-visible:ring-green-600";
@@ -86,30 +80,6 @@ export default function LoginPage() {
 
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* USER TYPE */}
-            <div className="flex gap-2 mb-6">
-              <Button
-                type="button"
-                variant={userType === "student" ? "default" : "outline"}
-                className="flex-1"
-                onClick={() =>
-                  setValue("userType", "student", { shouldValidate: true })
-                }
-              >
-                Student
-              </Button>
-              <Button
-                type="button"
-                variant={userType === "teacher" ? "default" : "outline"}
-                className="flex-1"
-                onClick={() =>
-                  setValue("userType", "teacher", { shouldValidate: true })
-                }
-              >
-                Teacher
-              </Button>
-            </div>
-
             {/* EMAIL */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -120,12 +90,12 @@ export default function LoginPage() {
                   type="email"
                   placeholder="you@example.com"
                   {...register("email")}
-                  className={`pl-10 ${inputClass(!!errors.email, touchedFields.email)}`}
+                  className={`pl-10 ${inputClass(!!errors.email, !!touchedFields.email)}`}
                   aria-invalid={errors.email ? "true" : "false"}
                   autoComplete="email"
                 />
               </div>
-              {errors.email && touchedFields.email && (
+              {errors.email && !!touchedFields.email && (
                 <p className="text-sm text-red-600">{errors.email.message}</p>
               )}
             </div>
@@ -140,12 +110,12 @@ export default function LoginPage() {
                   type="password"
                   placeholder="••••••••"
                   {...register("password")}
-                  className={`pl-10 ${inputClass(!!errors.password, touchedFields.password)}`}
+                  className={`pl-10 ${inputClass(!!errors.password, !!touchedFields.password)}`}
                   aria-invalid={errors.password ? "true" : "false"}
                   autoComplete="current-password"
                 />
               </div>
-              {errors.password && touchedFields.password && (
+              {errors.password && !!touchedFields.password && (
                 <p className="text-sm text-red-600">
                   {errors.password.message}
                 </p>
@@ -174,6 +144,24 @@ export default function LoginPage() {
               disabled={!isValid || isSubmitting}
             >
               {isSubmitting ? "Signing in..." : "Sign In"}
+            </Button>
+
+            {/* OR separator */}
+            <div className="mt-1 flex items-center gap-3">
+              <div className="flex-1 h-px bg-border" />
+              <span className="text-sm text-muted-foreground">or</span>
+              <div className="flex-1 h-px bg-border" />
+            </div>
+
+            {/* Google OAuth */}
+            <Button
+              type="button"
+              variant="default"
+              className="w-full mt-3 flex items-center justify-center gap-3"
+              onClick={handleGoogle}
+            >
+              <FaGoogle />
+              <span className="text-sm font-medium">Sign up with Google</span>
             </Button>
           </form>
 
