@@ -122,6 +122,16 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* Smooth scrolling for in-page anchors (e.g. #features) and reasonable offset for fixed headers */
+html {
+  scroll-behavior: smooth;
+}
+
+/* If you have a fixed header, adjust the scroll offset so targets are not hidden behind it.
+   Change the value to match your header height (e.g. 4rem). */
+[id] {
+  scroll-margin-top: 4rem;
+}
 @layer base {
   * {
     @apply border-border outline-ring/50;

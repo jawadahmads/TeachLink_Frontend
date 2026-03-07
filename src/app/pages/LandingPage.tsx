@@ -1,7 +1,16 @@
-import { Link } from 'react-router';
-import { BookOpen, Users, Video, Star, Clock, Shield, Search, Calendar } from 'lucide-react';
-import { Button } from '../components/ui/button';
-import { Card, CardContent } from '../components/ui/card';
+import {
+  BookOpen,
+  Users,
+  Video,
+  Star,
+  Clock,
+  Shield,
+  Search,
+  Calendar,
+} from "lucide-react";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
+import { Link } from "react-router";
 
 export default function LandingPage() {
   return (
@@ -15,10 +24,30 @@ export default function LandingPage() {
               <span className="text-2xl font-bold text-primary">TeachLink</span>
             </div>
             <div className="hidden md:flex items-center gap-8">
-              <a href="#features" className="text-foreground hover:text-primary transition-colors">Features</a>
-              <a href="#how-it-works" className="text-foreground hover:text-primary transition-colors">How It Works</a>
-              <a href="#teachers" className="text-foreground hover:text-primary transition-colors">Find Teachers</a>
-              <a href="#about" className="text-foreground hover:text-primary transition-colors">About</a>
+              <a
+                href="#features"
+                className="text-foreground hover:text-primary transition-colors"
+              >
+                Features
+              </a>
+              <a
+                href="#how-it-works"
+                className="text-foreground hover:text-primary transition-colors"
+              >
+                How It Works
+              </a>
+              <Link
+                to="search"
+                className="text-foreground hover:text-primary transition-colors"
+              >
+                Find Teachers
+              </Link>
+              <Link
+                to="about"
+                className="text-foreground hover:text-primary transition-colors"
+              >
+                About
+              </Link>
             </div>
             <div className="flex items-center gap-3">
               <Link to="/login">
@@ -41,7 +70,8 @@ export default function LandingPage() {
                 Learn Anything, Anywhere with Expert Teachers
               </h1>
               <p className="text-xl text-muted-foreground mb-8">
-                Connect with verified tutors for personalized online learning. Choose from 500+ subjects and learn at your own pace.
+                Connect with verified tutors for personalized online learning.
+                Choose from 500+ subjects and learn at your own pace.
               </p>
               <div className="flex gap-4">
                 <Link to="/search">
@@ -49,7 +79,7 @@ export default function LandingPage() {
                     Find a Teacher
                   </Button>
                 </Link>
-                <Link to="/signup">
+                <Link to="/signup?role=teacher">
                   <Button size="lg" variant="outline" className="text-lg px-8">
                     Become a Teacher
                   </Button>
@@ -58,21 +88,27 @@ export default function LandingPage() {
               <div className="mt-8 flex items-center gap-8">
                 <div>
                   <div className="text-3xl font-bold text-primary">500+</div>
-                  <div className="text-sm text-muted-foreground">Expert Teachers</div>
+                  <div className="text-sm text-muted-foreground">
+                    Expert Teachers
+                  </div>
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-primary">2,000+</div>
-                  <div className="text-sm text-muted-foreground">Active Students</div>
+                  <div className="text-sm text-muted-foreground">
+                    Active Students
+                  </div>
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-primary">4.8★</div>
-                  <div className="text-sm text-muted-foreground">Average Rating</div>
+                  <div className="text-sm text-muted-foreground">
+                    Average Rating
+                  </div>
                 </div>
               </div>
             </div>
             <div className="relative">
-              <img 
-                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop" 
+              <img
+                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop"
                 alt="Students learning online"
                 className="rounded-2xl shadow-2xl"
               />
@@ -85,8 +121,12 @@ export default function LandingPage() {
       <section id="features" className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">Why Choose TeachLink?</h2>
-            <p className="text-xl text-muted-foreground">Everything you need for successful online learning</p>
+            <h2 className="text-4xl font-bold text-foreground mb-4">
+              Why Choose TeachLink?
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Everything you need for successful online learning
+            </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             <Card className="border-2 hover:border-primary transition-colors">
@@ -94,9 +134,12 @@ export default function LandingPage() {
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                   <Users className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Verified Teachers</h3>
+                <h3 className="text-xl font-semibold mb-3">
+                  Verified Teachers
+                </h3>
                 <p className="text-muted-foreground">
-                  All our teachers are verified professionals with proven teaching experience and qualifications.
+                  All our teachers are verified professionals with proven
+                  teaching experience and qualifications.
                 </p>
               </CardContent>
             </Card>
@@ -105,9 +148,12 @@ export default function LandingPage() {
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                   <Video className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Live Video Sessions</h3>
+                <h3 className="text-xl font-semibold mb-3">
+                  Live Video Sessions
+                </h3>
                 <p className="text-muted-foreground">
-                  High-quality video conferencing with screen sharing and interactive whiteboard.
+                  High-quality video conferencing with screen sharing and
+                  interactive whiteboard.
                 </p>
               </CardContent>
             </Card>
@@ -116,9 +162,12 @@ export default function LandingPage() {
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                   <Calendar className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Flexible Scheduling</h3>
+                <h3 className="text-xl font-semibold mb-3">
+                  Flexible Scheduling
+                </h3>
                 <p className="text-muted-foreground">
-                  Book sessions that fit your schedule. Learn at your own pace, anytime, anywhere.
+                  Book sessions that fit your schedule. Learn at your own pace,
+                  anytime, anywhere.
                 </p>
               </CardContent>
             </Card>
@@ -127,9 +176,12 @@ export default function LandingPage() {
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                   <Star className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Ratings & Reviews</h3>
+                <h3 className="text-xl font-semibold mb-3">
+                  Ratings & Reviews
+                </h3>
                 <p className="text-muted-foreground">
-                  Read authentic reviews from students to find the perfect teacher for your needs.
+                  Read authentic reviews from students to find the perfect
+                  teacher for your needs.
                 </p>
               </CardContent>
             </Card>
@@ -138,9 +190,12 @@ export default function LandingPage() {
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                   <Clock className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Instant Messaging</h3>
+                <h3 className="text-xl font-semibold mb-3">
+                  Instant Messaging
+                </h3>
                 <p className="text-muted-foreground">
-                  Chat with your teachers anytime. Get quick answers to your questions between sessions.
+                  Chat with your teachers anytime. Get quick answers to your
+                  questions between sessions.
                 </p>
               </CardContent>
             </Card>
@@ -151,7 +206,8 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Secure Payments</h3>
                 <p className="text-muted-foreground">
-                  Safe and secure payment processing. Pay only after your session is complete.
+                  Safe and secure payment processing. Pay only after your
+                  session is complete.
                 </p>
               </CardContent>
             </Card>
@@ -163,32 +219,45 @@ export default function LandingPage() {
       <section id="how-it-works" className="py-20 px-4 bg-muted">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">How It Works</h2>
-            <p className="text-xl text-muted-foreground">Get started in three simple steps</p>
+            <h2 className="text-4xl font-bold text-foreground mb-4">
+              How It Works
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Get started in three simple steps
+            </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">1</div>
+              <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+                1
+              </div>
               <Search className="h-12 w-12 text-primary mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-3">Find Your Teacher</h3>
               <p className="text-muted-foreground">
-                Browse through our verified teachers, filter by subject, availability, and ratings.
+                Browse through our verified teachers, filter by subject,
+                availability, and ratings.
               </p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">2</div>
+              <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+                2
+              </div>
               <Calendar className="h-12 w-12 text-primary mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-3">Book a Session</h3>
               <p className="text-muted-foreground">
-                Choose a convenient time slot and book your session instantly. Pay securely online.
+                Choose a convenient time slot and book your session instantly.
+                Pay securely online.
               </p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">3</div>
+              <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+                3
+              </div>
               <Video className="h-12 w-12 text-primary mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-3">Start Learning</h3>
               <p className="text-muted-foreground">
-                Join your live video session and start learning. Track your progress and book more sessions.
+                Join your live video session and start learning. Track your
+                progress and book more sessions.
               </p>
             </div>
           </div>
@@ -220,31 +289,68 @@ export default function LandingPage() {
                 <span className="text-xl font-bold">TeachLink</span>
               </div>
               <p className="text-gray-400">
-                Connecting students with expert teachers for personalized online learning.
+                Connecting students with expert teachers for personalized online
+                learning.
               </p>
             </div>
             <div>
               <h4 className="font-semibold mb-4">For Students</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white">Find Teachers</a></li>
-                <li><a href="#" className="hover:text-white">How It Works</a></li>
-                <li><a href="#" className="hover:text-white">Pricing</a></li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Find Teachers
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    How It Works
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Pricing
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">For Teachers</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white">Become a Teacher</a></li>
-                <li><a href="#" className="hover:text-white">Teacher Guidelines</a></li>
-                <li><a href="#" className="hover:text-white">Resources</a></li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Become a Teacher
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Teacher Guidelines
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Resources
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white">About Us</a></li>
-                <li><a href="#" className="hover:text-white">Contact</a></li>
-                <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    About Us
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Contact
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white">
+                    Privacy Policy
+                  </a>
+                </li>
               </ul>
             </div>
           </div>

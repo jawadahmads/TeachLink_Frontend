@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
-import { BookOpen, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+import { BookOpen, Mail, Lock, User, Eye, EyeOff, Home } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -15,6 +15,7 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signupSchema } from "../schema/signUpSchema";
+import { getQueryParam, setQueryParam } from "../utils/queryParams";
 
 type SignupForm = z.infer<typeof signupSchema>;
 
@@ -22,6 +23,9 @@ export default function SignupPage() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // extract query parameters
+  const role = getQueryParam("role");
 
   const {
     register,
@@ -33,7 +37,7 @@ export default function SignupPage() {
     resolver: zodResolver(signupSchema),
     mode: "onChange",
     defaultValues: {
-      userType: "student",
+      userType: role === "teacher" ? "teacher" : "student",
       name: "",
       email: "",
       password: "",
@@ -43,7 +47,7 @@ export default function SignupPage() {
   });
 
   // watch for the state of the userType field
-  const userType = watch("userType");
+  let userType = watch("userType");
 
   const onSubmit = (data: SignupForm) => {
     console.log(data);
@@ -64,6 +68,14 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center px-4 py-8">
+      <Link
+        to="/"
+        aria-label="Home"
+        className="fixed top-4 left-4 z-50 inline-flex items-center justify-center h-10 w-10 rounded-md bg-white border border-border shadow-sm text-primary hover:bg-primary/5 transition"
+      >
+        <Home className="h-5 w-5" />
+      </Link>
+
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <Link to="/" className="flex items-center justify-center gap-2 mb-6">
@@ -84,9 +96,11 @@ export default function SignupPage() {
                 type="button"
                 variant={userType === "student" ? "default" : "outline"}
                 className="flex-1"
-                onClick={() =>
-                  setValue("userType", "student", { shouldValidate: true })
-                }
+                onClick={() => {
+                  // change query param on click
+                  setQueryParam("role", "student");
+                  setValue("userType", "student", { shouldValidate: true });
+                }}
               >
                 Student
               </Button>
@@ -94,9 +108,10 @@ export default function SignupPage() {
                 type="button"
                 variant={userType === "teacher" ? "default" : "outline"}
                 className="flex-1"
-                onClick={() =>
-                  setValue("userType", "teacher", { shouldValidate: true })
-                }
+                onClick={() => {
+                  setQueryParam("role", "teacher");
+                  setValue("userType", "teacher", { shouldValidate: true });
+                }}
               >
                 Teacher
               </Button>

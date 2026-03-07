@@ -11,6 +11,7 @@ import ChatPage from "./pages/ChatPage";
 import VideoConference from "./pages/VideoConference";
 import NotificationsPage from "./pages/NotificationsPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import AboutPage from "./pages/About";
 
 export const router = createBrowserRouter([
   {
@@ -60,5 +61,9 @@ export const router = createBrowserRouter([
   {
     path: "/admin",
     Component: AdminDashboard,
+  },
+  {
+    path: "/about",
+    Component: AboutPage,
   },
 ]);
