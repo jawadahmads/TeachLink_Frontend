@@ -1,5 +1,5 @@
 import axios from "axios";
-import { type LoginForm } from "../pages/LoginPage";
+import { type LoginForm } from "../schema/loginSchema";
 
 const API_URL_V1 = "http://localhost:4002/v1";
 

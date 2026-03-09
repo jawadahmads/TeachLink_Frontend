@@ -1,5 +1,5 @@
 import axios from "axios";
-import { type SignupForm } from "../pages/SignupPage";
+import { type SignupForm } from "../schema/signUpSchema";
 
 const API_URL_V1 = "http://localhost:4002/v1";
 

@@ -12,18 +12,13 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signupSchema } from "../schema/signUpSchema";
+import { signupSchema, type SignupForm } from "../schema/signUpSchema";
 import { getQueryParam, setQueryParam } from "../utils/queryParams";
 import { FaGoogle } from "react-icons/fa";
 import { signup } from "../api/signup";
 
-export type SignupForm = z.infer<typeof signupSchema>;
-
 export default function SignupPage() {
-  const navigate = useNavigate();
-  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 

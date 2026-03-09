@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { BookOpen, Mail, Lock, Home } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -11,22 +11,23 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FaGoogle } from "react-icons/fa";
-import { loginSchema } from "../schema/loginSchema";
+import { loginSchema, type LoginForm } from "../schema/loginSchema";
 import { setQueryParam, getQueryParam } from "../utils/queryParams";
 import { useEffect, useState } from "react";
 import { login } from "../api/login";
-
-export type LoginForm = z.infer<typeof loginSchema>;
+import { useAppDispatch } from "../redux/store";
+import { setStatus, setToken, setUser } from "../redux/authSlice";
 
 export default function LoginPage() {
   // compute initial role from query param once
   const initialRole =
     getQueryParam("role") === "teacher" ? "teacher" : "student";
   const [role, setRole] = useState<"student" | "teacher">(initialRole);
-  const [token, setToken] = useState<string | null>(null);
+
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const {
     register,
@@ -53,31 +54,22 @@ export default function LoginPage() {
   const userType = watch("userType");
 
   const onSubmit = async (data: LoginForm) => {
-    const response = await login(data);
-    setToken(response.accessToken);
-    console.log(response);
-  };
+    try {
+      const response = await login(data);
+      dispatch(setToken(response.accessToken));
+      type User = typeof response.user;
+      dispatch(setUser<User>(response.user));
 
-  function testAUTH() {
-    fetch("http://localhost:4002/v1/health", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Health check successful:", data);
-      })
-      .catch((error) => {
-        console.error("Health check failed:", error);
-      });
-  }
+      // based on the role navigate to the appropriate dashboard
+      const role = response.user.role;
+      navigate(`/${role}/dashboard`);
+    } catch (error) {
+      console.error("Login failed:", error);
+      dispatch(setStatus("failed"));
+    } finally {
+      dispatch(setStatus("idle"));
+    }
+  };
 
   const handleGoogle = () => {
     // redirect to your OAuth endpoint; change to your backend route if different
@@ -217,7 +209,7 @@ export default function LoginPage() {
               type="button"
               variant="default"
               className="w-full mt-3 flex items-center justify-center gap-3"
-              onClick={testAUTH}
+              onClick={handleGoogle}
             >
               <FaGoogle />
               <span className="text-sm font-medium">Sign up with Google</span>

@@ -12,6 +12,7 @@ import VideoConference from "./pages/VideoConference";
 import NotificationsPage from "./pages/NotificationsPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AboutPage from "./pages/About";
+import IsAuthenticated from "./components/helper/Authenticated";
 
 export const router = createBrowserRouter([
   {
@@ -27,43 +28,20 @@ export const router = createBrowserRouter([
     Component: SignupPage,
   },
   {
-    path: "/student/dashboard",
-    Component: StudentDashboard,
-  },
-  {
-    path: "/teacher/dashboard",
-    Component: TeacherDashboard,
-  },
-  {
-    path: "/teacher/:id",
-    Component: TeacherProfile,
-  },
-  {
-    path: "/search",
-    Component: SearchTeachers,
-  },
-  {
-    path: "/booking/:teacherId",
-    Component: BookingPage,
-  },
-  {
-    path: "/chat",
-    Component: ChatPage,
-  },
-  {
-    path: "/video/:sessionId",
-    Component: VideoConference,
-  },
-  {
-    path: "/notifications",
-    Component: NotificationsPage,
-  },
-  {
-    path: "/admin",
-    Component: AdminDashboard,
-  },
-  {
-    path: "/about",
-    Component: AboutPage,
+    // All protected routes go under this parent
+    path: "/",
+    Component: IsAuthenticated, // wrapper component
+    children: [
+      { path: "student/dashboard", Component: StudentDashboard },
+      { path: "teacher/dashboard", Component: TeacherDashboard },
+      { path: "teacher/:id", Component: TeacherProfile },
+      { path: "search", Component: SearchTeachers },
+      { path: "booking/:teacherId", Component: BookingPage },
+      { path: "chat", Component: ChatPage },
+      { path: "video/:sessionId", Component: VideoConference },
+      { path: "notifications", Component: NotificationsPage },
+      { path: "admin", Component: AdminDashboard },
+      { path: "about", Component: AboutPage },
+    ],
   },
 ]);
