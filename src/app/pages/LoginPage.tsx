@@ -14,19 +14,20 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FaGoogle } from "react-icons/fa";
+import { loginSchema } from "../schema/loginSchema";
+import { setQueryParam, getQueryParam } from "../utils/queryParams";
+import { useEffect, useState } from "react";
+import { login } from "../api/login";
 
-const loginSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Invalid email address"),
-  password: z
-    .string()
-    .min(1, "Password is required")
-    .min(6, "Password must be at least 6 characters"),
-  remember: z.boolean().optional(),
-});
-
-type LoginForm = z.infer<typeof loginSchema>;
+export type LoginForm = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
+  // compute initial role from query param once
+  const initialRole =
+    getQueryParam("role") === "teacher" ? "teacher" : "student";
+  const [role, setRole] = useState<"student" | "teacher">(initialRole);
+  const [token, setToken] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -37,15 +38,47 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
     mode: "onChange",
     defaultValues: {
+      userType: initialRole, // <- ensure form starts with the correct role
       email: "",
       password: "",
       remember: false,
     },
   });
 
-  const onSubmit = (data: LoginForm) => {
-    console.log(data);
+  // keep local role state and form value in sync
+  useEffect(() => {
+    setValue("userType", role, { shouldValidate: true, shouldDirty: true });
+  }, [role, setValue]);
+
+  const userType = watch("userType");
+
+  const onSubmit = async (data: LoginForm) => {
+    const response = await login(data);
+    setToken(response.accessToken);
+    console.log(response);
   };
+
+  function testAUTH() {
+    fetch("http://localhost:4002/v1/health", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Health check successful:", data);
+      })
+      .catch((error) => {
+        console.error("Health check failed:", error);
+      });
+  }
+
   const handleGoogle = () => {
     // redirect to your OAuth endpoint; change to your backend route if different
     window.location.href = "/auth/google";
@@ -80,6 +113,32 @@ export default function LoginPage() {
 
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="flex gap-2 mb-6">
+              {/* USER TYPonClick={testAUTH}E: update role state, form value, and query param on click */}
+              <Button
+                type="button"
+                variant={userType === "student" ? "default" : "outline"}
+                className="flex-1"
+                onClick={() => {
+                  setRole("student");
+                  setQueryParam("role", "student");
+                }}
+              >
+                Student
+              </Button>
+              <Button
+                type="button"
+                variant={userType === "teacher" ? "default" : "outline"}
+                className="flex-1"
+                onClick={() => {
+                  setRole("teacher");
+                  setQueryParam("role", "teacher");
+                }}
+              >
+                Teacher
+              </Button>
+            </div>
+
             {/* EMAIL */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -158,7 +217,7 @@ export default function LoginPage() {
               type="button"
               variant="default"
               className="w-full mt-3 flex items-center justify-center gap-3"
-              onClick={handleGoogle}
+              onClick={testAUTH}
             >
               <FaGoogle />
               <span className="text-sm font-medium">Sign up with Google</span>

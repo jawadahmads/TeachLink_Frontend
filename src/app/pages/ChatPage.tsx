@@ -1,13 +1,5 @@
 import { useState } from "react";
-import {
-  Send,
-  Search,
-  MoreVertical,
-  Paperclip,
-  Image,
-  Phone,
-  Video,
-} from "lucide-react";
+import { Send, Search, MoreVertical, Paperclip, Image } from "lucide-react";
 import Header from "../components/Header";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -72,7 +64,8 @@ export default function ChatPage() {
 
       {/* Main chat layout: takes all remaining width/height below header */}
       <div className="flex-1 flex">
-        <Card className="flex flex-row gap-0 w-full h-full overflow-hidden shadow-none rounded-none border-0">
+        {/* make the chat container fill the viewport height minus header (header is h-16 / 4rem) */}
+        <Card className="flex flex-row gap-0 w-full h-[calc(100vh-4rem)] overflow-hidden shadow-none rounded-none border-0">
           {/* LEFT: Conversations list */}
           <div className="w-80 max-w-[320px] flex-shrink-0 border-r border-border flex flex-col bg-card">
             <div className="p-4 border-b border-border">
@@ -176,12 +169,6 @@ export default function ChatPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon">
-                      <Phone className="h-5 w-5" />
-                    </Button>
-                    <Button variant="ghost" size="icon">
-                      <Video className="h-5 w-5" />
-                    </Button>
                     <Button variant="ghost" size="icon">
                       <MoreVertical className="h-5 w-5" />
                     </Button>

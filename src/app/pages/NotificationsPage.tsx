@@ -1,42 +1,60 @@
-import { useState } from 'react';
-import { Link } from 'react-router';
-import { Bell, Calendar, MessageSquare, DollarSign, Settings as SettingsIcon, Check, X } from 'lucide-react';
-import Header from '../components/Header';
-import { Button } from '../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { mockNotifications, currentStudent } from '../data/mockData';
+import { useState } from "react";
+import { Link } from "react-router";
+import {
+  Bell,
+  Calendar,
+  MessageSquare,
+  DollarSign,
+  Settings as SettingsIcon,
+  Check,
+  X,
+} from "lucide-react";
+import Header from "../components/Header";
+import { Button } from "../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../components/ui/tabs";
+import { mockNotifications, currentStudent } from "../data/mockData";
 
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState(mockNotifications);
 
-  const unreadNotifications = notifications.filter(n => !n.read);
-  const readNotifications = notifications.filter(n => n.read);
+  const unreadNotifications = notifications.filter((n) => !n.read);
+  const readNotifications = notifications.filter((n) => n.read);
 
   const markAsRead = (id: string) => {
-    setNotifications(notifications.map(n =>
-      n.id === id ? { ...n, read: true } : n
-    ));
+    setNotifications(
+      notifications.map((n) => (n.id === id ? { ...n, read: true } : n)),
+    );
   };
 
   const markAllAsRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, read: true })));
+    setNotifications(notifications.map((n) => ({ ...n, read: true })));
   };
 
   const deleteNotification = (id: string) => {
-    setNotifications(notifications.filter(n => n.id !== id));
+    setNotifications(notifications.filter((n) => n.id !== id));
   };
 
   const getIcon = (type: string) => {
     switch (type) {
-      case 'session':
+      case "session":
         return <Calendar className="h-5 w-5 text-blue-500" />;
-      case 'message':
+      case "message":
         return <MessageSquare className="h-5 w-5 text-green-500" />;
-      case 'payment':
+      case "payment":
         return <DollarSign className="h-5 w-5 text-yellow-500" />;
-      case 'review':
+      case "review":
         return <Bell className="h-5 w-5 text-purple-500" />;
       default:
         return <SettingsIcon className="h-5 w-5 text-gray-500" />;
@@ -53,10 +71,14 @@ export default function NotificationsPage() {
     return `${Math.floor(diff / 1440)}d ago`;
   };
 
-  const NotificationItem = ({ notification }: { notification: typeof notifications[0] }) => (
+  const NotificationItem = ({
+    notification,
+  }: {
+    notification: (typeof notifications)[0];
+  }) => (
     <div
       className={`p-4 border-b border-border hover:bg-muted transition-colors ${
-        !notification.read ? 'bg-blue-50/50' : ''
+        !notification.read ? "bg-blue-50/50" : ""
       }`}
     >
       <div className="flex gap-4">
@@ -68,11 +90,15 @@ export default function NotificationsPage() {
               {getTimeAgo(notification.timestamp)}
             </span>
           </div>
-          <p className="text-sm text-muted-foreground mb-2">{notification.message}</p>
+          <p className="text-sm text-muted-foreground mb-2">
+            {notification.message}
+          </p>
           <div className="flex items-center gap-2">
             {notification.actionUrl && (
               <Link to={notification.actionUrl}>
-                <Button variant="outline" size="sm">View</Button>
+                <Button variant="outline" size="sm">
+                  View
+                </Button>
               </Link>
             )}
             {!notification.read && (
@@ -106,9 +132,9 @@ export default function NotificationsPage() {
 
   return (
     <div className="min-h-screen bg-muted">
-      <Header 
-        userType="student" 
-        userName={currentStudent.name} 
+      <Header
+        userType="student"
+        userName={currentStudent.name}
         userAvatar={currentStudent.avatar}
         unreadNotifications={unreadNotifications.length}
         unreadMessages={1}
@@ -117,7 +143,9 @@ export default function NotificationsPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
-            <h1 className="text-3xl font-bold text-foreground">Notifications</h1>
+            <h1 className="text-3xl font-bold text-foreground">
+              Notifications
+            </h1>
             {unreadNotifications.length > 0 && (
               <Button variant="outline" onClick={markAllAsRead}>
                 Mark all as read
@@ -153,7 +181,10 @@ export default function NotificationsPage() {
               ) : (
                 <div>
                   {notifications.map((notification) => (
-                    <NotificationItem key={notification.id} notification={notification} />
+                    <NotificationItem
+                      key={notification.id}
+                      notification={notification}
+                    />
                   ))}
                 </div>
               )}
@@ -164,19 +195,25 @@ export default function NotificationsPage() {
                 <div className="py-12 text-center text-muted-foreground">
                   <Check className="h-12 w-12 mx-auto mb-3 opacity-50" />
                   <p>All caught up!</p>
-                  <p className="text-sm mt-1">You have no unread notifications</p>
+                  <p className="text-sm mt-1">
+                    You have no unread notifications
+                  </p>
                 </div>
               ) : (
                 <div>
                   {unreadNotifications.map((notification) => (
-                    <NotificationItem key={notification.id} notification={notification} />
+                    <NotificationItem
+                      key={notification.id}
+                      notification={notification}
+                    />
                   ))}
                 </div>
               )}
             </TabsContent>
 
             <TabsContent value="sessions" className="mt-0">
-              {notifications.filter(n => n.type === 'session').length === 0 ? (
+              {notifications.filter((n) => n.type === "session").length ===
+              0 ? (
                 <div className="py-12 text-center text-muted-foreground">
                   <Calendar className="h-12 w-12 mx-auto mb-3 opacity-50" />
                   <p>No session notifications</p>
@@ -184,16 +221,20 @@ export default function NotificationsPage() {
               ) : (
                 <div>
                   {notifications
-                    .filter(n => n.type === 'session')
+                    .filter((n) => n.type === "session")
                     .map((notification) => (
-                      <NotificationItem key={notification.id} notification={notification} />
+                      <NotificationItem
+                        key={notification.id}
+                        notification={notification}
+                      />
                     ))}
                 </div>
               )}
             </TabsContent>
 
             <TabsContent value="messages" className="mt-0">
-              {notifications.filter(n => n.type === 'message').length === 0 ? (
+              {notifications.filter((n) => n.type === "message").length ===
+              0 ? (
                 <div className="py-12 text-center text-muted-foreground">
                   <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-50" />
                   <p>No message notifications</p>
@@ -201,9 +242,12 @@ export default function NotificationsPage() {
               ) : (
                 <div>
                   {notifications
-                    .filter(n => n.type === 'message')
+                    .filter((n) => n.type === "message")
                     .map((notification) => (
-                      <NotificationItem key={notification.id} notification={notification} />
+                      <NotificationItem
+                        key={notification.id}
+                        notification={notification}
+                      />
                     ))}
                 </div>
               )}

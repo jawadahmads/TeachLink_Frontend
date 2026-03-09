@@ -17,8 +17,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signupSchema } from "../schema/signUpSchema";
 import { getQueryParam, setQueryParam } from "../utils/queryParams";
 import { FaGoogle } from "react-icons/fa";
+import { signup } from "../api/signup";
 
-type SignupForm = z.infer<typeof signupSchema>;
+export type SignupForm = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -66,13 +67,9 @@ export default function SignupPage() {
     setRole(newRole);
   }, [location.search, role]);
 
-  const onSubmit = (data: SignupForm) => {
-    console.log(data);
-    if (data.userType === "student") {
-      navigate("/student/dashboard");
-    } else {
-      navigate("/teacher/dashboard");
-    }
+  const onSubmit = async (data: SignupForm) => {
+    const response = await signup(data);
+    console.log(response);
   };
 
   // FIX: touched is boolean | undefined — coerce explicitly.
