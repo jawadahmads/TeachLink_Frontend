@@ -16,7 +16,7 @@ export default function AboutPage() {
   const { user, token } = useAppSelector((state) => state.auth);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background text-foreground">
       {token ? (
         <Header
           userType={user?.role.toLowerCase() as any || "student"}
@@ -24,11 +24,11 @@ export default function AboutPage() {
           userAvatar={user?.avatar || currentStudent.avatar}
         />
       ) : (
-        <nav className="border-b border-border bg-white sticky top-0 z-50">
+        <nav className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <Link to="/" className="flex items-center gap-2">
-                <BookOpen className="h-8 w-8 text-primary" />
+                < BookOpen className="h-8 w-8 text-primary" />
                 <span className="text-2xl font-bold text-primary">TeachLink</span>
               </Link>
               <div className="flex items-center gap-3">
@@ -44,7 +44,7 @@ export default function AboutPage() {
         </nav>
       )}
 
-      <header className="bg-gradient-to-br from-blue-50 to-white py-20">
+      <header className="bg-gradient-to-br from-primary/5 via-background to-background py-20">
         <div className="max-w-5xl mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             About TeachLink
@@ -72,7 +72,7 @@ export default function AboutPage() {
       <section id="about" className="py-16 px-4">
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="text-3xl font-semibold mb-4">Our Mission</h2>
+            <h2 className="text-3xl font-semibold mb-4 text-foreground">Our Mission</h2>
             <p className="text-muted-foreground mb-6">
               TeachLink exists to bridge learners and educators with trusted,
               high-quality instruction. We prioritise verification, transparency
@@ -81,14 +81,14 @@ export default function AboutPage() {
             </p>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <Card className="border-2">
+              <Card className="border-2 bg-card">
                 <CardContent className="p-5">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
                       <Users className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <h4 className="font-semibold">Verified Teachers</h4>
+                      <h4 className="font-semibold text-foreground">Verified Teachers</h4>
                       <p className="text-sm text-muted-foreground">
                         Profiles, reviews and credentials so you can book with
                         confidence.
@@ -98,14 +98,14 @@ export default function AboutPage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-2">
+              <Card className="border-2 bg-card">
                 <CardContent className="p-5">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
                       <Video className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <h4 className="font-semibold">Live Sessions</h4>
+                      <h4 className="font-semibold text-foreground">Live Sessions</h4>
                       <p className="text-sm text-muted-foreground">
                         High-quality video, whiteboard and resources for active
                         learning.
@@ -115,14 +115,14 @@ export default function AboutPage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-2">
+              <Card className="border-2 bg-card">
                 <CardContent className="p-5">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
                       <Search className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <h4 className="font-semibold">Smart Discovery</h4>
+                      <h4 className="font-semibold text-foreground">Smart Discovery</h4>
                       <p className="text-sm text-muted-foreground">
                         Filter by subject, availability and ratings to find the
                         perfect match.
@@ -132,14 +132,14 @@ export default function AboutPage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-2">
+              <Card className="border-2 bg-card">
                 <CardContent className="p-5">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
                       <Shield className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <h4 className="font-semibold">Secure Payments</h4>
+                      <h4 className="font-semibold text-foreground">Secure Payments</h4>
                       <p className="text-sm text-muted-foreground">
                         Protected transactions and clear refund policies.
                       </p>
@@ -154,17 +154,17 @@ export default function AboutPage() {
             <img
               src="https://images.unsplash.com/photo-1557800636-894a64c1696f?w=900&h=700&fit=crop"
               alt="About TeachLink"
-              className="rounded-2xl shadow-lg"
+              className="rounded-2xl shadow-lg border border-border"
             />
           </div>
         </div>
       </section>
 
-      <section className="py-16 px-4 bg-muted">
+      <section className="py-16 px-4 bg-muted/50">
         <div className="max-w-6xl mx-auto text-center">
-          <h3 className="text-2xl font-semibold mb-6">Our Values</h3>
+          <h3 className="text-2xl font-semibold mb-6 text-foreground">Our Values</h3>
           <div className="grid md:grid-cols-3 gap-6">
-            <Card className="p-6">
+            <Card className="p-6 bg-card">
               <CardContent>
                 <div className="text-3xl text-primary font-bold mb-2">
                   Trust
@@ -175,7 +175,7 @@ export default function AboutPage() {
                 </p>
               </CardContent>
             </Card>
-            <Card className="p-6">
+            <Card className="p-6 bg-card">
               <CardContent>
                 <div className="text-3xl text-primary font-bold mb-2">
                   Quality
@@ -185,7 +185,7 @@ export default function AboutPage() {
                 </p>
               </CardContent>
             </Card>
-            <Card className="p-6">
+            <Card className="p-6 bg-card">
               <CardContent>
                 <div className="text-3xl text-primary font-bold mb-2">
                   Access
@@ -202,7 +202,7 @@ export default function AboutPage() {
 
       <section className="py-16 px-4 text-center">
         <div className="max-w-4xl mx-auto">
-          <h3 className="text-2xl font-semibold mb-4">Ready to learn?</h3>
+          <h3 className="text-2xl font-semibold mb-4 text-foreground">Ready to learn?</h3>
           <p className="text-muted-foreground mb-6">
             Join thousands of students and discover expert teachers today.
           </p>

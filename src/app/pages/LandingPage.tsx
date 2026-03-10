@@ -14,9 +14,9 @@ import { Link } from "react-router";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="border-b border-border bg-white sticky top-0 z-50">
+      <nav className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="flex items-center gap-2">
@@ -26,25 +26,25 @@ export default function LandingPage() {
             <div className="hidden md:flex items-center gap-8">
               <a
                 href="#features"
-                className="text-foreground hover:text-primary transition-colors"
+                className="text-muted-foreground hover:text-primary transition-colors"
               >
                 Features
               </a>
               <a
                 href="#how-it-works"
-                className="text-foreground hover:text-primary transition-colors"
+                className="text-muted-foreground hover:text-primary transition-colors"
               >
                 How It Works
               </a>
               <Link
                 to="search"
-                className="text-foreground hover:text-primary transition-colors"
+                className="text-muted-foreground hover:text-primary transition-colors"
               >
                 Find Teachers
               </Link>
               <Link
                 to="about"
-                className="text-foreground hover:text-primary transition-colors"
+                className="text-muted-foreground hover:text-primary transition-colors"
               >
                 About
               </Link>
@@ -62,7 +62,7 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-50 to-white py-20 px-4">
+      <section className="bg-gradient-to-br from-primary/5 via-background to-background py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
@@ -110,7 +110,7 @@ export default function LandingPage() {
               <img
                 src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop"
                 alt="Students learning online"
-                className="rounded-2xl shadow-2xl"
+                className="rounded-2xl shadow-2xl border border-border"
               />
             </div>
           </div>
@@ -129,9 +129,9 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="border-2 hover:border-primary transition-colors">
+            <Card className="border-2 hover:border-primary transition-colors bg-card">
               <CardContent className="p-6">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                   <Users className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">
@@ -143,9 +143,9 @@ export default function LandingPage() {
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-2 hover:border-primary transition-colors">
+            <Card className="border-2 hover:border-primary transition-colors bg-card">
               <CardContent className="p-6">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                   <Video className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">
@@ -157,9 +157,9 @@ export default function LandingPage() {
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-2 hover:border-primary transition-colors">
+            <Card className="border-2 hover:border-primary transition-colors bg-card">
               <CardContent className="p-6">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                   <Calendar className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">
@@ -171,9 +171,9 @@ export default function LandingPage() {
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-2 hover:border-primary transition-colors">
+            <Card className="border-2 hover:border-primary transition-colors bg-card">
               <CardContent className="p-6">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                   <Star className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">
@@ -185,9 +185,9 @@ export default function LandingPage() {
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-2 hover:border-primary transition-colors">
+            <Card className="border-2 hover:border-primary transition-colors bg-card">
               <CardContent className="p-6">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                   <Clock className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">
@@ -199,9 +199,9 @@ export default function LandingPage() {
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-2 hover:border-primary transition-colors">
+            <Card className="border-2 hover:border-primary transition-colors bg-card">
               <CardContent className="p-6">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                   <Shield className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Secure Payments</h3>
@@ -216,7 +216,7 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 px-4 bg-muted">
+      <section id="how-it-works" className="py-20 px-4 bg-muted/50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">
@@ -228,7 +228,7 @@ export default function LandingPage() {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+              <div className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
                 1
               </div>
               <Search className="h-12 w-12 text-primary mx-auto mb-4" />
@@ -239,7 +239,7 @@ export default function LandingPage() {
               </p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+              <div className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
                 2
               </div>
               <Calendar className="h-12 w-12 text-primary mx-auto mb-4" />
@@ -250,7 +250,7 @@ export default function LandingPage() {
               </p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+              <div className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
                 3
               </div>
               <Video className="h-12 w-12 text-primary mx-auto mb-4" />
@@ -265,7 +265,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+      <section className="py-20 px-4 bg-primary text-primary-foreground">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold mb-6">Ready to Start Learning?</h2>
           <p className="text-xl mb-8 opacity-90">
@@ -280,81 +280,81 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white py-12 px-4">
+      <footer className="bg-card border-t border-border py-12 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <BookOpen className="h-6 w-6" />
-                <span className="text-xl font-bold">TeachLink</span>
+                <BookOpen className="h-6 w-6 text-primary" />
+                <span className="text-xl font-bold text-foreground">TeachLink</span>
               </div>
-              <p className="text-gray-400">
+              <p className="text-muted-foreground">
                 Connecting students with expert teachers for personalized online
                 learning.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">For Students</h4>
-              <ul className="space-y-2 text-gray-400">
+              <h4 className="font-semibold mb-4 text-foreground">For Students</h4>
+              <ul className="space-y-2 text-muted-foreground">
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="#" className="hover:text-primary">
                     Find Teachers
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="#" className="hover:text-primary">
                     How It Works
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="#" className="hover:text-primary">
                     Pricing
                   </a>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">For Teachers</h4>
-              <ul className="space-y-2 text-gray-400">
+              <h4 className="font-semibold mb-4 text-foreground">For Teachers</h4>
+              <ul className="space-y-2 text-muted-foreground">
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="#" className="hover:text-primary">
                     Become a Teacher
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="#" className="hover:text-primary">
                     Teacher Guidelines
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white">
+                  <a href="#" className="hover:text-primary">
                     Resources
                   </a>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-gray-400">
+              <h4 className="font-semibold mb-4 text-foreground">Company</h4>
+              <ul className="space-y-2 text-muted-foreground">
                 <li>
-                  <Link to="/about" className="hover:text-white">
+                  <Link to="/about" className="hover:text-primary">
                     About Us
                   </Link>
                 </li>
                 <li>
-                  <Link to="/contact" className="hover:text-white">
+                  <Link to="/contact" className="hover:text-primary">
                     Contact
                   </Link>
                 </li>
                 <li>
-                  <Link to="/privacy" className="hover:text-white">
+                  <Link to="/privacy" className="hover:text-primary">
                     Privacy Policy
                   </Link>
                 </li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
+          <div className="border-t border-border pt-8 text-center text-muted-foreground">
             <p>&copy; 2026 TeachLink. All rights reserved.</p>
           </div>
         </div>

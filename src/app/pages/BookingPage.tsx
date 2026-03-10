@@ -44,7 +44,7 @@ export default function BookingPage() {
   const totalPrice = teacher.hourlyRate * (parseInt(duration) / 60);
 
   return (
-    <div className="min-h-screen bg-muted">
+    <div className="min-h-screen bg-background">
       <Header
         userType={
           (user?.role?.toLowerCase() as "student" | "teacher" | "admin") ||
@@ -65,15 +65,15 @@ export default function BookingPage() {
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
                     s === step
-                      ? "bg-primary text-white"
+                      ? "bg-primary text-primary-foreground"
                       : s < step
-                        ? "bg-green-500 text-white"
-                        : "bg-gray-200 text-gray-500"
+                        ? "bg-green-600 text-white"
+                        : "bg-muted text-muted-foreground"
                   }`}
                 >
                   {s < step ? <CheckCircle className="h-6 w-6" /> : s}
                 </div>
-                {s < 3 && <div className="w-16 h-1 bg-gray-200 mx-2" />}
+                {s < 3 && <div className={`w-16 h-1 mx-2 ${s < step ? 'bg-green-600' : 'bg-muted'}`} />}
               </div>
             ))}
           </div>
@@ -112,7 +112,7 @@ export default function BookingPage() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div>
-                    <Label className="mb-3 block">Choose a Day</Label>
+                    <Label className="mb-3 block text-foreground">Choose a Day</Label>
                     <div className="grid grid-cols-2 gap-3">
                       {teacher.availability.map((day, index) => (
                         <Button
@@ -135,7 +135,7 @@ export default function BookingPage() {
 
                   {selectedDay && (
                     <div>
-                      <Label className="mb-3 block">Available Time Slots</Label>
+                      <Label className="mb-3 block text-foreground">Available Time Slots</Label>
                       <div className="grid grid-cols-4 gap-2">
                         {teacher.availability
                           .find((d) => d.day === selectedDay)
@@ -156,23 +156,23 @@ export default function BookingPage() {
                   )}
 
                   <div>
-                    <Label className="mb-3 block">Session Duration</Label>
+                    <Label className="mb-3 block text-foreground">Session Duration</Label>
                     <RadioGroup value={duration} onValueChange={setDuration}>
                       <div className="flex items-center space-x-2 mb-2">
                         <RadioGroupItem value="30" id="30" />
-                        <Label htmlFor="30" className="cursor-pointer">
+                        <Label htmlFor="30" className="cursor-pointer text-foreground">
                           30 minutes - ${teacher.hourlyRate / 2}
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2 mb-2">
                         <RadioGroupItem value="60" id="60" />
-                        <Label htmlFor="60" className="cursor-pointer">
+                        <Label htmlFor="60" className="cursor-pointer text-foreground">
                           60 minutes - ${teacher.hourlyRate}
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="90" id="90" />
-                        <Label htmlFor="90" className="cursor-pointer">
+                        <Label htmlFor="90" className="cursor-pointer text-foreground">
                           90 minutes - ${teacher.hourlyRate * 1.5}
                         </Label>
                       </div>
@@ -197,7 +197,7 @@ export default function BookingPage() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div>
-                    <Label htmlFor="subject" className="mb-3 block">
+                    <Label htmlFor="subject" className="mb-3 block text-foreground">
                       Subject
                     </Label>
                     <div className="flex flex-wrap gap-2">
@@ -214,7 +214,7 @@ export default function BookingPage() {
                   </div>
 
                   <div>
-                    <Label htmlFor="notes">Session Notes (Optional)</Label>
+                    <Label htmlFor="notes" className="text-foreground">Session Notes (Optional)</Label>
                     <Textarea
                       id="notes"
                       placeholder="Tell the teacher what you'd like to focus on in this session..."
@@ -247,14 +247,14 @@ export default function BookingPage() {
                   <CardTitle>Payment Information</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
                     <div className="flex items-start gap-3">
-                      <CreditCard className="h-5 w-5 text-blue-600 mt-0.5" />
+                      <CreditCard className="h-5 w-5 text-primary mt-0.5" />
                       <div className="flex-1">
-                        <h4 className="font-medium text-blue-900 mb-1">
+                        <h4 className="font-medium text-foreground mb-1">
                           Mock Payment
                         </h4>
-                        <p className="text-sm text-blue-700">
+                        <p className="text-sm text-muted-foreground">
                           This is a demo. In a real application, you would enter
                           your payment details here using a secure payment
                           processor like Stripe.
@@ -266,16 +266,16 @@ export default function BookingPage() {
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Session fee</span>
-                      <span>${totalPrice}</span>
+                      <span className="text-foreground">${totalPrice}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">
                         Platform fee
                       </span>
-                      <span>${(totalPrice * 0.1).toFixed(2)}</span>
+                      <span className="text-foreground">${(totalPrice * 0.1).toFixed(2)}</span>
                     </div>
                     <div className="border-t border-border pt-3 flex justify-between font-semibold">
-                      <span>Total</span>
+                      <span className="text-foreground">Total</span>
                       <span className="text-primary">
                         ${(totalPrice * 1.1).toFixed(2)}
                       </span>
@@ -312,7 +312,7 @@ export default function BookingPage() {
                     <AvatarFallback>{teacher.name.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <h3 className="font-semibold">{teacher.name}</h3>
+                    <h3 className="font-semibold text-foreground">{teacher.name}</h3>
                     <Link
                       to={`/teacher/${teacher.id}`}
                       className="text-sm text-primary hover:underline"
@@ -327,7 +327,7 @@ export default function BookingPage() {
                     <div className="flex items-start gap-2">
                       <CalendarIcon className="h-4 w-4 text-muted-foreground mt-1" />
                       <div>
-                        <div className="text-sm font-medium">{selectedDay}</div>
+                        <div className="text-sm font-medium text-foreground">{selectedDay}</div>
                         <div className="text-sm text-muted-foreground">
                           {selectedTime}
                         </div>
@@ -338,7 +338,7 @@ export default function BookingPage() {
                   <div className="flex items-start gap-2">
                     <Clock className="h-4 w-4 text-muted-foreground mt-1" />
                     <div>
-                      <div className="text-sm font-medium">
+                      <div className="text-sm font-medium text-foreground">
                         {duration} minutes
                       </div>
                       <div className="text-sm text-muted-foreground">
@@ -350,7 +350,7 @@ export default function BookingPage() {
                   <div className="flex items-start gap-2">
                     <CreditCard className="h-4 w-4 text-muted-foreground mt-1" />
                     <div>
-                      <div className="text-sm font-medium">Total</div>
+                      <div className="text-sm font-medium text-foreground">Total</div>
                       <div className="text-lg font-bold text-primary">
                         ${(totalPrice * 1.1).toFixed(2)}
                       </div>
@@ -361,7 +361,7 @@ export default function BookingPage() {
                 <div className="pt-6 border-t border-border">
                   <Badge
                     variant="secondary"
-                    className="w-full justify-center py-2"
+                    className="w-full justify-center py-2 bg-muted text-muted-foreground"
                   >
                     <CheckCircle className="h-4 w-4 mr-2" />
                     Protected by TeachLink

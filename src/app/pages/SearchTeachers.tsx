@@ -41,8 +41,7 @@ export default function SearchTeachers() {
   const [sortBy, setSortBy] = useState("rating");
   const [selectedDay, setSelectedDay] = useState("all");
   const { user } = useAppSelector((state) => state.auth);
-  const currentUser = user || currentStudent;
-  const userRole = (user?.role?.toLowerCase() as "student" | "teacher" | "admin") || "student";
+  const teacher = mockTeachers[0]; // Current teacher
 
   const filteredTeachers = mockTeachers
     .filter((teacher) => {
@@ -161,9 +160,12 @@ export default function SearchTeachers() {
   return (
     <div className="min-h-screen bg-muted">
       <Header
-        userType={userRole}
-        userName={currentUser.name}
-        userAvatar={currentUser.avatar}
+        userType={
+          (user?.role?.toLowerCase() as "student" | "teacher" | "admin") ||
+          "teacher"
+        }
+      userName={user?.name || teacher.name}
+        userAvatar={user?.avatar || teacher.avatar}
         unreadNotifications={3}
         unreadMessages={2}
       />

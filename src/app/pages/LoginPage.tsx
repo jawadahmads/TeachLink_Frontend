@@ -61,7 +61,7 @@ export default function LoginPage() {
       const dashboard = response.user.role.toLowerCase();
       navigate(`/${dashboard}/dashboard`);
     } catch (error) {
-      dispatch(setStatus("failed"));
+      dispatch(setStatus("unauthorized"));
     } finally {
       dispatch(setStatus("idle"));
     }
@@ -78,11 +78,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center px-4 flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-background flex items-center justify-center px-4 flex-col">
       <Link
         to="/"
         aria-label="Home"
-        className="fixed top-4 left-4 z-50 inline-flex items-center justify-center h-10 w-10 rounded-md bg-white border border-border shadow-sm text-primary hover:bg-primary/5 transition"
+        className="fixed top-4 left-4 z-50 inline-flex items-center justify-center h-10 w-10 rounded-md bg-card border border-border shadow-sm text-primary hover:bg-primary/5 transition"
       >
         <Home className="h-5 w-5" />
       </Link>

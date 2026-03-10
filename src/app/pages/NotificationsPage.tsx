@@ -67,7 +67,7 @@ export default function NotificationsPage() {
       case "review":
         return <Bell className="h-5 w-5 text-purple-500" />;
       default:
-        return <SettingsIcon className="h-5 w-5 text-gray-500" />;
+        return <SettingsIcon className="h-5 w-5 text-muted-foreground" />;
     }
   };
 
@@ -87,15 +87,15 @@ export default function NotificationsPage() {
     notification: (typeof notifications)[0];
   }) => (
     <div
-      className={`p-4 border-b border-border hover:bg-muted transition-colors ${
-        !notification.read ? "bg-blue-50/50" : ""
+      className={`p-4 border-b border-border hover:bg-muted/50 transition-colors ${
+        !notification.read ? "bg-primary/5" : ""
       }`}
     >
       <div className="flex gap-4">
         <div className="flex-shrink-0 mt-1">{getIcon(notification.type)}</div>
         <div className="flex-1">
           <div className="flex items-start justify-between gap-2 mb-1">
-            <h4 className="font-semibold">{notification.title}</h4>
+            <h4 className="font-semibold text-foreground">{notification.title}</h4>
             <span className="text-xs text-muted-foreground whitespace-nowrap">
               {getTimeAgo(notification.timestamp)}
             </span>
@@ -141,7 +141,7 @@ export default function NotificationsPage() {
   );
 
   return (
-    <div className="min-h-screen bg-muted">
+    <div className="min-h-screen bg-background">
       <Header
         userType={userRole}
         userName={currentUser.name}
@@ -150,7 +150,7 @@ export default function NotificationsPage() {
         unreadMessages={2}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-3xl font-bold text-foreground">
@@ -170,7 +170,7 @@ export default function NotificationsPage() {
         <Card>
           <Tabs defaultValue="all" className="w-full">
             <CardHeader className="pb-3">
-              <TabsList className="w-full justify-start">
+              <TabsList className="w-full justify-start bg-muted">
                 <TabsTrigger value="all">
                   All ({notifications.length})
                 </TabsTrigger>
@@ -189,7 +189,7 @@ export default function NotificationsPage() {
                   <p>No notifications</p>
                 </div>
               ) : (
-                <div>
+                <div className="divide-y divide-border">
                   {notifications.map((notification) => (
                     <NotificationItem
                       key={notification.id}
@@ -210,7 +210,7 @@ export default function NotificationsPage() {
                   </p>
                 </div>
               ) : (
-                <div>
+                <div className="divide-y divide-border">
                   {unreadNotifications.map((notification) => (
                     <NotificationItem
                       key={notification.id}
@@ -229,7 +229,7 @@ export default function NotificationsPage() {
                   <p>No session notifications</p>
                 </div>
               ) : (
-                <div>
+                <div className="divide-y divide-border">
                   {notifications
                     .filter((n) => n.type === "session")
                     .map((notification) => (
@@ -250,7 +250,7 @@ export default function NotificationsPage() {
                   <p>No message notifications</p>
                 </div>
               ) : (
-                <div>
+                <div className="divide-y divide-border">
                   {notifications
                     .filter((n) => n.type === "message")
                     .map((notification) => (

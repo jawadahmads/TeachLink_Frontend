@@ -76,11 +76,11 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-background flex items-center justify-center px-4 py-8">
       <Link
         to="/"
         aria-label="Home"
-        className="fixed top-4 left-4 z-50 inline-flex items-center justify-center h-10 w-10 rounded-md bg-white border border-border shadow-sm text-primary hover:bg-primary/5 transition"
+        className="fixed top-4 left-4 z-50 inline-flex items-center justify-center h-10 w-10 rounded-md bg-card border border-border shadow-sm text-primary hover:bg-primary/5 transition"
       >
         <Home className="h-5 w-5" />
       </Link>
@@ -238,7 +238,7 @@ export default function SignupPage() {
               <input
                 type="checkbox"
                 {...register("terms")}
-                className="mt-1 rounded border-gray-300"
+                className="mt-1 rounded border-border bg-background"
               />
               <label className="text-sm text-muted-foreground">
                 I agree to the{" "}
