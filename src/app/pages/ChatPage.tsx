@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, Search, MoreVertical, Paperclip, Image } from "lucide-react";
-import Header from "../components/Header";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Card } from "../components/ui/card";
@@ -94,16 +93,8 @@ export default function ChatPage() {
   );
 
   return (
-    <div className="min-h-screen bg-muted flex flex-col">
-      <Header
-        userType={userRole}
-        userName={currentUser.name}
-        userAvatar={currentUser.avatar}
-        unreadNotifications={3}
-        unreadMessages={totalUnread}
-      />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="flex-1 flex flex-col">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <Card className="flex flex-row gap-0 w-full h-[calc(100vh-4rem)] overflow-hidden shadow-none rounded-none border-0">
           {/* LEFT: Conversations list */}
           <div className="w-80 max-w-[320px] flex-shrink-0 border-r border-border flex flex-col bg-card">

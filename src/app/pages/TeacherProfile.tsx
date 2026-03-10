@@ -10,7 +10,6 @@ import {
   Calendar,
   CheckCircle,
 } from "lucide-react";
-import Header from "../components/Header";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -37,17 +36,6 @@ export default function TeacherProfile() {
 
   return (
     <div className="min-h-screen bg-muted">
-      <Header
-        userType={
-          (user?.role?.toLowerCase() as "student" | "teacher" | "admin") ||
-          "teacher"
-        }
-        userName={user?.name || teacher.name}
-        userAvatar={user?.avatar || teacher.avatar}
-        unreadNotifications={3}
-        unreadMessages={2}
-      />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Profile Header */}
         <Card className="mb-8">

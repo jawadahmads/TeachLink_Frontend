@@ -15,42 +15,49 @@ import AboutPage from "./pages/About";
 import StudentProfile from "./pages/studentProfile";
 import IsAuthenticated from "./components/helper/Authenticated";
 import IsNotAuthenticated from "./components/helper/IsNotAuthenticated";
+import MainLayout from "./components/MainLayout";
 
 export const router = createBrowserRouter([
   {
-    path: "/",
-    Component: IsNotAuthenticated,
-    children: [
-      {
-        path: "",
-        Component: LandingPage,
-      },
-      {
-        path: "login",
-        Component: LoginPage,
-      },
-      {
-        path: "signup",
-        Component: SignupPage,
-      },
-    ],
+    path: "/login",
+    Component: LoginPage,
   },
   {
-    // All protected routes go under this parent
+    path: "/signup",
+    Component: SignupPage,
+  },
+  {
     path: "/",
-    Component: IsAuthenticated, // wrapper component
+    Component: MainLayout,
     children: [
-      { path: "student/dashboard", Component: StudentDashboard },
-      { path: "student/:id", Component: StudentProfile },
-      { path: "teacher/dashboard", Component: TeacherDashboard },
-      { path: "teacher/:id", Component: TeacherProfile },
-      { path: "search", Component: SearchTeachers },
-      { path: "booking/:teacherId", Component: BookingPage },
-      { path: "chat", Component: ChatPage },
-      { path: "video/:sessionId", Component: VideoConference },
-      { path: "notifications", Component: NotificationsPage },
-      { path: "admin", Component: AdminDashboard },
-      { path: "about", Component: AboutPage },
+      {
+        path: "/",
+        Component: IsNotAuthenticated,
+        children: [
+          {
+            path: "",
+            Component: LandingPage,
+          },
+        ],
+      },
+      {
+        // All protected routes go under this parent
+        path: "/",
+        Component: IsAuthenticated, // wrapper component
+        children: [
+          { path: "student/dashboard", Component: StudentDashboard },
+          { path: "student/:id", Component: StudentProfile },
+          { path: "teacher/dashboard", Component: TeacherDashboard },
+          { path: "teacher/:id", Component: TeacherProfile },
+          { path: "search", Component: SearchTeachers },
+          { path: "booking/:teacherId", Component: BookingPage },
+          { path: "chat", Component: ChatPage },
+          { path: "video/:sessionId", Component: VideoConference },
+          { path: "notifications", Component: NotificationsPage },
+          { path: "admin", Component: AdminDashboard },
+          { path: "about", Component: AboutPage },
+        ],
+      },
     ],
   },
 ]);

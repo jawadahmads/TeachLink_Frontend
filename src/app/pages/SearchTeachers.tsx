@@ -9,7 +9,6 @@ import {
   DollarSign,
   CheckCircle,
 } from "lucide-react";
-import Header from "../components/Header";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Card, CardContent } from "../components/ui/card";
@@ -31,8 +30,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../components/ui/sheet";
-import { mockTeachers, subjects, currentStudent } from "../data/mockData";
-import { useAppSelector } from "../redux/store";
+import { mockTeachers, subjects } from "../data/mockData";
 
 export default function SearchTeachers() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -40,8 +38,6 @@ export default function SearchTeachers() {
   const [priceRange, setPriceRange] = useState("all");
   const [sortBy, setSortBy] = useState("rating");
   const [selectedDay, setSelectedDay] = useState("all");
-  const { user } = useAppSelector((state) => state.auth);
-  const teacher = mockTeachers[0]; // Current teacher
 
   const filteredTeachers = mockTeachers
     .filter((teacher) => {
@@ -158,18 +154,7 @@ export default function SearchTeachers() {
   );
 
   return (
-    <div className="min-h-screen bg-muted">
-      <Header
-        userType={
-          (user?.role?.toLowerCase() as "student" | "teacher" | "admin") ||
-          "teacher"
-        }
-      userName={user?.name || teacher.name}
-        userAvatar={user?.avatar || teacher.avatar}
-        unreadNotifications={3}
-        unreadMessages={2}
-      />
-
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">

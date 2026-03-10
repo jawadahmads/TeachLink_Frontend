@@ -1,6 +1,5 @@
 import { Link } from 'react-router';
 import { Users, GraduationCap, DollarSign, Star, TrendingUp, Video, Calendar, AlertCircle } from 'lucide-react';
-import Header from '../components/Header';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
@@ -36,15 +35,7 @@ export default function AdminDashboard() {
   const topTeachers = mockTeachers.slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-muted">
-      <Header 
-        userType={(user?.role?.toLowerCase() as "student" | "teacher" | "admin") || "admin"} 
-        userName={user?.name || user?.email || "Admin"} 
-        userAvatar={user?.avatar || currentStudent.avatar}
-        unreadNotifications={5}
-        unreadMessages={0}
-      />
-
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8 flex justify-between items-center">

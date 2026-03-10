@@ -3,22 +3,27 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useParams } from "react-router";
-import { 
-  User as UserIcon, 
-  Mail, 
-  Calendar, 
-  BookOpen, 
-  Camera, 
-  Save, 
-  X, 
+import {
+  User as UserIcon,
+  Mail,
+  Calendar,
+  BookOpen,
+  Camera,
+  Save,
+  X,
   CheckCircle,
-  GraduationCap
+  GraduationCap,
 } from "lucide-react";
-import Header from "../components/Header";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "../components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { Badge } from "../components/ui/badge";
 import { useAppSelector } from "../redux/store";
@@ -46,12 +51,14 @@ export default function StudentProfile() {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-    setValue
+    setValue,
   } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: isOwnProfile ? (user?.name || studentData.name) : studentData.name,
-      email: isOwnProfile ? (user?.email || studentData.email) : studentData.email,
+      name: isOwnProfile ? user?.name || studentData.name : studentData.name,
+      email: isOwnProfile
+        ? user?.email || studentData.email
+        : studentData.email,
     },
   });
 
@@ -65,7 +72,7 @@ export default function StudentProfile() {
 
   const onSubmit = async (data: ProfileFormValues) => {
     if (!isOwnProfile) return;
-    
+
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setStudentData({ ...studentData, ...data });
@@ -79,23 +86,15 @@ export default function StudentProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header 
-        userType={(user?.role?.toLowerCase() as "student" | "teacher" | "admin") || "student"} 
-        userName={user?.name || studentData.name} 
-        userAvatar={user?.avatar || studentData.avatar}
-        unreadNotifications={2}
-        unreadMessages={1}
-      />
-
+    <div className="flex-1">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground">
             {isOwnProfile ? "My Profile" : `${studentData.name}'s Profile`}
           </h1>
           <p className="text-muted-foreground">
-            {isOwnProfile 
-              ? "Manage your personal information and preferences" 
+            {isOwnProfile
+              ? "Manage your personal information and preferences"
               : "Viewing student information and learning interests"}
           </p>
         </div>
@@ -108,22 +107,34 @@ export default function StudentProfile() {
                 <div className="flex flex-col items-center text-center">
                   <div className="relative mb-4">
                     <Avatar className="h-32 w-32 border-4 border-card shadow-lg">
-                      <AvatarImage src={studentData.avatar} alt={studentData.name} />
-                      <AvatarFallback className="text-3xl text-foreground bg-muted">{studentData.name.charAt(0)}</AvatarFallback>
+                      <AvatarImage
+                        src={studentData.avatar}
+                        alt={studentData.name}
+                      />
+                      <AvatarFallback className="text-3xl text-foreground bg-muted">
+                        {studentData.name.charAt(0)}
+                      </AvatarFallback>
                     </Avatar>
                     {isOwnProfile && (
-                      <Button 
-                        size="icon" 
-                        variant="secondary" 
+                      <Button
+                        size="icon"
+                        variant="secondary"
                         className="absolute bottom-0 right-0 rounded-full shadow-md bg-secondary text-secondary-foreground"
                       >
                         <Camera className="h-4 w-4" />
                       </Button>
                     )}
                   </div>
-                  <h2 className="text-xl font-bold text-foreground">{studentData.name}</h2>
-                  <p className="text-sm text-muted-foreground mb-4">{studentData.email}</p>
-                  <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                  <h2 className="text-xl font-bold text-foreground">
+                    {studentData.name}
+                  </h2>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    {studentData.email}
+                  </p>
+                  <Badge
+                    variant="outline"
+                    className="bg-primary/10 text-primary border-primary/20"
+                  >
                     Student Account
                   </Badge>
                 </div>
@@ -131,11 +142,16 @@ export default function StudentProfile() {
                 <div className="mt-8 space-y-4 pt-6 border-t border-border">
                   <div className="flex items-center gap-3 text-sm">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">Joined {new Date(studentData.joinedDate).toLocaleDateString()}</span>
+                    <span className="text-muted-foreground">
+                      Joined{" "}
+                      {new Date(studentData.joinedDate).toLocaleDateString()}
+                    </span>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">{studentData.totalSessions} Sessions Completed</span>
+                    <span className="text-muted-foreground">
+                      {studentData.totalSessions} Sessions Completed
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -151,12 +167,20 @@ export default function StudentProfile() {
               <CardContent>
                 <div className="flex flex-wrap gap-2">
                   {studentData.favoriteSubjects.map((subject, index) => (
-                    <Badge key={index} variant="secondary" className="bg-secondary text-secondary-foreground">
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="bg-secondary text-secondary-foreground"
+                    >
                       {subject}
                     </Badge>
                   ))}
                   {isOwnProfile && (
-                    <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-primary hover:text-primary hover:bg-primary/10">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 px-2 text-xs text-primary hover:text-primary hover:bg-primary/10"
+                    >
                       + Add More
                     </Button>
                   )}
@@ -170,10 +194,12 @@ export default function StudentProfile() {
             <Card className="h-full">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-7">
                 <div className="space-y-1">
-                  <CardTitle className="text-foreground">Personal Details</CardTitle>
+                  <CardTitle className="text-foreground">
+                    Personal Details
+                  </CardTitle>
                   <CardDescription>
-                    {isOwnProfile 
-                      ? "Update your name and email address here" 
+                    {isOwnProfile
+                      ? "Update your name and email address here"
                       : "General information about this student"}
                   </CardDescription>
                 </div>
@@ -187,7 +213,9 @@ export default function StudentProfile() {
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name" className="text-foreground">Full Name</Label>
+                      <Label htmlFor="name" className="text-foreground">
+                        Full Name
+                      </Label>
                       <div className="relative">
                         <UserIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input
@@ -199,12 +227,16 @@ export default function StudentProfile() {
                         />
                       </div>
                       {errors.name && (
-                        <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
+                        <p className="text-xs text-red-500 mt-1">
+                          {errors.name.message}
+                        </p>
                       )}
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-foreground">Email Address</Label>
+                      <Label htmlFor="email" className="text-foreground">
+                        Email Address
+                      </Label>
                       <div className="relative">
                         <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input
@@ -217,7 +249,9 @@ export default function StudentProfile() {
                         />
                       </div>
                       {errors.email && (
-                        <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>
+                        <p className="text-xs text-red-500 mt-1">
+                          {errors.email.message}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -229,28 +263,32 @@ export default function StudentProfile() {
                     </h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-3 rounded-lg border border-primary bg-primary/5 flex items-center justify-between">
-                        <span className="text-sm font-medium text-foreground">Undergraduate</span>
+                        <span className="text-sm font-medium text-foreground">
+                          Undergraduate
+                        </span>
                         <CheckCircle className="h-4 w-4 text-primary fill-primary/10" />
                       </div>
                       <div className="p-3 rounded-lg border border-border hover:border-primary/50 cursor-pointer transition-colors bg-card hover:bg-muted/50">
-                        <span className="text-sm font-medium text-muted-foreground">Postgraduate</span>
+                        <span className="text-sm font-medium text-muted-foreground">
+                          Postgraduate
+                        </span>
                       </div>
                     </div>
                   </div>
 
                   {isEditing && (
                     <div className="flex justify-end gap-3 mt-8">
-                      <Button 
-                        type="button" 
-                        variant="ghost" 
+                      <Button
+                        type="button"
+                        variant="ghost"
                         onClick={handleCancel}
                         className="flex items-center gap-2"
                       >
                         <X className="h-4 w-4" />
                         Cancel
                       </Button>
-                      <Button 
-                        type="submit" 
+                      <Button
+                        type="submit"
                         disabled={isSubmitting}
                         className="flex items-center gap-2"
                       >

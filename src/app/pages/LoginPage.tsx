@@ -61,9 +61,9 @@ export default function LoginPage() {
       const dashboard = response.user.role.toLowerCase();
       navigate(`/${dashboard}/dashboard`);
     } catch (error) {
-      dispatch(setStatus("unauthorized"));
+      dispatch(setStatus("unauthenticated"));
     } finally {
-      dispatch(setStatus("idle"));
+      dispatch(setStatus("unauthenticated"));
     }
   };
 

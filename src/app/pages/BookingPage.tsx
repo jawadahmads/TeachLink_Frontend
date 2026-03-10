@@ -6,7 +6,6 @@ import {
   CreditCard,
   CheckCircle,
 } from "lucide-react";
-import Header from "../components/Header";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -19,11 +18,9 @@ import { Badge } from "../components/ui/badge";
 import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
-import { mockTeachers, currentStudent } from "../data/mockData";
-import { useAppSelector } from "../redux/store";
+import { mockTeachers } from "../data/mockData";
 
 export default function BookingPage() {
-  const { user } = useAppSelector((state) => state.auth);
   const { teacherId } = useParams();
   const navigate = useNavigate();
   const teacher =
@@ -44,18 +41,7 @@ export default function BookingPage() {
   const totalPrice = teacher.hourlyRate * (parseInt(duration) / 60);
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header
-        userType={
-          (user?.role?.toLowerCase() as "student" | "teacher" | "admin") ||
-          "student"
-        }
-        userName={user?.name || currentStudent.name}
-        userAvatar={user?.avatar || currentStudent.avatar}
-        unreadNotifications={2}
-        unreadMessages={1}
-      />
-
+    <div className="min-h-screen">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Progress Steps */}
         <div className="mb-8">

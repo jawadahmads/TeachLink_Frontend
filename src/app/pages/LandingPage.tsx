@@ -14,55 +14,9 @@ import { Link } from "react-router";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link to="/" className="flex items-center gap-2">
-              <BookOpen className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold text-primary">TeachLink</span>
-            </Link>
-            <div className="hidden md:flex items-center gap-8">
-              <a
-                href="#features"
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
-                Features
-              </a>
-              <a
-                href="#how-it-works"
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
-                How It Works
-              </a>
-              <Link
-                to="search"
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
-                Find Teachers
-              </Link>
-              <Link
-                to="about"
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
-                About
-              </Link>
-            </div>
-            <div className="flex items-center gap-3">
-              <Link to="/login">
-                <Button variant="ghost">Log In</Button>
-              </Link>
-              <Link to="/signup">
-                <Button>Get Started</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary/5 via-background to-background py-20 px-4">
+      <section className="bg-transparent py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>

@@ -9,7 +9,6 @@ import {
   Check,
   X,
 } from "lucide-react";
-import Header from "../components/Header";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -40,7 +39,6 @@ export default function NotificationsPage() {
   const [notifications, setNotifications] = useState(mockNotifications);
 
   const unreadNotifications = notifications.filter((n) => !n.read);
-  const readNotifications = notifications.filter((n) => n.read);
 
   const markAsRead = (id: string) => {
     setNotifications(
@@ -141,15 +139,7 @@ export default function NotificationsPage() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header
-        userType={userRole}
-        userName={currentUser.name}
-        userAvatar={currentUser.avatar}
-        unreadNotifications={unreadNotifications.length}
-        unreadMessages={2}
-      />
-
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">

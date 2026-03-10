@@ -23,22 +23,23 @@ export default function App() {
   return (
     <Provider store={store}>
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-        <AutoRefresh />
-        <AnimatePresence mode="wait">
-          {isLoading ? (
-            <LoadingScreen key="loading" />
-          ) : (
-            <motion.div
-              key="router"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
-              className="min-h-screen bg-background text-foreground"
-            >
-              <RouterProvider router={router} />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <AutoRefresh>
+          <AnimatePresence mode="wait">
+            {isLoading ? (
+              <LoadingScreen key="loading" />
+            ) : (
+              <motion.div
+                key="router"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8 }}
+                className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-background text-foreground"
+              >
+                <RouterProvider router={router} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </AutoRefresh>
       </ThemeProvider>
     </Provider>
   );
