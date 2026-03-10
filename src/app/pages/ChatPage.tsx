@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Send, Search, MoreVertical, Paperclip, Image } from "lucide-react";
 import Header from "../components/Header";
 import { Button } from "../components/ui/button";
@@ -8,19 +8,34 @@ import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { Badge } from "../components/ui/badge";
 import { ScrollArea } from "../components/ui/scroll-area";
 import { mockMessages, mockTeachers, currentStudent } from "../data/mockData";
+import { useAppSelector } from "../redux/store";
 
 export default function ChatPage() {
+  const { user } = useAppSelector((state) => state.auth);
+
+  const currentUser = user || currentStudent;
+  const userRole =
+    (user?.role?.toLowerCase() as "student" | "teacher" | "admin") || "student";
+
+  const [messages, setMessages] = useState(mockMessages);
   const [selectedChatId, setSelectedChatId] = useState("1");
   const [newMessage, setNewMessage] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, selectedChatId]);
 
   // Group messages by conversation
   const conversations = mockTeachers.slice(0, 3).map((teacher) => {
-    const messages = mockMessages.filter(
+    const teacherMessages = messages.filter(
       (m) => m.senderId === teacher.id || m.receiverId === teacher.id,
     );
-    const lastMessage = messages[messages.length - 1];
-    const unreadCount = messages.filter(
+    const lastMessage = teacherMessages[teacherMessages.length - 1];
+    const unreadCount = teacherMessages.filter(
       (m) => !m.read && m.senderId === teacher.id,
     ).length;
 
@@ -31,21 +46,47 @@ export default function ChatPage() {
       lastMessage: lastMessage?.content || "No messages yet",
       timestamp: lastMessage?.timestamp || "",
       unread: unreadCount,
-      online: Math.random() > 0.5,
+      online: true,
     };
   });
+
+  const totalUnread = conversations.reduce((acc, c) => acc + c.unread, 0);
 
   const selectedConversation = conversations.find(
     (c) => c.id === selectedChatId,
   );
-  const currentMessages = mockMessages.filter(
+  const currentMessages = messages.filter(
     (m) => m.senderId === selectedChatId || m.receiverId === selectedChatId,
   );
 
   const handleSendMessage = () => {
     if (!newMessage.trim()) return;
-    // Mock send message
+
+    const newMsg = {
+      id: `msg-${Date.now()}`,
+      senderId: currentUser.id,
+      senderName: currentUser.name,
+      senderAvatar: currentUser.avatar,
+      receiverId: selectedChatId,
+      content: newMessage,
+      timestamp: new Date().toISOString(),
+      read: false,
+    };
+
+    setMessages((prev) => [...prev, newMsg]);
     setNewMessage("");
+  };
+
+  const handleSelectConversation = (id: string) => {
+    setSelectedChatId(id);
+    // Mark messages as read
+    setMessages((prev) =>
+      prev.map((m) =>
+        m.senderId === id && m.receiverId === currentUser.id
+          ? { ...m, read: true }
+          : m,
+      ),
+    );
   };
 
   const filteredConversations = conversations.filter((c) =>
@@ -55,16 +96,14 @@ export default function ChatPage() {
   return (
     <div className="min-h-screen bg-muted flex flex-col">
       <Header
-        userType="student"
-        userName={currentStudent.name}
-        userAvatar={currentStudent.avatar}
-        unreadNotifications={2}
-        unreadMessages={1}
+        userType={userRole}
+        userName={currentUser.name}
+        userAvatar={currentUser.avatar}
+        unreadNotifications={3}
+        unreadMessages={totalUnread}
       />
 
-      {/* Main chat layout: takes all remaining width/height below header */}
-      <div className="flex-1 flex">
-        {/* make the chat container fill the viewport height minus header (header is h-16 / 4rem) */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Card className="flex flex-row gap-0 w-full h-[calc(100vh-4rem)] overflow-hidden shadow-none rounded-none border-0">
           {/* LEFT: Conversations list */}
           <div className="w-80 max-w-[320px] flex-shrink-0 border-r border-border flex flex-col bg-card">
@@ -86,7 +125,7 @@ export default function ChatPage() {
                 {filteredConversations.map((conversation) => (
                   <button
                     key={conversation.id}
-                    onClick={() => setSelectedChatId(conversation.id)}
+                    onClick={() => handleSelectConversation(conversation.id)}
                     className={`w-full p-4 flex items-center gap-3 hover:bg-muted transition-colors ${
                       selectedChatId === conversation.id ? "bg-muted" : ""
                     }`}
@@ -97,9 +136,7 @@ export default function ChatPage() {
                           src={conversation.avatar}
                           alt={conversation.name}
                         />
-                        <AvatarFallback>
-                          {conversation.name.charAt(0)}
-                        </AvatarFallback>
+                        <AvatarFallback>{conversation.name}</AvatarFallback>
                       </Avatar>
                       {conversation.online && (
                         <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
@@ -142,7 +179,6 @@ export default function ChatPage() {
           <div className="flex-1 flex flex-col">
             {selectedConversation ? (
               <>
-                {/* Chat Header (sticky) */}
                 <div className="p-4 border-b border-border flex items-center justify-between bg-card z-10">
                   <div className="flex items-center gap-3">
                     <div className="relative">
@@ -152,7 +188,7 @@ export default function ChatPage() {
                           alt={selectedConversation.name}
                         />
                         <AvatarFallback>
-                          {selectedConversation.name.charAt(0)}
+                          {selectedConversation.name}
                         </AvatarFallback>
                       </Avatar>
                       {selectedConversation.online && (
@@ -175,7 +211,6 @@ export default function ChatPage() {
                   </div>
                 </div>
 
-                {/* Messages area (scrollable) */}
                 <ScrollArea className="flex-1 p-4">
                   <div className="space-y-4">
                     {currentMessages.map((message) => {
@@ -191,7 +226,7 @@ export default function ChatPage() {
                               alt={message.senderName}
                             />
                             <AvatarFallback>
-                              {message.senderName.charAt(0)}
+                              {message.senderName}
                             </AvatarFallback>
                           </Avatar>
                           <div
@@ -215,10 +250,10 @@ export default function ChatPage() {
                         </div>
                       );
                     })}
+                    <div ref={scrollRef} />
                   </div>
                 </ScrollArea>
 
-                {/* Message input (sticky at bottom) */}
                 <div className="p-4 border-t border-border bg-card">
                   <div className="flex items-center gap-2">
                     <Button variant="ghost" size="icon">

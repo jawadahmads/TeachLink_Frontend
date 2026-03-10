@@ -12,6 +12,7 @@ import VideoConference from "./pages/VideoConference";
 import NotificationsPage from "./pages/NotificationsPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AboutPage from "./pages/About";
+import StudentProfile from "./pages/studentProfile";
 import IsAuthenticated from "./components/helper/Authenticated";
 import IsNotAuthenticated from "./components/helper/IsNotAuthenticated";
 
@@ -40,6 +41,7 @@ export const router = createBrowserRouter([
     Component: IsAuthenticated, // wrapper component
     children: [
       { path: "student/dashboard", Component: StudentDashboard },
+      { path: "student/:id", Component: StudentProfile },
       { path: "teacher/dashboard", Component: TeacherDashboard },
       { path: "teacher/:id", Component: TeacherProfile },
       { path: "search", Component: SearchTeachers },

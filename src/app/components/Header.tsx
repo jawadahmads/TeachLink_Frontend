@@ -1,5 +1,12 @@
 import { Link, useNavigate } from "react-router";
-import { BookOpen, Bell, MessageSquare, User, LogOut } from "lucide-react";
+import {
+  BookOpen,
+  Bell,
+  MessageSquare,
+  User,
+  LogOut,
+  Settings,
+} from "lucide-react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
@@ -23,15 +30,15 @@ interface HeaderProps {
 }
 
 export default function Header({
+  userType,
   userName,
   userAvatar,
   unreadNotifications = 0,
   unreadMessages = 0,
 }: HeaderProps) {
   const dispatch = useAppDispatch();
-  const selector = useAppSelector((state) => state.auth);
-  const userType = selector.user?.role.toLowerCase() as String;
   const navigate = useNavigate();
+  const user = useAppSelector((state) => state.auth.user);
 
   const handleLogout = async () => {
     try {
@@ -43,6 +50,16 @@ export default function Header({
     } catch (error) {
       console.error("Logout failed:", error);
     }
+  };
+
+  const getProfileRoute = () => {
+    if (userType === "teacher" && user?.id) {
+      return `/teacher/${user.id}`;
+    }
+    if (userType === "student" && user?.id) {
+      return `/student/${user.id}`;
+    }
+    return `/${userType}/dashboard`; // Fallback to dashboard for admin
   };
 
   return (
@@ -96,10 +113,22 @@ export default function Header({
                     to={`/${userType}/dashboard`}
                     className="flex items-center gap-2 cursor-pointer w-full"
                   >
-                    <User className="h-4 w-4" />
+                    <Settings className="h-4 w-4" />
                     Dashboard
                   </Link>
                 </DropdownMenuItem>
+
+                {/* Profile Link */}
+                <DropdownMenuItem asChild>
+                  <Link
+                    to={getProfileRoute()}
+                    className="flex items-center gap-2 cursor-pointer w-full"
+                  >
+                    <User className="h-4 w-4" />
+                    My Profile
+                  </Link>
+                </DropdownMenuItem>
+
                 <DropdownMenuItem asChild>
                   <Link
                     to="/search"
@@ -109,7 +138,9 @@ export default function Header({
                     {userType === "student" ? "Find Teachers" : "Browse"}
                   </Link>
                 </DropdownMenuItem>
+
                 <DropdownMenuSeparator />
+
                 <DropdownMenuItem
                   onSelect={handleLogout}
                   className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"

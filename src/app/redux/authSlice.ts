@@ -3,13 +3,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 type AuthState = {
   token: string | null;
   user: Record<string, any> | null;
-  status: "idle" | "loading" | "failed";
+  status: "loading" | "authenticated" | "unauthenticated";
 };
 
 const initialAuthState: AuthState = {
   token: null,
   user: null,
-  status: "idle",
+  status: "unauthenticated",
 };
 
 const authSlice = createSlice({
@@ -28,7 +28,7 @@ const authSlice = createSlice({
     logout(state) {
       state.token = null;
       state.user = null;
-      state.status = "idle";
+      state.status = "unauthenticated";
     },
   },
 });

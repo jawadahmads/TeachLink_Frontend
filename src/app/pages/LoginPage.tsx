@@ -15,56 +15,52 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FaGoogle } from "react-icons/fa";
 import { loginSchema, type LoginForm } from "../schema/loginSchema";
 import { setQueryParam, getQueryParam } from "../utils/queryParams";
-import { useEffect, useState } from "react";
 import { login } from "../api/login";
 import { useAppDispatch } from "../redux/store";
 import { setStatus, setToken, setUser } from "../redux/authSlice";
+import { useState } from "react";
 
 export default function LoginPage() {
-  // compute initial role from query param once
   const initialRole =
     getQueryParam("role") === "teacher" ? "teacher" : "student";
-  const [role, setRole] = useState<"student" | "teacher">(initialRole);
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  const [userType, setUserType] = useState<"student" | "teacher">(initialRole);
 
   const {
     register,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors, touchedFields, isSubmitting, isValid },
   } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
     mode: "onChange",
     defaultValues: {
-      userType: initialRole, // <- ensure form starts with the correct role
+      userType: initialRole,
       email: "",
       password: "",
       remember: false,
     },
   });
 
-  // keep local role state and form value in sync
-  useEffect(() => {
-    setValue("userType", role, { shouldValidate: true, shouldDirty: true });
-  }, [role, setValue]);
-
-  const userType = watch("userType");
+  const handleRoleChange = (newRole: "student" | "teacher") => {
+    setUserType(newRole);
+    setQueryParam("role", newRole);
+    setValue("userType", newRole);
+  };
 
   const onSubmit = async (data: LoginForm) => {
     try {
       const response = await login(data);
-      dispatch(setToken(response.accessToken));
-      type User = typeof response.user;
-      dispatch(setUser<User>(response.user));
 
-      // based on the role navigate to the appropriate dashboard
-      const role = response.user.role;
-      navigate(`/${role}/dashboard`);
+      dispatch(setToken(response.accessToken));
+      dispatch(setUser(response.user));
+
+      const dashboard = response.user.role.toLowerCase();
+      navigate(`/${dashboard}/dashboard`);
     } catch (error) {
-      console.error("Login failed:", error);
       dispatch(setStatus("failed"));
     } finally {
       dispatch(setStatus("idle"));
@@ -72,10 +68,9 @@ export default function LoginPage() {
   };
 
   const handleGoogle = () => {
-    // redirect to your OAuth endpoint; change to your backend route if different
     window.location.href = "/auth/google";
   };
-  // No border when untouched, red on error, green when schema passes
+
   const inputClass = (hasError: boolean, isTouched: boolean) => {
     if (!isTouched) return "";
     if (hasError) return "border-red-600 focus-visible:ring-red-600";
@@ -84,7 +79,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center px-4 flex-col">
-      {/* Home icon fixed to top-left */}
       <Link
         to="/"
         aria-label="Home"
@@ -106,26 +100,20 @@ export default function LoginPage() {
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="flex gap-2 mb-6">
-              {/* USER TYPonClick={testAUTH}E: update role state, form value, and query param on click */}
               <Button
                 type="button"
                 variant={userType === "student" ? "default" : "outline"}
                 className="flex-1"
-                onClick={() => {
-                  setRole("student");
-                  setQueryParam("role", "student");
-                }}
+                onClick={() => handleRoleChange("student")}
               >
                 Student
               </Button>
+
               <Button
                 type="button"
                 variant={userType === "teacher" ? "default" : "outline"}
                 className="flex-1"
-                onClick={() => {
-                  setRole("teacher");
-                  setQueryParam("role", "teacher");
-                }}
+                onClick={() => handleRoleChange("teacher")}
               >
                 Teacher
               </Button>

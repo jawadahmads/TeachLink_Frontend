@@ -38,9 +38,11 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-muted">
       <Header 
-        userType="admin" 
-        userName={user?.email || "Admin"} 
-        userAvatar={currentStudent.avatar}
+        userType={(user?.role?.toLowerCase() as "student" | "teacher" | "admin") || "admin"} 
+        userName={user?.name || user?.email || "Admin"} 
+        userAvatar={user?.avatar || currentStudent.avatar}
+        unreadNotifications={5}
+        unreadMessages={0}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

@@ -6,8 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Badge } from '../components/ui/badge';
 import { currentStudent, mockSessions, mockTeachers } from '../data/mockData';
+import { useAppSelector } from '../redux/store';
 
 export default function StudentDashboard() {
+  const { user } = useAppSelector((state) => state.auth);
   const upcomingSessions = mockSessions.filter(s => s.status === 'upcoming');
   const completedSessions = mockSessions.filter(s => s.status === 'completed');
   const favoriteTeachers = mockTeachers.slice(0, 3);
@@ -15,15 +17,15 @@ export default function StudentDashboard() {
   return (
     <div className="min-h-screen bg-muted">
       <Header 
-        userType="student" 
-        userName={currentStudent.name} 
-        userAvatar={currentStudent.avatar}
+        userType={(user?.role?.toLowerCase() as "student" | "teacher" | "admin") || "student"} 
+        userName={user?.name || currentStudent.name} 
+        userAvatar={user?.avatar || currentStudent.avatar}
         unreadNotifications={2}
         unreadMessages={1}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
+...
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">
             Welcome back, {currentStudent.name.split(' ')[0]}! 👋

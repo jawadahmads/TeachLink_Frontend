@@ -20,8 +20,8 @@ export default function AboutPage() {
       {token ? (
         <Header
           userType={user?.role.toLowerCase() as any || "student"}
-          userName={user?.email || "User"}
-          userAvatar={currentStudent.avatar}
+          userName={user?.name || user?.email || "User"}
+          userAvatar={user?.avatar || currentStudent.avatar}
         />
       ) : (
         <nav className="border-b border-border bg-white sticky top-0 z-50">

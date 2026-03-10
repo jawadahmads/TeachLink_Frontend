@@ -24,9 +24,19 @@ import {
   TabsList,
   TabsTrigger,
 } from "../components/ui/tabs";
-import { mockNotifications, currentStudent } from "../data/mockData";
+import {
+  mockNotifications,
+  currentStudent,
+  mockTeachers,
+} from "../data/mockData";
+import { useAppSelector } from "../redux/store";
 
 export default function NotificationsPage() {
+  const { user } = useAppSelector((state) => state.auth);
+  const teacher = mockTeachers[0]; // Current teacher
+  const currentUser = user || currentStudent;
+  const userRole =
+    (user?.role?.toLowerCase() as "student" | "teacher" | "admin") || "student";
   const [notifications, setNotifications] = useState(mockNotifications);
 
   const unreadNotifications = notifications.filter((n) => !n.read);
@@ -133,14 +143,14 @@ export default function NotificationsPage() {
   return (
     <div className="min-h-screen bg-muted">
       <Header
-        userType="student"
-        userName={currentStudent.name}
-        userAvatar={currentStudent.avatar}
+        userType={userRole}
+        userName={currentUser.name}
+        userAvatar={currentUser.avatar}
         unreadNotifications={unreadNotifications.length}
-        unreadMessages={1}
+        unreadMessages={2}
       />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-3xl font-bold text-foreground">

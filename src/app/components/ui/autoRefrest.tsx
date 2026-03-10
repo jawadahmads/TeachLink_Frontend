@@ -3,7 +3,7 @@ import { useAppDispatch } from "../../redux/store";
 import { setStatus, setToken, setUser } from "../../redux/authSlice";
 import { refreshToken } from "../../api/refresh";
 
-export function AutoRefresh() {
+export function AutoRefresh({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
 
   const callForRefreshToken = async () => {
@@ -13,14 +13,14 @@ export function AutoRefresh() {
       dispatch(setUser(response.user));
     } catch (error) {
       console.error("Refresh failed:", error);
-      dispatch(setStatus("failed"));
+      dispatch(setStatus("unauthenticated"));
     } finally {
-      dispatch(setStatus("idle"));
+      dispatch(setStatus("unauthenticated"));
     }
   };
 
   useEffect(() => {
     callForRefreshToken();
   }, []);
-  return <></>;
+  return <>{children}</>;
 }
