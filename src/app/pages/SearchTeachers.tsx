@@ -7,11 +7,16 @@ import {
   Video,
   Clock,
   DollarSign,
-  CheckCircle,
+  CheckCircle2,
+  ArrowRight,
+  ChevronDown,
+  Sparkles,
+  Users,
+  Award
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { Card, CardContent } from "../components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { Badge } from "../components/ui/badge";
 import {
@@ -31,6 +36,29 @@ import {
   SheetTrigger,
 } from "../components/ui/sheet";
 import { mockTeachers, subjects } from "../data/mockData";
+import { motion, AnimatePresence } from "motion/react";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  },
+};
 
 export default function SearchTeachers() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -82,18 +110,19 @@ export default function SearchTeachers() {
   };
 
   const FilterContent = () => (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h3 className="font-semibold mb-3">Subjects</h3>
-        <div className="space-y-2 max-h-64 overflow-y-auto">
+        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4">Subjects</h3>
+        <div className="space-y-3 max-h-72 overflow-y-auto pr-2 custom-scrollbar">
           {subjects.map((subject) => (
-            <div key={subject} className="flex items-center space-x-2">
+            <div key={subject} className="flex items-center space-x-3 group">
               <Checkbox
                 id={subject}
                 checked={selectedSubjects.includes(subject)}
                 onCheckedChange={() => toggleSubject(subject)}
+                className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
               />
-              <Label htmlFor={subject} className="cursor-pointer">
+              <Label htmlFor={subject} className="text-sm font-semibold cursor-pointer group-hover:text-primary transition-colors">
                 {subject}
               </Label>
             </div>
@@ -102,12 +131,12 @@ export default function SearchTeachers() {
       </div>
 
       <div>
-        <h3 className="font-semibold mb-3">Price Range</h3>
+        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4">Price Range</h3>
         <Select value={priceRange} onValueChange={setPriceRange}>
-          <SelectTrigger>
+          <SelectTrigger className="w-full rounded-xl border-2 hover:border-primary/50 transition-all font-bold">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="rounded-xl border-2">
             <SelectItem value="all">All Prices</SelectItem>
             <SelectItem value="low">Under $40/hr</SelectItem>
             <SelectItem value="medium">$40-50/hr</SelectItem>
@@ -117,12 +146,12 @@ export default function SearchTeachers() {
       </div>
 
       <div>
-        <h3 className="font-semibold mb-3">Availability</h3>
+        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4">Availability</h3>
         <Select value={selectedDay} onValueChange={setSelectedDay}>
-          <SelectTrigger>
+          <SelectTrigger className="w-full rounded-xl border-2 hover:border-primary/50 transition-all font-bold">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="rounded-xl border-2">
             <SelectItem value="all">Any Day</SelectItem>
             <SelectItem value="Monday">Monday</SelectItem>
             <SelectItem value="Tuesday">Tuesday</SelectItem>
@@ -139,203 +168,294 @@ export default function SearchTeachers() {
         priceRange !== "all" ||
         selectedDay !== "all") && (
         <Button
-          variant="outline"
-          className="w-full"
+          variant="ghost"
+          className="w-full rounded-full font-bold text-destructive hover:bg-destructive/10 hover:text-destructive"
           onClick={() => {
             setSelectedSubjects([]);
             setPriceRange("all");
             setSelectedDay("all");
           }}
         >
-          Clear Filters
+          Clear All Filters
         </Button>
       )}
     </div>
   );
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Find Your Perfect Teacher
-          </h1>
-          <p className="text-muted-foreground">
-            Browse through {mockTeachers.length}+ verified expert teachers
-          </p>
-        </div>
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Decorative Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
+        <div className="absolute top-[-5%] right-[-5%] w-[35%] h-[35%] bg-primary/5 rounded-full blur-[120px]" />
+        <div className="absolute top-[20%] left-[-10%] w-[30%] h-[30%] bg-blue-500/5 rounded-full blur-[100px]" />
+      </div>
 
-        {/* Search and Filters */}
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search by teacher name or subject..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <div className="flex gap-2">
-                <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="rating">Highest Rated</SelectItem>
-                    <SelectItem value="price-low">
-                      Price: Low to High
-                    </SelectItem>
-                    <SelectItem value="price-high">
-                      Price: High to Low
-                    </SelectItem>
-                    <SelectItem value="students">Most Students</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                {/* Mobile Filter */}
-                <Sheet>
-                  <SheetTrigger asChild>
-                    <Button variant="outline" className="md:hidden">
-                      <Filter className="h-4 w-4 mr-2" />
-                      Filters
-                    </Button>
-                  </SheetTrigger>
-                  <SheetContent side="left">
-                    <SheetHeader>
-                      <SheetTitle>Filters</SheetTitle>
-                    </SheetHeader>
-                    <div className="mt-6">
-                      <FilterContent />
-                    </div>
-                  </SheetContent>
-                </Sheet>
-              </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <motion.div 
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+        >
+          {/* Header Section */}
+          <motion.div variants={itemVariants} className="mb-10 text-center md:text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-widest mb-4">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Expert Tutors</span>
             </div>
-          </CardContent>
-        </Card>
+            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-foreground mb-4">
+              Find Your Perfect Teacher
+            </h1>
+            <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl">
+              Browse through our global network of <span className="text-primary font-black">{mockTeachers.length}+</span> verified expert teachers and start learning today.
+            </p>
+          </motion.div>
 
-        <div className="grid lg:grid-cols-4 gap-6">
-          {/* Sidebar Filters (Desktop) */}
-          <div className="hidden md:block">
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-2 mb-6">
-                  <Filter className="h-5 w-5 text-primary" />
-                  <h2 className="font-semibold">Filters</h2>
+          {/* Top Search Bar */}
+          <motion.div variants={itemVariants} className="mb-8">
+            <Card className="border-none shadow-xl bg-card/50 backdrop-blur-xl overflow-hidden rounded-3xl">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="flex-1 relative group">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <Input
+                      placeholder="Search by teacher name, subject, or specialty..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-12 h-14 bg-background border-2 rounded-2xl focus-visible:ring-primary/20 focus-visible:border-primary transition-all font-medium text-lg"
+                    />
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="flex items-center bg-background rounded-2xl border-2 px-4 h-14 min-w-[200px]">
+                       <span className="text-sm font-bold text-muted-foreground mr-2">Sort by:</span>
+                       <Select value={sortBy} onValueChange={setSortBy}>
+                        <SelectTrigger className="border-none bg-transparent h-auto p-0 focus:ring-0 font-black text-sm">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl border-2">
+                          <SelectItem value="rating">Highest Rated</SelectItem>
+                          <SelectItem value="price-low">Price: Low to High</SelectItem>
+                          <SelectItem value="price-high">Price: High to Low</SelectItem>
+                          <SelectItem value="students">Most Students</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Mobile Filter Trigger */}
+                    <Sheet>
+                      <SheetTrigger asChild>
+                        <Button variant="outline" className="md:hidden h-14 w-14 rounded-2xl border-2 flex-shrink-0">
+                          <Filter className="h-5 w-5" />
+                        </Button>
+                      </SheetTrigger>
+                      <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+                        <SheetHeader className="mb-8">
+                          <SheetTitle className="text-2xl font-black">Filters</SheetTitle>
+                        </SheetHeader>
+                        <FilterContent />
+                      </SheetContent>
+                    </Sheet>
+                  </div>
                 </div>
-                <FilterContent />
               </CardContent>
             </Card>
-          </div>
+          </motion.div>
 
-          {/* Teacher List */}
-          <div className="lg:col-span-3">
-            <div className="mb-4 text-sm text-muted-foreground">
-              Showing {filteredTeachers.length} teachers
-            </div>
-            <div className="space-y-4">
-              {filteredTeachers.map((teacher) => (
-                <Card
-                  key={teacher.id}
-                  className="hover:shadow-lg transition-shadow"
-                >
-                  <CardContent className="p-6">
-                    <div className="flex flex-col md:flex-row gap-6">
-                      <Avatar className="h-24 w-24 mx-auto md:mx-0">
-                        <AvatarImage src={teacher.avatar} alt={teacher.name} />
-                        <AvatarFallback className="text-2xl">
-                          {teacher.name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
+          <div className="grid lg:grid-cols-4 gap-10">
+            {/* Sidebar Filters (Desktop) */}
+            <motion.div variants={itemVariants} className="hidden md:block">
+              <div className="sticky top-24">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-black flex items-center gap-2">
+                    <Filter className="h-5 w-5 text-primary" />
+                    Filters
+                  </h2>
+                </div>
+                <div className="p-8 rounded-[32px] border-none bg-card/50 backdrop-blur-xl shadow-lg">
+                  <FilterContent />
+                </div>
+              </div>
+            </motion.div>
 
-                      <div className="flex-1">
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className="text-xl font-semibold">
-                                {teacher.name}
-                              </h3>
-                              {teacher.verified && (
-                                <CheckCircle className="h-4 w-4 text-blue-600" />
-                              )}
-                            </div>
-                            <div className="flex items-center gap-2 mb-2">
-                              <div className="flex items-center gap-1 text-yellow-500">
-                                <Star className="h-4 w-4 fill-current" />
-                                <span className="font-semibold">
-                                  {teacher.rating}
-                                </span>
+            {/* Teacher List */}
+            <div className="lg:col-span-3">
+              <div className="mb-6 flex items-center justify-between px-2">
+                <p className="text-sm font-bold text-muted-foreground">
+                  Found <span className="text-foreground">{filteredTeachers.length}</span> exceptional teachers
+                </p>
+                <div className="flex gap-1">
+                   {/* Layout toggles could go here */}
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <AnimatePresence mode="popLayout">
+                  {filteredTeachers.map((teacher, i) => (
+                    <motion.div
+                      key={teacher.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.3, delay: i * 0.05 }}
+                      layout
+                    >
+                      <Card className="group border-none shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all bg-card/50 backdrop-blur-sm overflow-hidden rounded-[32px]">
+                        <CardContent className="p-6 sm:p-8">
+                          <div className="flex flex-col md:flex-row gap-8">
+                            {/* Left: Avatar and Quick Stats */}
+                            <div className="flex flex-row md:flex-col items-center gap-6">
+                              <div className="relative">
+                                <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full scale-110 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <Avatar className="h-28 w-28 sm:h-32 sm:w-32 border-4 border-background shadow-xl relative z-10 transition-transform duration-500 group-hover:scale-105">
+                                  <AvatarImage src={teacher.avatar} alt={teacher.name} className="object-cover" />
+                                  <AvatarFallback className="text-3xl font-black bg-primary/10 text-primary">
+                                    {teacher.name.charAt(0)}
+                                  </AvatarFallback>
+                                </Avatar>
+                                {teacher.verified && (
+                                  <div className="absolute -bottom-1 right-2 z-20 bg-primary text-primary-foreground p-1.5 rounded-full shadow-lg border-4 border-background">
+                                    <CheckCircle2 className="h-5 w-5" />
+                                  </div>
+                                )}
                               </div>
-                              <span className="text-sm text-muted-foreground">
-                                ({teacher.reviewCount} reviews)
-                              </span>
+                              
+                              <div className="hidden md:flex flex-col gap-3 w-full">
+                                <div className="flex items-center justify-between px-3 py-2 bg-muted/50 rounded-xl">
+                                   <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
+                                      <Users className="h-3.5 w-3.5" />
+                                      Students
+                                   </div>
+                                   <span className="text-sm font-black">{teacher.totalStudents}</span>
+                                </div>
+                                <div className="flex items-center justify-between px-3 py-2 bg-muted/50 rounded-xl">
+                                   <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
+                                      <Award className="h-3.5 w-3.5" />
+                                      Experience
+                                   </div>
+                                   <span className="text-sm font-black">{teacher.totalHours}h+</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Right: Info and Actions */}
+                            <div className="flex-1">
+                              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4">
+                                <div>
+                                  <div className="flex items-center gap-3 mb-2">
+                                    <h3 className="text-2xl font-black tracking-tight group-hover:text-primary transition-colors">
+                                      {teacher.name}
+                                    </h3>
+                                    <Badge className="bg-yellow-500/10 text-yellow-600 border-none font-black flex items-center gap-1.5 px-3">
+                                      <Star className="h-3.5 w-3.5 fill-current" />
+                                      {teacher.rating}
+                                    </Badge>
+                                  </div>
+                                  <div className="flex flex-wrap gap-2">
+                                    {teacher.subjects.slice(0, 4).map((subject, index) => (
+                                      <Badge key={index} variant="secondary" className="bg-muted font-bold px-3 py-1 rounded-full text-xs">
+                                        {subject}
+                                      </Badge>
+                                    ))}
+                                    {teacher.subjects.length > 4 && (
+                                      <Badge variant="ghost" className="text-xs font-bold px-2">+{teacher.subjects.length - 4} more</Badge>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="text-left sm:text-right bg-primary/5 sm:bg-transparent p-4 sm:p-0 rounded-2xl border sm:border-none">
+                                  <div className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-1">Hourly Rate</div>
+                                  <div className="text-3xl font-black text-primary">
+                                    ${teacher.hourlyRate}
+                                    <span className="text-sm font-bold text-muted-foreground ml-1">/hr</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <p className="text-muted-foreground text-sm font-medium leading-relaxed mb-6 line-clamp-2 sm:line-clamp-none max-w-2xl">
+                                {teacher.bio}
+                              </p>
+
+                              <div className="grid grid-cols-2 sm:flex sm:items-center gap-4 sm:gap-8 mb-8">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                                    <Clock className="h-4 w-4" />
+                                  </div>
+                                  <div>
+                                    <p className="text-[10px] font-black uppercase text-muted-foreground">Response</p>
+                                    <p className="text-xs font-bold">{teacher.responseTime}</p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center text-green-600">
+                                    <Video className="h-4 w-4" />
+                                  </div>
+                                  <div>
+                                    <p className="text-[10px] font-black uppercase text-muted-foreground">Platform</p>
+                                    <p className="text-xs font-bold">HD Video</p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-600">
+                                    <CheckCircle2 className="h-4 w-4" />
+                                  </div>
+                                  <div>
+                                    <p className="text-[10px] font-black uppercase text-muted-foreground">Vetted</p>
+                                    <p className="text-xs font-bold">100% Verified</p>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex flex-col sm:flex-row gap-4">
+                                <Link to={`/teacher/${teacher.id}`} className="flex-1">
+                                  <Button variant="outline" className="w-full h-14 rounded-2xl border-2 font-black group/btn">
+                                    View Full Profile
+                                    <ChevronDown className="ml-2 h-4 w-4 group-hover/btn:translate-y-0.5 transition-transform" />
+                                  </Button>
+                                </Link>
+                                <Link to={`/booking/${teacher.id}`} className="flex-1">
+                                  <Button className="w-full h-14 rounded-2xl font-black shadow-lg shadow-primary/20 group/btn">
+                                    Book a Trial Session
+                                    <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
+                                  </Button>
+                                </Link>
+                              </div>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <div className="text-2xl font-bold text-primary">
-                              ${teacher.hourlyRate}
-                              <span className="text-sm font-normal text-muted-foreground">
-                                /hr
-                              </span>
-                            </div>
-                          </div>
-                        </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
 
-                        <p className="text-muted-foreground mb-3 line-clamp-2">
-                          {teacher.bio}
-                        </p>
-
-                        <div className="flex flex-wrap gap-2 mb-3">
-                          {teacher.subjects.map((subject, index) => (
-                            <Badge key={index} variant="secondary">
-                              {subject}
-                            </Badge>
-                          ))}
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-4">
-                          <div className="flex items-center gap-1">
-                            <Video className="h-3 w-3" />
-                            {teacher.totalHours} hours taught
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            {teacher.responseTime} response
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <DollarSign className="h-3 w-3" />
-                            {teacher.totalStudents} students
-                          </div>
-                        </div>
-
-                        <div className="flex gap-3">
-                          <Link
-                            to={`/teacher/${teacher.id}`}
-                            className="flex-1"
-                          >
-                            <Button variant="outline" className="w-full">
-                              View Profile
-                            </Button>
-                          </Link>
-                          <Link
-                            to={`/booking/${teacher.id}`}
-                            className="flex-1"
-                          >
-                            <Button className="w-full">Book Session</Button>
-                          </Link>
-                        </div>
-                      </div>
+                {filteredTeachers.length === 0 && (
+                  <motion.div 
+                    initial={{ opacity: 0 }} 
+                    animate={{ opacity: 1 }} 
+                    className="text-center py-20 bg-card/50 backdrop-blur-sm rounded-[32px] border-2 border-dashed border-border"
+                  >
+                    <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+                       <Search className="h-10 w-10 text-muted-foreground" />
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    <h3 className="text-2xl font-black mb-2">No teachers found</h3>
+                    <p className="text-muted-foreground max-w-sm mx-auto font-medium">
+                      We couldn't find any teachers matching your current filters. Try adjusting your search criteria.
+                    </p>
+                    <Button 
+                      variant="link" 
+                      className="mt-4 font-black text-primary"
+                      onClick={() => {
+                        setSearchQuery("");
+                        setSelectedSubjects([]);
+                        setPriceRange("all");
+                        setSelectedDay("all");
+                      }}
+                    >
+                      Reset all filters
+                    </Button>
+                  </motion.div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

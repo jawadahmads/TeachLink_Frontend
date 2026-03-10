@@ -205,7 +205,7 @@ export default function LandingPage() {
       </section>
 
       {/* Featured Teachers */}
-      <section className="py-24 px-4 relative">
+      <section id="tutors" className="py-24 px-4 relative">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
             <div className="max-w-2xl">
