@@ -13,19 +13,26 @@ import NotificationsPage from "./pages/NotificationsPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AboutPage from "./pages/About";
 import IsAuthenticated from "./components/helper/Authenticated";
+import IsNotAuthenticated from "./components/helper/IsNotAuthenticated";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    Component: LandingPage,
-  },
-  {
-    path: "/login",
-    Component: LoginPage,
-  },
-  {
-    path: "/signup",
-    Component: SignupPage,
+    Component: IsNotAuthenticated,
+    children: [
+      {
+        path: "",
+        Component: LandingPage,
+      },
+      {
+        path: "login",
+        Component: LoginPage,
+      },
+      {
+        path: "signup",
+        Component: SignupPage,
+      },
+    ],
   },
   {
     // All protected routes go under this parent

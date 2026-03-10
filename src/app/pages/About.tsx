@@ -1,37 +1,48 @@
 import {
   BookOpen,
   Users,
-  Star,
   Shield,
-  Calendar,
   Video,
   Search,
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import { Link } from "react-router";
+import Header from "../components/Header";
+import { useAppSelector } from "../redux/store";
+import { currentStudent } from "../data/mockData";
 
 export default function AboutPage() {
+  const { user, token } = useAppSelector((state) => state.auth);
+
   return (
     <div className="min-h-screen bg-white">
-      <nav className="border-b border-border bg-white sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-2">
-              <BookOpen className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold text-primary">TeachLink</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Link to="/login">
-                <Button variant="ghost">Log In</Button>
+      {token ? (
+        <Header
+          userType={user?.role.toLowerCase() as any || "student"}
+          userName={user?.email || "User"}
+          userAvatar={currentStudent.avatar}
+        />
+      ) : (
+        <nav className="border-b border-border bg-white sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <Link to="/" className="flex items-center gap-2">
+                <BookOpen className="h-8 w-8 text-primary" />
+                <span className="text-2xl font-bold text-primary">TeachLink</span>
               </Link>
-              <Link to="/signup">
-                <Button>Get Started</Button>
-              </Link>
+              <div className="flex items-center gap-3">
+                <Link to="/login">
+                  <Button variant="ghost">Log In</Button>
+                </Link>
+                <Link to="/signup">
+                  <Button>Get Started</Button>
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      </nav>
+        </nav>
+      )}
 
       <header className="bg-gradient-to-br from-blue-50 to-white py-20">
         <div className="max-w-5xl mx-auto px-4 text-center">

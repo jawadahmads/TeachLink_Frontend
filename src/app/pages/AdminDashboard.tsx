@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 import { Users, GraduationCap, DollarSign, Star, TrendingUp, Video, Calendar, AlertCircle } from 'lucide-react';
+import Header from '../components/Header';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
@@ -8,8 +9,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { adminStats, mockTeachers, mockSessions, currentStudent } from '../data/mockData';
+import { useAppSelector } from '../redux/store';
 
 export default function AdminDashboard() {
+  const user = useAppSelector((state) => state.auth.user);
+  
   const revenueData = [
     { month: 'Jan', revenue: 12000 },
     { month: 'Feb', revenue: 15000 },
@@ -33,32 +37,20 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-muted">
-      {/* Admin Header */}
-      <header className="bg-white border-b border-border sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-2">
-              <GraduationCap className="h-8 w-8 text-primary" />
-              <div>
-                <span className="text-2xl font-bold text-primary">TeachLink</span>
-                <Badge variant="secondary" className="ml-2">Admin</Badge>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Avatar>
-                <AvatarImage src={currentStudent.avatar} alt="Admin" />
-                <AvatarFallback>AD</AvatarFallback>
-              </Avatar>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header 
+        userType="admin" 
+        userName={user?.email || "Admin"} 
+        userAvatar={currentStudent.avatar}
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage and monitor your platform</p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground mb-2">Admin Dashboard</h1>
+            <p className="text-muted-foreground">Manage and monitor your platform</p>
+          </div>
+          <Badge variant="secondary" className="h-fit">Admin Access</Badge>
         </div>
 
         {/* Stats Overview */}
