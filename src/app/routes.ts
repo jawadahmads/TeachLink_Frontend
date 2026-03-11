@@ -13,6 +13,8 @@ import NotificationsPage from "./pages/NotificationsPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AboutPage from "./pages/About";
 import StudentProfile from "./pages/studentProfile";
+import ManageProfile from "./pages/manageProfile";
+import PublishGig from "./pages/PublishGig";
 import IsAuthenticated from "./components/helper/Authenticated";
 import IsNotAuthenticated from "./components/helper/IsNotAuthenticated";
 import MainLayout from "./components/MainLayout";
@@ -49,6 +51,8 @@ export const router = createBrowserRouter([
           { path: "student/:id", Component: StudentProfile },
           { path: "teacher/dashboard", Component: TeacherDashboard },
           { path: "teacher/:id", Component: TeacherProfile },
+          { path: "teacher/manage-profile", Component: ManageProfile },
+          { path: "teacher/publish-gig", Component: PublishGig },
           { path: "search", Component: SearchTeachers },
           { path: "booking/:teacherId", Component: BookingPage },
           { path: "chat", Component: ChatPage },

@@ -103,6 +103,14 @@ export default function TeacherDashboard() {
               </p>
             </div>
             <div className="flex items-center gap-3">
+              <Link to="/teacher/manage-profile">
+                <Button
+                  variant="outline"
+                  className="rounded-full px-6 font-bold border-2 hover:bg-primary/5 transition-all"
+                >
+                  Manage Profile
+                </Button>
+              </Link>
               <Button
                 variant="outline"
                 className="rounded-full px-6 font-bold border-2 hover:bg-primary/5 transition-all"

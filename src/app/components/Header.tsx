@@ -9,6 +9,7 @@ import {
   Search,
   Info,
   ChevronDown,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -283,6 +284,23 @@ export default function Header({
                         Browse Experts
                       </Link>
                     </DropdownMenuItem>
+
+                    {userType === "teacher" && (
+                      <DropdownMenuItem
+                        asChild
+                        className="rounded-xl h-11 cursor-pointer focus:bg-primary/10 focus:text-primary transition-colors"
+                      >
+                        <Link
+                          to="/teacher/publish-gig"
+                          className="flex items-center gap-3 w-full font-bold"
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center text-green-500">
+                            <Sparkles />
+                          </div>
+                          Publish Gig
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
 
                     <DropdownMenuSeparator className="my-2" />
 

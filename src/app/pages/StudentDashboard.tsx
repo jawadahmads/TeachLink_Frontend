@@ -101,10 +101,7 @@ export default function StudentDashboard() {
           </motion.div>
 
           {/* Stats Grid */}
-          <motion.div
-            variants={itemVariants}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10"
-          >
+          <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
             {[
               {
                 label: "Total Sessions",

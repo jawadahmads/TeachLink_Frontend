@@ -20,6 +20,7 @@ import { useAppDispatch } from "../redux/store";
 import { setStatus, setToken, setUser } from "../redux/authSlice";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { da } from "zod/v4/locales";
 
 export default function LoginPage() {
   const initialRole =
@@ -60,7 +61,11 @@ export default function LoginPage() {
       dispatch(setUser(response.user));
 
       const dashboard = response.user.role.toLowerCase();
-      navigate(`/${dashboard}/dashboard`);
+      if (dashboard === "teacher") {
+        navigate(`/${dashboard}/manage-profile`);
+      } else {
+        navigate(`/${dashboard}/dashboard`);
+      }
     } catch (error) {
       dispatch(setStatus("unauthenticated"));
     }
@@ -72,7 +77,8 @@ export default function LoginPage() {
 
   const inputClass = (hasError: boolean, isTouched: boolean) => {
     if (!isTouched) return "bg-background/50 border-2 border-border/50";
-    if (hasError) return "bg-red-500/5 border-2 border-red-500/50 focus-visible:ring-red-500/20 focus-visible:border-red-500";
+    if (hasError)
+      return "bg-red-500/5 border-2 border-red-500/50 focus-visible:ring-red-500/20 focus-visible:border-red-500";
     return "bg-green-500/5 border-2 border-green-500/50 focus-visible:ring-green-500/20 focus-visible:border-green-500";
   };
 
@@ -89,7 +95,9 @@ export default function LoginPage() {
         className="fixed top-6 left-6 z-50 group flex items-center gap-2 px-4 py-2 rounded-full bg-background/50 backdrop-blur-md border border-border/50 shadow-sm hover:bg-primary hover:text-primary-foreground transition-all duration-300"
       >
         <Home className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
-        <span className="text-xs font-black uppercase tracking-widest">Home</span>
+        <span className="text-xs font-black uppercase tracking-widest">
+          Home
+        </span>
       </Link>
 
       <motion.div
@@ -100,7 +108,10 @@ export default function LoginPage() {
       >
         <Card className="border-none shadow-2xl bg-card/60 backdrop-blur-2xl rounded-[32px] overflow-hidden">
           <CardHeader className="text-center pt-10 pb-6 px-8">
-            <Link to="/" className="flex items-center justify-center gap-2.5 mb-8 group">
+            <Link
+              to="/"
+              className="flex items-center justify-center gap-2.5 mb-8 group"
+            >
               <div className="relative">
                 <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity" />
                 <BookOpen className="h-8 w-8 text-primary relative z-10" />
@@ -119,7 +130,7 @@ export default function LoginPage() {
 
           <CardContent className="px-8 pb-10">
             <div className="flex p-1.5 bg-muted/50 rounded-[20px] mb-8 relative">
-              <div 
+              <div
                 className={`absolute inset-1.5 w-[calc(50%-6px)] bg-background rounded-[14px] shadow-sm transition-transform duration-500 ease-spring ${
                   userType === "teacher" ? "translate-x-full" : ""
                 }`}
@@ -127,7 +138,9 @@ export default function LoginPage() {
               <button
                 type="button"
                 className={`relative flex-1 py-3 text-sm font-black uppercase tracking-widest transition-colors duration-300 z-10 ${
-                  userType === "student" ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                  userType === "student"
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
                 onClick={() => handleRoleChange("student")}
               >
@@ -136,7 +149,9 @@ export default function LoginPage() {
               <button
                 type="button"
                 className={`relative flex-1 py-3 text-sm font-black uppercase tracking-widest transition-colors duration-300 z-10 ${
-                  userType === "teacher" ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                  userType === "teacher"
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
                 onClick={() => handleRoleChange("teacher")}
               >
@@ -147,7 +162,10 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               {/* EMAIL */}
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+                <Label
+                  htmlFor="email"
+                  className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1"
+                >
                   Email Address
                 </Label>
                 <div className="relative group">
@@ -163,7 +181,7 @@ export default function LoginPage() {
                 </div>
                 <AnimatePresence>
                   {errors.email && touchedFields.email && (
-                    <motion.p 
+                    <motion.p
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
@@ -178,10 +196,16 @@ export default function LoginPage() {
               {/* PASSWORD */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between px-1">
-                  <Label htmlFor="password" className="text-xs font-black uppercase tracking-widest text-muted-foreground">
+                  <Label
+                    htmlFor="password"
+                    className="text-xs font-black uppercase tracking-widest text-muted-foreground"
+                  >
                     Password
                   </Label>
-                  <a href="#" className="text-[11px] font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-colors">
+                  <a
+                    href="#"
+                    className="text-[11px] font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-colors"
+                  >
                     Forgot?
                   </a>
                 </div>
@@ -198,7 +222,7 @@ export default function LoginPage() {
                 </div>
                 <AnimatePresence>
                   {errors.password && touchedFields.password && (
-                    <motion.p 
+                    <motion.p
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
@@ -217,7 +241,10 @@ export default function LoginPage() {
                   className="w-4 h-4 rounded-lg border-2 border-border/50 text-primary focus:ring-primary/20 bg-background/50 transition-all cursor-pointer"
                   {...register("remember")}
                 />
-                <label htmlFor="remember" className="text-xs font-bold text-muted-foreground cursor-pointer select-none">
+                <label
+                  htmlFor="remember"
+                  className="text-xs font-bold text-muted-foreground cursor-pointer select-none"
+                >
                   Keep me signed in
                 </label>
               </div>
@@ -230,7 +257,11 @@ export default function LoginPage() {
                 {isSubmitting ? (
                   <motion.div
                     animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
                     className="h-5 w-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full"
                   />
                 ) : (
@@ -276,21 +307,21 @@ export default function LoginPage() {
             </div>
           </CardContent>
         </Card>
-        
-        <motion.div 
+
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
           className="mt-8 flex items-center justify-center gap-6"
         >
           <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
-             <Sparkles className="h-3 w-3" />
-             Expert Vetted
+            <Sparkles className="h-3 w-3" />
+            Expert Vetted
           </div>
           <div className="w-1 h-1 rounded-full bg-border/50" />
           <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
-             <Lock className="h-3 w-3" />
-             Bank-Level Security
+            <Lock className="h-3 w-3" />
+            Bank-Level Security
           </div>
         </motion.div>
       </motion.div>
