@@ -1,5 +1,6 @@
 import axios from "axios";
 import { type LoginForm } from "../schema/loginSchema";
+import { toast } from "sonner";
 
 const API_URL_V1 = "http://localhost:4002/v1";
 
@@ -18,9 +19,10 @@ export const login = async ({
         withCredentials: true, // send cookies / credentials
       },
     );
+
     return response.data;
   } catch (error) {
     console.error("Login error:", error);
-    throw error;
+    toast.error("Login failed. Please check your credentials.");
   }
 };

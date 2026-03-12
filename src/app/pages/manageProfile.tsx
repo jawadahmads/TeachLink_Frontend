@@ -19,6 +19,8 @@ import {
   ShieldX,
   Zap,
   Trash2,
+  Satellite,
+  ArrowUpWideNarrow,
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import {
@@ -54,7 +56,9 @@ import {
   FormLabel,
   FormMessage,
 } from "../components/ui/form";
-import { useAppSelector } from "../redux/store";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import { updateProfile } from "../api/updateProfile";
+import { setUser } from "../redux/authSlice";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -81,7 +85,6 @@ const itemVariants = {
 export default function ManageProfile() {
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.auth.user);
-
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -124,7 +127,7 @@ export default function ManageProfile() {
 
   const [newSubject, setNewSubject] = useState("");
   const [newLanguage, setNewLanguage] = useState("");
-
+  const dispatch = useAppDispatch();
   const handleAddSubject = () => {
     const currentSubjects = form.getValues("subjects");
     if (newSubject && !currentSubjects.includes(newSubject)) {
@@ -163,8 +166,14 @@ export default function ManageProfile() {
     );
   };
 
-  const onSubmit = (data: ProfileFormValues) => {
-    console.log("Updated Profile Data:", data);
+  const onSubmit = async (data: ProfileFormValues) => {
+    const userId: string = user?.id || "unknown";
+    const newProfileData = { userId, ...data };
+    const response = await updateProfile(newProfileData);
+    console.log(response);
+
+    // update redux profile info
+    dispatch(setUser<typeof response.data.user>(response.data.user));
     toast.success("Profile updated successfully!");
   };
 

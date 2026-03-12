@@ -20,7 +20,7 @@ import { useAppDispatch } from "../redux/store";
 import { setStatus, setToken, setUser } from "../redux/authSlice";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { da } from "zod/v4/locales";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const initialRole =
@@ -56,9 +56,9 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginForm) => {
     try {
       const response = await login(data);
-
       dispatch(setToken(response.accessToken));
       dispatch(setUser(response.user));
+      toast.success("Login successful!");
 
       const dashboard = response.user.role.toLowerCase();
       if (dashboard === "teacher") {

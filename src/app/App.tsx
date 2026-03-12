@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import LoadingScreen from "./components/ui/LoadingScreen";
 import { ThemeProvider } from "next-themes";
+import { Toaster } from "sonner";
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -23,6 +24,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <Toaster richColors />
         <AutoRefresh>
           <AnimatePresence mode="wait">
             {isLoading ? (

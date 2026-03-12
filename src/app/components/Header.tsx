@@ -66,7 +66,7 @@ export default function Header({
       await logout();
       dispatch(setToken(null));
       dispatch(setUser(null));
-      dispatch(setStatus("idle"));
+      dispatch(setStatus("unauthenticated"));
       navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error);

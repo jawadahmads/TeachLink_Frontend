@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "sonner";
 
 const API_URL_V1 = "http://localhost:4002/v1";
 
@@ -15,6 +16,7 @@ export const logout = async (): Promise<LogoutResponse> => {
         withCredentials: true,
       },
     );
+    toast.success("Logout successful!");
     return response.data;
   } catch (error) {
     console.error("Logout error:", error);

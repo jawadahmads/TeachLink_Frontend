@@ -25,6 +25,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { Badge } from "../components/ui/badge";
 import { currentStudent, mockSessions, mockTeachers } from "../data/mockData";
 import { motion } from "motion/react";
+import { Toaster } from "sonner";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -56,6 +57,7 @@ export default function StudentDashboard() {
 
   return (
     <div className="flex-1 min-h-screen bg-background relative overflow-hidden">
+      <Toaster richColors />
       {/* Decorative Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
         <div className="absolute top-[-5%] right-[-5%] w-[30%] h-[30%] bg-primary/5 rounded-full blur-[100px]" />
