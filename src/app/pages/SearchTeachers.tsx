@@ -1,10 +1,5 @@
 import { useState } from "react";
-import {
-  Search,
-  Filter,
-  ChevronDown,
-  Sparkles,
-} from "lucide-react";
+import { Search, Filter, ChevronDown, Sparkles } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Card, CardContent } from "../components/ui/card";
@@ -102,7 +97,9 @@ export default function SearchTeachers() {
   const FilterContent = () => (
     <div className="space-y-8">
       <div>
-        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4">Subjects</h3>
+        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4">
+          Subjects
+        </h3>
         <div className="space-y-3 max-h-72 overflow-y-auto pr-2 custom-scrollbar">
           {subjects.map((subject) => (
             <div key={subject} className="flex items-center space-x-3 group">
@@ -112,7 +109,10 @@ export default function SearchTeachers() {
                 onCheckedChange={() => toggleSubject(subject)}
                 className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
               />
-              <Label htmlFor={subject} className="text-sm font-semibold cursor-pointer group-hover:text-primary transition-colors">
+              <Label
+                htmlFor={subject}
+                className="text-sm font-semibold cursor-pointer group-hover:text-primary transition-colors"
+              >
                 {subject}
               </Label>
             </div>
@@ -121,7 +121,9 @@ export default function SearchTeachers() {
       </div>
 
       <div>
-        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4">Price Range</h3>
+        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4">
+          Price Range
+        </h3>
         <Select value={priceRange} onValueChange={setPriceRange}>
           <SelectTrigger className="w-full rounded-xl border-2 hover:border-primary/50 transition-all font-bold">
             <SelectValue />
@@ -136,7 +138,9 @@ export default function SearchTeachers() {
       </div>
 
       <div>
-        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4">Availability</h3>
+        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-4">
+          Availability
+        </h3>
         <Select value={selectedDay} onValueChange={setSelectedDay}>
           <SelectTrigger className="w-full rounded-xl border-2 hover:border-primary/50 transition-all font-bold">
             <SelectValue />
@@ -181,13 +185,13 @@ export default function SearchTeachers() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <motion.div 
+        <motion.div
           initial="hidden"
           animate="visible"
           variants={containerVariants}
         >
           {/* Header Section */}
-          <motion.div variants={itemVariants} className="mb-10 text-center md:text-left">
+          <motion.div className="mb-10 text-center md:text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-widest mb-4">
               <Sparkles className="h-3.5 w-3.5" />
               <span>Expert Tutors</span>
@@ -196,7 +200,11 @@ export default function SearchTeachers() {
               Find Your Perfect Teacher
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl">
-              Browse through our global network of <span className="text-primary font-black">{mockTeachers.length}+</span> verified expert teachers and start learning today.
+              Browse through our global network of{" "}
+              <span className="text-primary font-black">
+                {mockTeachers.length}+
+              </span>{" "}
+              verified expert teachers and start learning today.
             </p>
           </motion.div>
 
@@ -216,16 +224,24 @@ export default function SearchTeachers() {
                   </div>
                   <div className="flex gap-3">
                     <div className="flex items-center bg-background rounded-2xl border-2 px-4 h-14 min-w-[200px]">
-                       <span className="text-sm font-bold text-muted-foreground mr-2">Sort by:</span>
-                       <Select value={sortBy} onValueChange={setSortBy}>
+                      <span className="text-sm font-bold text-muted-foreground mr-2">
+                        Sort by:
+                      </span>
+                      <Select value={sortBy} onValueChange={setSortBy}>
                         <SelectTrigger className="border-none bg-transparent h-auto p-0 focus:ring-0 font-black text-sm">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent className="rounded-xl border-2">
                           <SelectItem value="rating">Highest Rated</SelectItem>
-                          <SelectItem value="price-low">Price: Low to High</SelectItem>
-                          <SelectItem value="price-high">Price: High to Low</SelectItem>
-                          <SelectItem value="students">Most Students</SelectItem>
+                          <SelectItem value="price-low">
+                            Price: Low to High
+                          </SelectItem>
+                          <SelectItem value="price-high">
+                            Price: High to Low
+                          </SelectItem>
+                          <SelectItem value="students">
+                            Most Students
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -233,13 +249,21 @@ export default function SearchTeachers() {
                     {/* Mobile Filter Trigger */}
                     <Sheet>
                       <SheetTrigger asChild>
-                        <Button variant="outline" className="md:hidden h-14 w-14 rounded-2xl border-2 flex-shrink-0">
+                        <Button
+                          variant="outline"
+                          className="md:hidden h-14 w-14 rounded-2xl border-2 flex-shrink-0"
+                        >
                           <Filter className="h-5 w-5" />
                         </Button>
                       </SheetTrigger>
-                      <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+                      <SheetContent
+                        side="left"
+                        className="w-[300px] sm:w-[400px]"
+                      >
                         <SheetHeader className="mb-8">
-                          <SheetTitle className="text-2xl font-black">Filters</SheetTitle>
+                          <SheetTitle className="text-2xl font-black">
+                            Filters
+                          </SheetTitle>
                         </SheetHeader>
                         <FilterContent />
                       </SheetContent>
@@ -270,10 +294,14 @@ export default function SearchTeachers() {
             <div className="lg:col-span-3">
               <div className="mb-6 flex items-center justify-between px-2">
                 <p className="text-sm font-bold text-muted-foreground">
-                  Found <span className="text-foreground">{filteredTeachers.length}</span> exceptional teachers
+                  Found{" "}
+                  <span className="text-foreground">
+                    {filteredTeachers.length}
+                  </span>{" "}
+                  exceptional teachers
                 </p>
                 <div className="flex gap-1">
-                   {/* Layout toggles could go here */}
+                  {/* Layout toggles could go here */}
                 </div>
               </div>
 
@@ -294,20 +322,23 @@ export default function SearchTeachers() {
                 </AnimatePresence>
 
                 {filteredTeachers.length === 0 && (
-                  <motion.div 
-                    initial={{ opacity: 0 }} 
-                    animate={{ opacity: 1 }} 
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
                     className="text-center py-20 bg-card/50 backdrop-blur-sm rounded-[32px] border-2 border-dashed border-border"
                   >
                     <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
-                       <Search className="h-10 w-10 text-muted-foreground" />
+                      <Search className="h-10 w-10 text-muted-foreground" />
                     </div>
-                    <h3 className="text-2xl font-black mb-2">No teachers found</h3>
+                    <h3 className="text-2xl font-black mb-2">
+                      No teachers found
+                    </h3>
                     <p className="text-muted-foreground max-w-sm mx-auto font-medium">
-                      We couldn't find any teachers matching your current filters. Try adjusting your search criteria.
+                      We couldn't find any teachers matching your current
+                      filters. Try adjusting your search criteria.
                     </p>
-                    <Button 
-                      variant="link" 
+                    <Button
+                      variant="link"
                       className="mt-4 font-black text-primary"
                       onClick={() => {
                         setSearchQuery("");

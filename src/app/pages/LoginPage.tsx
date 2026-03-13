@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FaGoogle } from "react-icons/fa";
 import { loginSchema, type LoginForm } from "../schema/loginSchema";
@@ -53,7 +53,9 @@ export default function LoginPage() {
     setValue("userType", newRole);
   };
 
-  const onSubmit = async (data: LoginForm) => {
+  const onSubmit: SubmitHandler<LoginForm> = async (
+    data: LoginForm,
+  ): Promise<void> => {
     try {
       const response = await login(data);
       dispatch(setToken(response.accessToken));
