@@ -1,6 +1,7 @@
 import authReducer from "./authSlice";
 import process from "process";
 import userInfoReducer from "./userInfoSlice";
+import gigInfoReducer from "./gigSlice";
 
 import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
@@ -9,6 +10,7 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
     info: userInfoReducer,
+    gig: gigInfoReducer,
   },
 
   middleware: (getDefaultMiddleware) =>

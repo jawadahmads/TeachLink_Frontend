@@ -9,11 +9,8 @@ import { PublishGigHeader } from "./components/PublishGigHeader";
 import { TeacherInfoCard } from "./components/TeacherInfoCard";
 import { GigStatsCards } from "./components/GigStatsCards";
 import { GigForm } from "./components/GigForm";
+import { GigDetails } from "./components/GigDetails";
 import { GigSubmitButton } from "./components/GigSubmitButton";
-import { useLayoutEffect } from "react";
-import { userInfo } from "../../api/userInfo";
-import { setUserInfo } from "../../redux/userInfoSlice";
-import { useAppDispatch } from "../../redux/store";
 
 const containerVariants = {
   type: "spring",
@@ -63,17 +60,6 @@ export default function PublishGig() {
     onSubmit,
   } = usePublishGig();
 
-  // fetch form data
-
-  const dispatch = useAppDispatch();
-  useLayoutEffect(() => {
-    const fetchUser = async () => {
-      const data = await userInfo();
-      dispatch(setUserInfo(data));
-    };
-    fetchUser();
-  }, []);
-
   // Access Denied
   if (!isTeacher) {
     return <AccessDenied onLoginClick={() => navigate("/login")} />;
@@ -113,10 +99,10 @@ export default function PublishGig() {
 
           <motion.div variants={itemVariants}>
             <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-xl rounded-[40px] overflow-hidden">
-              <CardContent className="p-8 md:p-12">
+              <CardContent className="p-8 md:p-12 space-y-8">
                 <motion.div
                   variants={itemVariants}
-                  className="grid md:grid-cols-3 gap-8 mb-10"
+                  className="grid md:grid-cols-3 gap-8"
                 >
                   <div className="md:col-span-2">
                     <TeacherInfoCard
@@ -135,10 +121,8 @@ export default function PublishGig() {
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-8"
                   >
-                    <GigForm
-                      form={form}
-                      isPublished={teacherInfo?.isPublished || false}
-                    />
+                    <GigDetails teacherInfo={teacherInfo} />
+                    <GigForm form={form} />
                     <GigSubmitButton
                       isPublished={teacherInfo?.isPublished || false}
                       onNavigate={() => navigate("/teacher/dashboard")}

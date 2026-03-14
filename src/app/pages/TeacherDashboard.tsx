@@ -111,12 +111,7 @@ export default function TeacherDashboard() {
                   Manage Profile
                 </Button>
               </Link>
-              <Button
-                variant="outline"
-                className="rounded-full px-6 font-bold border-2 hover:bg-primary/5 transition-all"
-              >
-                Manage Schedule
-              </Button>
+
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"

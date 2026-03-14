@@ -1,12 +1,5 @@
 import { Link } from "react-router";
-import {
-  Star,
-  Clock,
-  Video,
-  CheckCircle2,
-  Users,
-  Award
-} from "lucide-react";
+import { Star, Clock, Video, CheckCircle2, Users, Award } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
@@ -26,7 +19,11 @@ export default function TeacherGig({ teacher }: TeacherGigProps) {
             <div className="relative">
               <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full scale-110 opacity-0 group-hover:opacity-100 transition-opacity" />
               <Avatar className="h-28 w-28 sm:h-32 sm:w-32 border-4 border-background shadow-xl relative z-10 transition-transform duration-500 group-hover:scale-105">
-                <AvatarImage src={teacher.avatar} alt={teacher.name} className="object-cover" />
+                <AvatarImage
+                  src={teacher.avatar}
+                  alt={teacher.name}
+                  className="object-cover"
+                />
                 <AvatarFallback className="text-3xl font-black bg-primary/10 text-primary">
                   {teacher.name.charAt(0)}
                 </AvatarFallback>
@@ -37,21 +34,25 @@ export default function TeacherGig({ teacher }: TeacherGigProps) {
                 </div>
               )}
             </div>
-            
+
             <div className="hidden md:flex flex-col gap-3 w-full">
               <div className="flex items-center justify-between px-3 py-2 bg-muted/50 rounded-xl">
                 <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
                   <Users className="h-3.5 w-3.5" />
                   Students
                 </div>
-                <span className="text-sm font-black">{teacher.totalStudents}</span>
+                <span className="text-sm font-black">
+                  {teacher.totalStudents}
+                </span>
               </div>
               <div className="flex items-center justify-between px-3 py-2 bg-muted/50 rounded-xl">
                 <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
                   <Award className="h-3.5 w-3.5" />
                   Experience
                 </div>
-                <span className="text-sm font-black">{teacher.totalHours}h+</span>
+                <span className="text-sm font-black">
+                  {teacher.totalHours}h+
+                </span>
               </div>
             </div>
           </div>
@@ -69,21 +70,32 @@ export default function TeacherGig({ teacher }: TeacherGigProps) {
                   </Badge>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {teacher.subjects.slice(0, 4).map((subject, index) => (
-                    <Badge key={index} variant="secondary" className="bg-muted font-bold px-3 py-1 rounded-full text-xs">
-                      {subject}
+                  {teacher.subjects &&
+                    teacher.subjects.slice(0, 4).map((subject, index) => (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="bg-muted font-bold px-3 py-1 rounded-full text-xs"
+                      >
+                        {subject}
+                      </Badge>
+                    ))}
+                  {teacher.subjects && teacher.subjects.length > 4 && (
+                    <Badge variant="ghost" className="text-xs font-bold px-2">
+                      +{teacher.subjects.length - 4} more
                     </Badge>
-                  ))}
-                  {teacher.subjects.length > 4 && (
-                    <Badge variant="ghost" className="text-xs font-bold px-2">+{teacher.subjects.length - 4} more</Badge>
                   )}
                 </div>
               </div>
               <div className="text-left sm:text-right bg-primary/5 sm:bg-transparent p-4 sm:p-0 rounded-2xl border sm:border-none">
-                <div className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-1">Hourly Rate</div>
+                <div className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-1">
+                  Hourly Rate
+                </div>
                 <div className="text-3xl font-black text-primary">
                   ${teacher.hourlyRate}
-                  <span className="text-sm font-bold text-muted-foreground ml-1">/hr</span>
+                  <span className="text-sm font-bold text-muted-foreground ml-1">
+                    /hr
+                  </span>
                 </div>
               </div>
             </div>
@@ -98,7 +110,9 @@ export default function TeacherGig({ teacher }: TeacherGigProps) {
                   <Clock className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase text-muted-foreground">Response</p>
+                  <p className="text-[10px] font-black uppercase text-muted-foreground">
+                    Response
+                  </p>
                   <p className="text-xs font-bold">{teacher.responseTime}</p>
                 </div>
               </div>
@@ -107,7 +121,9 @@ export default function TeacherGig({ teacher }: TeacherGigProps) {
                   <Video className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase text-muted-foreground">Platform</p>
+                  <p className="text-[10px] font-black uppercase text-muted-foreground">
+                    Platform
+                  </p>
                   <p className="text-xs font-bold">HD Video</p>
                 </div>
               </div>
@@ -116,7 +132,9 @@ export default function TeacherGig({ teacher }: TeacherGigProps) {
                   <CheckCircle2 className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase text-muted-foreground">Vetted</p>
+                  <p className="text-[10px] font-black uppercase text-muted-foreground">
+                    Vetted
+                  </p>
                   <p className="text-xs font-bold">100% Verified</p>
                 </div>
               </div>
@@ -124,7 +142,10 @@ export default function TeacherGig({ teacher }: TeacherGigProps) {
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Link to={`/teacher/${teacher.id}`} className="flex-1">
-                <Button variant="outline" className="w-full h-14 rounded-2xl border-2 font-black group/btn">
+                <Button
+                  variant="outline"
+                  className="w-full h-14 rounded-2xl border-2 font-black group/btn"
+                >
                   View Full Profile
                 </Button>
               </Link>

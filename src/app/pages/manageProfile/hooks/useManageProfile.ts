@@ -147,7 +147,7 @@ export function useManageProfile() {
       const response = await updateProfile(newProfileData);
       console.log(response);
 
-      dispatch(setUser<typeof response.data.user>(response.data.user));
+      dispatch(setUserInfo(response.data));
       toast.success("Profile updated successfully!");
     } catch (error) {
       console.error("Error updating profile:", error);

@@ -1,8 +1,14 @@
-import { DollarSign, GraduationCap, Award } from "lucide-react";
+import { FileText, AlignLeft, Pencil, Sparkles } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { Textarea } from "../../../components/ui/textarea";
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
@@ -26,53 +32,51 @@ const itemVariants = {
 
 interface GigFormProps {
   form: any;
-  isPublished: boolean;
 }
 
-export function GigForm({ form, isPublished }: GigFormProps) {
+export function GigForm({ form }: GigFormProps) {
   return (
-    <Form {...form}>
-      <form className="space-y-8">
-        <motion.div
-          variants={itemVariants}
-          className="grid sm:grid-cols-2 gap-6"
-        >
+    <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-xl rounded-[40px] overflow-hidden relative">
+      <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
+        <Pencil className="w-48 h-48 rotate-12 text-primary" />
+      </div>
+      
+      <CardHeader className="p-8 md:p-12 pb-0">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2 rounded-xl bg-primary/10 text-primary">
+            <Sparkles className="h-5 w-5" />
+          </div>
+          <CardTitle className="text-2xl font-black">Gig Details</CardTitle>
+        </div>
+        <CardDescription className="text-base font-semibold max-w-xl">
+          Craft a compelling title and description to showcase your expertise and attract the right students.
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent className="p-8 md:p-12 space-y-10">
+        <motion.div variants={itemVariants}>
           <FormField
             control={form.control}
-            name="hourlyRate"
+            name="title"
             render={({ field }) => (
               <FormItem className="space-y-3">
                 <FormLabel className="font-black text-sm uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
-                  <DollarSign className="h-4 w-4" />
-                  Hourly Rate ($)
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    {...field}
-                    className="h-14 rounded-2xl border-2 font-bold focus-visible:ring-primary"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="education"
-            render={({ field }) => (
-              <FormItem className="space-y-3">
-                <FormLabel className="font-black text-sm uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
-                  <GraduationCap className="h-4 w-4" />
-                  Education
+                  <FileText className="h-4 w-4" />
+                  Gig Headline
                 </FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    className="h-14 rounded-2xl border-2 font-bold focus-visible:ring-primary"
+                    placeholder="e.g., Professional English Conversation with Native Speaker"
+                    className="h-16 px-6 rounded-2xl border-2 font-bold text-lg focus-visible:ring-primary shadow-sm"
                   />
                 </FormControl>
-                <FormMessage />
+                <div className="flex justify-between items-center px-2">
+                  <FormMessage className="font-bold text-xs" />
+                  <span className="text-[10px] font-black text-muted-foreground/50 tabular-nums">
+                    {field.value?.length || 0} / 80
+                  </span>
+                </div>
               </FormItem>
             )}
           />
@@ -81,47 +85,26 @@ export function GigForm({ form, isPublished }: GigFormProps) {
         <motion.div variants={itemVariants}>
           <FormField
             control={form.control}
-            name="experience"
+            name="description"
             render={({ field }) => (
               <FormItem className="space-y-3">
                 <FormLabel className="font-black text-sm uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
-                  <Award className="h-4 w-4" />
-                  Experience
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    className="h-14 rounded-2xl border-2 font-bold focus-visible:ring-primary"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </motion.div>
-
-        <motion.div variants={itemVariants}>
-          <FormField
-            control={form.control}
-            name="bio"
-            render={({ field }) => (
-              <FormItem className="space-y-3">
-                <FormLabel className="font-black text-sm uppercase tracking-widest text-muted-foreground ml-1">
-                  Professional Bio
+                  <AlignLeft className="h-4 w-4" />
+                  Detailed Description
                 </FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}
-                    className="min-h-[160px] rounded-[24px] border-2 font-medium text-lg p-6 focus-visible:ring-primary leading-relaxed"
-                    placeholder="Tell students about your teaching philosophy and background..."
+                    className="min-h-[200px] rounded-[32px] border-2 font-medium text-lg p-8 focus-visible:ring-primary leading-relaxed shadow-sm"
+                    placeholder="Share your teaching philosophy, what makes your lessons unique, and the specific goals you'll help students achieve..."
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="font-bold text-xs" />
               </FormItem>
             )}
           />
         </motion.div>
-      </form>
-    </Form>
+      </CardContent>
+    </Card>
   );
 }

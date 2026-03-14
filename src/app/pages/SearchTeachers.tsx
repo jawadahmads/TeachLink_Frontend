@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Search, Filter, ChevronDown, Sparkles } from "lucide-react";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { Search, Filter, Sparkles } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Card, CardContent } from "../components/ui/card";
@@ -19,9 +19,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../components/ui/sheet";
-import { mockTeachers, subjects } from "../data/mockData";
+import { subjects } from "../data/mockData";
 import { motion, AnimatePresence } from "motion/react";
 import TeacherGig from "../components/TeacherGig";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import { fetchGigs } from "../redux/gigSlice";
+import { toast } from "sonner";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -46,13 +49,45 @@ const itemVariants = {
 };
 
 export default function SearchTeachers() {
+  const dispatch = useAppDispatch();
+  const { gigs, loading, error } = useAppSelector((state) => state.gig);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState("all");
   const [sortBy, setSortBy] = useState("rating");
   const [selectedDay, setSelectedDay] = useState("all");
 
-  const filteredTeachers = mockTeachers
+  useLayoutEffect(() => {
+    dispatch(fetchGigs())
+      .unwrap()
+      .catch((err) => {
+        toast.error("Failed to fetch gigs");
+        console.error(err);
+      });
+  }, [dispatch]);
+
+  const teachers =
+    gigs &&
+    gigs.map((gig) => ({
+      id: gig.teacher.id,
+      name: gig.teacher.name,
+      avatar: gig.teacher.avatar,
+      subjects: gig.teacher.subject && gig.teacher.subject.map((s) => s.name),
+      rating: gig.teacher.rating,
+      reviewCount: gig.teacher.reviewCount,
+      hourlyRate: gig.teacher.hourlyRate,
+      bio: gig.teacher.bio,
+      education: gig.teacher.education,
+      experience: gig.teacher.experience,
+      languages: gig.teacher.languages.map((l) => l.name),
+      availability: gig.teacher.availability,
+      totalStudents: gig.teacher.totalStudents,
+      totalHours: gig.teacher.totalHours,
+      responseTime: gig.teacher.responseTime?.toString() ?? "",
+      verified: gig.teacher.verified,
+    }));
+
+  const filteredTeachers = teachers
     .filter((teacher) => {
       const matchesSearch =
         teacher.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -202,7 +237,7 @@ export default function SearchTeachers() {
             <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl">
               Browse through our global network of{" "}
               <span className="text-primary font-black">
-                {mockTeachers.length}+
+                {teachers.length}+
               </span>{" "}
               verified expert teachers and start learning today.
             </p>
@@ -306,20 +341,58 @@ export default function SearchTeachers() {
               </div>
 
               <div className="space-y-6">
-                <AnimatePresence mode="popLayout">
-                  {filteredTeachers.map((teacher, i) => (
-                    <motion.div
-                      key={teacher.id}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.3, delay: i * 0.05 }}
-                      layout
+                {loading && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-center py-20 bg-card/50 backdrop-blur-sm rounded-[32px]"
+                  >
+                    <div className="w-20 h-20 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-6" />
+                    <h3 className="text-2xl font-black mb-2">Loading...</h3>
+                  </motion.div>
+                )}
+
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-center py-20 bg-card/50 backdrop-blur-sm rounded-[32px] border-2 border-destructive"
+                  >
+                    <div className="w-20 h-20 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <Search className="h-10 w-10 text-destructive" />
+                    </div>
+                    <h3 className="text-2xl font-black mb-2 text-destructive">
+                      Error loading teachers
+                    </h3>
+                    <p className="text-muted-foreground max-w-sm mx-auto font-medium">
+                      {error}
+                    </p>
+                    <Button
+                      variant="link"
+                      className="mt-4 font-black text-primary"
+                      onClick={() => dispatch(fetchGigs())}
                     >
-                      <TeacherGig teacher={teacher} />
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
+                      Try again
+                    </Button>
+                  </motion.div>
+                )}
+
+                {!loading && !error && (
+                  <AnimatePresence mode="popLayout">
+                    {filteredTeachers.map((teacher, i) => (
+                      <motion.div
+                        key={teacher.id}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.3, delay: i * 0.05 }}
+                        layout
+                      >
+                        <TeacherGig teacher={teacher} />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                )}
 
                 {filteredTeachers.length === 0 && (
                   <motion.div
