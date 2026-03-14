@@ -7,7 +7,11 @@ import { Badge } from "../components/ui/badge";
 import { Teacher } from "../data/mockData";
 
 interface TeacherGigProps {
-  teacher: Teacher;
+  teacher: Teacher & {
+    gigId?: string;
+    gigTitle?: string;
+    gigDescription?: string;
+  };
 }
 
 export default function TeacherGig({ teacher }: TeacherGigProps) {

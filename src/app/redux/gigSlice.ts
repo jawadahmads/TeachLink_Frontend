@@ -31,7 +31,7 @@ export interface Teacher {
   verified: boolean;
   availability: Availability[];
   languages: Language[];
-  subject: Subject[];
+  subjects: Subject[];
 }
 
 export interface Gig {

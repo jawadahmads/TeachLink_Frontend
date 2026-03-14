@@ -25,3 +25,24 @@ export const userInfo = async () => {
     toast.error("Failed to retrieve user information.");
   }
 };
+
+export const getUserInfoById = async (userId: string) => {
+  const token = store.getState().auth.token;
+  try {
+    const response = await axios.get(
+      `${API_URL_V1}/user-info?userId=${userId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("User info error:", error);
+    toast.error("Failed to retrieve user information.");
+  }
+};

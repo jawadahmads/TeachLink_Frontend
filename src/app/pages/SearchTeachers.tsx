@@ -70,9 +70,12 @@ export default function SearchTeachers() {
     gigs &&
     gigs.map((gig) => ({
       id: gig.teacher.id,
+      gigId: gig.id,
+      gigTitle: gig.title,
+      gigDescription: gig.description,
       name: gig.teacher.name,
       avatar: gig.teacher.avatar,
-      subjects: gig.teacher.subject && gig.teacher.subject.map((s) => s.name),
+      subjects: gig.teacher.subjects && gig.teacher.subjects.map((s) => s.name),
       rating: gig.teacher.rating,
       reviewCount: gig.teacher.reviewCount,
       hourlyRate: gig.teacher.hourlyRate,

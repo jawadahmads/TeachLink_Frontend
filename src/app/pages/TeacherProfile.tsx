@@ -1,4 +1,5 @@
 import { useParams, Link } from "react-router";
+import { useState, useLayoutEffect } from "react";
 import {
   Star,
   MapPin,
@@ -32,9 +33,10 @@ import {
   TabsList,
   TabsTrigger,
 } from "../components/ui/tabs";
-import { mockTeachers, mockReviews, currentStudent } from "../data/mockData";
 import { useAppSelector } from "../redux/store";
 import { motion, AnimatePresence } from "motion/react";
+import { toast } from "sonner";
+import { getTeacherInfoById } from "../api/teacherInfo";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -59,12 +61,104 @@ const itemVariants = {
 };
 
 export default function TeacherProfile() {
-  const { id } = useParams();
+  const { userId } = useParams();
   const { user } = useAppSelector((state) => state.auth);
-  const teacher = mockTeachers.find((t) => t.id === id) || mockTeachers[0];
-  const teacherReviews = mockReviews.filter((r) => r.teacherId === teacher.id);
+  const [teacherData, setTeacherData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  console.log(user);
+  useLayoutEffect(() => {
+    const fetchTeacherData = async () => {
+      if (!userId) {
+        setError("User ID not found");
+        setLoading(false);
+        return;
+      }
+      try {
+        const data = await getTeacherInfoById(userId);
+        console.log(data);
+        setTeacherData(data);
+      } catch (err) {
+        setError("Failed to fetch teacher data");
+        toast.error("Failed to fetch teacher data");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTeacherData();
+  }, [userId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-20 h-20 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-6" />
+          <h3 className="text-2xl font-black">Loading...</h3>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !teacherData) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h3 className="text-2xl font-black mb-2">Teacher Not Found</h3>
+          <p className="text-muted-foreground">
+            {error || "Unable to load teacher profile"}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const teacher = teacherData.teacher || teacherData;
+  const gig = teacherData.gig || teacherData.gigs?.[0] || null;
+  const teacherId = teacher?.id || userId || "";
+  const teacherName = teacher?.name || "Teacher";
+  const teacherAvatar = teacher?.avatar || teacher?.profileImage || "";
+  const teacherVerified = teacher?.verified ?? false;
+  const teacherRating = teacher?.rating ?? 0;
+  const teacherReviewCount = teacher?.reviewCount ?? 0;
+  const teacherHourlyRate = teacher?.hourlyRate ?? 0;
+  const teacherBio = teacher?.bio || teacher?.about || "";
+  const teacherEducation = teacher?.education || "";
+  const teacherExperience = teacher?.experience || "";
+  const teacherTotalStudents = teacher?.totalStudents ?? 0;
+  const teacherTotalHours = teacher?.totalHours ?? 0;
+  const teacherResponseTime = teacher?.responseTime || "";
+  const subjects =
+    teacher?.subjects?.map((s: { name: string }) => s.name) ||
+    teacher?.subjects ||
+    [];
+  const availability = teacher?.availability || [];
+  const languages =
+    teacher?.languages?.map((l: { name: string }) => l.name) ||
+    teacher?.languages ||
+    [];
+  const apiReviews = teacher?.reviews || teacher?.reviewsReceived || [];
+  const teacherReviews =
+    apiReviews.length > 0
+      ? apiReviews.map(
+          (r: {
+            id: string;
+            studentId?: string;
+            comment: string;
+            rating: number;
+            student?: { name: string; avatar?: string };
+          }) => ({
+            id: r.id,
+            studentId: r.studentId || r.student?.id || "",
+            studentName: r.student?.name || "Student",
+            studentAvatar: r.student?.avatar || "",
+            teacherId: teacherId,
+            rating: r.rating,
+            comment: r.comment,
+            date: new Date().toISOString(),
+            subject: "General",
+          }),
+        )
+      : [];
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
@@ -93,15 +187,15 @@ export default function TeacherProfile() {
                     <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-110 opacity-0 group-hover:opacity-100 transition-opacity" />
                     <Avatar className="h-40 w-40 sm:h-48 sm:w-48 border-[6px] border-background shadow-2xl relative z-10 transition-transform duration-500 group-hover:scale-105">
                       <AvatarImage
-                        src={teacher.avatar}
-                        alt={teacher.name}
+                        src={teacherAvatar}
+                        alt={teacherName}
                         className="object-cover"
                       />
                       <AvatarFallback className="text-5xl font-black bg-primary/10 text-primary">
-                        {teacher.name.charAt(0)}
+                        {teacherName.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
-                    {teacher.verified && (
+                    {teacherVerified && (
                       <div className="absolute -bottom-2 right-4 z-20 bg-primary text-primary-foreground p-2 rounded-full shadow-xl border-4 border-background">
                         <CheckCircle2 className="h-6 w-6" />
                       </div>
@@ -113,7 +207,7 @@ export default function TeacherProfile() {
                       <div>
                         <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-4">
                           <h1 className="text-4xl sm:text-5xl font-black tracking-tight">
-                            {teacher.name}
+                            {teacherName}
                           </h1>
                           <Badge className="bg-primary/10 text-primary border-primary/20 font-black px-4 py-1.5 rounded-full text-xs uppercase tracking-widest">
                             Top Rated Teacher
@@ -123,23 +217,24 @@ export default function TeacherProfile() {
                           <div className="flex items-center gap-1.5 text-yellow-500">
                             <Star className="h-6 w-6 fill-current" />
                             <span className="font-black text-xl text-foreground">
-                              {teacher.rating}
+                              {teacherRating}
                             </span>
                           </div>
                           <span className="text-muted-foreground font-bold">
-                            ({teacher.reviewCount} verified reviews)
+                            ({teacherReviewCount} verified reviews)
                           </span>
                         </div>
                         <div className="flex flex-wrap justify-center lg:justify-start gap-2">
-                          {teacher.subjects.map((subject, index) => (
-                            <Badge
-                              key={index}
-                              variant="secondary"
-                              className="bg-muted px-4 py-1.5 rounded-full text-sm font-bold"
-                            >
-                              {subject}
-                            </Badge>
-                          ))}
+                          {subjects ??
+                            subjects.map((subject: string, index: number) => (
+                              <Badge
+                                key={index}
+                                variant="secondary"
+                                className="bg-muted px-4 py-1.5 rounded-full text-sm font-bold"
+                              >
+                                {subject}
+                              </Badge>
+                            ))}
                         </div>
                       </div>
 
@@ -149,7 +244,7 @@ export default function TeacherProfile() {
                             Hourly Rate
                           </p>
                           <div className="text-5xl font-black text-primary leading-none">
-                            ${teacher.hourlyRate}
+                            ${teacherHourlyRate}
                             <span className="text-lg font-bold text-muted-foreground ml-1">
                               /hr
                             </span>
@@ -159,10 +254,10 @@ export default function TeacherProfile() {
                           {(!user ||
                             (user.role &&
                               user.role.toLowerCase() !== "teacher")) &&
-                            user?.id !== teacher.id && (
+                            user?.id !== teacherId && (
                               <>
                                 <Link
-                                  to={`/booking/${teacher.id}`}
+                                  to={`/booking/${teacherId}`}
                                   className="w-full"
                                 >
                                   <Button
@@ -199,7 +294,7 @@ export default function TeacherProfile() {
                             Students
                           </p>
                           <p className="text-sm font-bold">
-                            {teacher.totalStudents}
+                            {teacherTotalStudents}
                           </p>
                         </div>
                       </div>
@@ -212,7 +307,7 @@ export default function TeacherProfile() {
                             Experience
                           </p>
                           <p className="text-sm font-bold">
-                            {teacher.totalHours}h taught
+                            {teacherTotalHours}h taught
                           </p>
                         </div>
                       </div>
@@ -225,7 +320,7 @@ export default function TeacherProfile() {
                             Response
                           </p>
                           <p className="text-sm font-bold">
-                            {teacher.responseTime}
+                            {teacherResponseTime}
                           </p>
                         </div>
                       </div>
@@ -238,7 +333,7 @@ export default function TeacherProfile() {
                             Languages
                           </p>
                           <p className="text-sm font-bold truncate max-w-[100px]">
-                            {teacher.languages.join(", ")}
+                            {languages.join(", ")}
                           </p>
                         </div>
                       </div>
@@ -292,7 +387,7 @@ export default function TeacherProfile() {
                         </CardHeader>
                         <CardContent className="space-y-8">
                           <p className="text-lg text-muted-foreground leading-relaxed font-medium">
-                            {teacher.bio}
+                            {teacherBio}
                           </p>
 
                           <div className="grid sm:grid-cols-2 gap-8">
@@ -306,7 +401,7 @@ export default function TeacherProfile() {
                                 </h3>
                               </div>
                               <p className="text-muted-foreground font-semibold">
-                                {teacher.education}
+                                {teacherEducation}
                               </p>
                             </div>
 
@@ -320,7 +415,7 @@ export default function TeacherProfile() {
                                 </h3>
                               </div>
                               <p className="text-muted-foreground font-semibold">
-                                {teacher.experience}
+                                {teacherExperience}
                               </p>
                             </div>
                           </div>
@@ -330,17 +425,19 @@ export default function TeacherProfile() {
                               Expertise & Specialties
                             </h3>
                             <div className="flex flex-wrap gap-3">
-                              {teacher.subjects.map((subject, index) => (
-                                <div
-                                  key={index}
-                                  className="flex items-center gap-2 px-5 py-3 bg-primary/5 rounded-2xl border border-primary/10 hover:border-primary/40 transition-colors group cursor-default"
-                                >
-                                  <div className="h-2 w-2 rounded-full bg-primary" />
-                                  <span className="font-black text-sm">
-                                    {subject}
-                                  </span>
-                                </div>
-                              ))}
+                              {subjects.map(
+                                (subject: string, index: number) => (
+                                  <div
+                                    key={index}
+                                    className="flex items-center gap-2 px-5 py-3 bg-primary/5 rounded-2xl border border-primary/10 hover:border-primary/40 transition-colors group cursor-default"
+                                  >
+                                    <div className="h-2 w-2 rounded-full bg-primary" />
+                                    <span className="font-black text-sm">
+                                      {subject}
+                                    </span>
+                                  </div>
+                                ),
+                              )}
                             </div>
                           </div>
                         </CardContent>
@@ -363,13 +460,13 @@ export default function TeacherProfile() {
                           </CardTitle>
                           <div className="flex items-center gap-2">
                             <span className="font-black text-lg">
-                              {teacher.rating}
+                              {teacherRating}
                             </span>
                             <div className="flex">
                               {[1, 2, 3, 4, 5].map((i) => (
                                 <Star
                                   key={i}
-                                  className={`h-4 w-4 ${i <= Math.round(teacher.rating) ? "fill-yellow-400 text-yellow-400" : "text-muted"}`}
+                                  className={`h-4 w-4 ${i <= Math.round(teacherRating) ? "fill-yellow-400 text-yellow-400" : "text-muted"}`}
                                 />
                               ))}
                             </div>
@@ -453,34 +550,39 @@ export default function TeacherProfile() {
                         </CardHeader>
                         <CardContent>
                           <div className="grid sm:grid-cols-2 gap-4">
-                            {teacher.availability.map((day, index) => (
-                              <div
-                                key={index}
-                                className="p-6 rounded-3xl border border-border/50 bg-card hover:border-primary/50 transition-all group"
-                              >
-                                <div className="flex items-center gap-3 mb-4">
-                                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                                    <Calendar className="h-5 w-5" />
+                            {availability.map(
+                              (
+                                day: { day: string; slots: string[] },
+                                index: number,
+                              ) => (
+                                <div
+                                  key={index}
+                                  className="p-6 rounded-3xl border border-border/50 bg-card hover:border-primary/50 transition-all group"
+                                >
+                                  <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                                      <Calendar className="h-5 w-5" />
+                                    </div>
+                                    <h4 className="font-black text-lg">
+                                      {day.day}
+                                    </h4>
                                   </div>
-                                  <h4 className="font-black text-lg">
-                                    {day.day}
-                                  </h4>
+                                  <div className="flex flex-wrap gap-2">
+                                    {day.slots.map((slot, i) => (
+                                      <Badge
+                                        key={i}
+                                        variant="outline"
+                                        className="px-3 py-1 font-bold rounded-lg border-2 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all cursor-default"
+                                      >
+                                        {slot}
+                                      </Badge>
+                                    ))}
+                                  </div>
                                 </div>
-                                <div className="flex flex-wrap gap-2">
-                                  {day.slots.map((slot, i) => (
-                                    <Badge
-                                      key={i}
-                                      variant="outline"
-                                      className="px-3 py-1 font-bold rounded-lg border-2 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all cursor-default"
-                                    >
-                                      {slot}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </div>
-                            ))}
+                              ),
+                            )}
                           </div>
-                          <Link to={`/booking/${teacher.id}`}>
+                          <Link to={`/booking/${teacherId}`}>
                             <Button
                               size="lg"
                               className="w-full mt-10 h-16 rounded-[24px] font-black text-lg shadow-xl shadow-primary/20"

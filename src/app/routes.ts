@@ -50,7 +50,7 @@ export const router = createBrowserRouter([
           { path: "student/dashboard", Component: StudentDashboard },
           { path: "student/:id", Component: StudentProfile },
           { path: "teacher/dashboard", Component: TeacherDashboard },
-          { path: "teacher/:id", Component: TeacherProfile },
+          { path: "teacher/:userId", Component: TeacherProfile },
           { path: "teacher/manage-profile", Component: ManageProfile },
           { path: "teacher/publish-gig", Component: PublishGig },
           { path: "search", Component: SearchTeachers },
