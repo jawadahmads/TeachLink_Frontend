@@ -4,7 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import StudentDashboard from "./pages/StudentDashboard";
 import TeacherDashboard from "./pages/TeacherDashboard";
-import TeacherProfile from "./pages/TeacherProfile";
+import TeacherProfile from "./pages/TeacherProfile/components/TeacherProfile";
 import SearchTeachers from "./pages/SearchTeachers";
 import BookingPage from "./pages/BookingPage";
 import ChatPage from "./pages/ChatPage";

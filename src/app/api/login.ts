@@ -19,7 +19,7 @@ export const login = async ({
         withCredentials: true, // send cookies / credentials
       },
     );
-
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Login error:", error);

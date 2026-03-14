@@ -75,10 +75,10 @@ export default function Header({
 
   const getProfileRoute = () => {
     if (userType === "teacher" && user?.id) {
-      return `/teacher/${user.id}`;
+      return `/teacher/${user.teacherId}`;
     }
     if (userType === "student" && user?.id) {
-      return `/student/${user.id}`;
+      return `/student/${user.studentId}`;
     }
     return `/${userType}/dashboard`;
   };
