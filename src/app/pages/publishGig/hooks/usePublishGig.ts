@@ -90,6 +90,9 @@ export function usePublishGig() {
 
     const response = await createGig(gigData);
     console.log(response);
+    if (response) {
+      navigate("/search-teachers");
+    }
   };
 
   const isTeacher = ROLE && ROLE.role && ROLE.role.toLowerCase() === "teacher";

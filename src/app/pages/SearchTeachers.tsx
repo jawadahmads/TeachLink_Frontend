@@ -51,6 +51,7 @@ const itemVariants = {
 export default function SearchTeachers() {
   const dispatch = useAppDispatch();
   const { gigs, loading, error } = useAppSelector((state) => state.gig);
+  const { user } = useAppSelector((state) => state.auth);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState("all");
@@ -391,7 +392,7 @@ export default function SearchTeachers() {
                         transition={{ duration: 0.3, delay: i * 0.05 }}
                         layout
                       >
-                        <TeacherGig teacher={teacher} />
+                        <TeacherGig teacher={teacher} currentUser={user} />
                       </motion.div>
                     ))}
                   </AnimatePresence>

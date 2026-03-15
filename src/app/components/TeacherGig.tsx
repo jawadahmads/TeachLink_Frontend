@@ -5,6 +5,7 @@ import { Card, CardContent } from "../components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { Badge } from "../components/ui/badge";
 import { Teacher } from "../data/mockData";
+import { toast } from "sonner";
 
 interface TeacherGigProps {
   teacher: Teacher & {
@@ -12,9 +13,13 @@ interface TeacherGigProps {
     gigTitle?: string;
     gigDescription?: string;
   };
+  currentUser?: {
+    role?: string;
+  } | null;
 }
 
-export default function TeacherGig({ teacher }: TeacherGigProps) {
+export default function TeacherGig({ teacher, currentUser }: TeacherGigProps) {
+  const isTeacher = currentUser?.role?.toLowerCase() === "teacher";
   return (
     <Card className="group border-none shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all bg-card/50 backdrop-blur-sm overflow-hidden rounded-[32px]">
       <CardContent className="p-6 sm:p-8">
@@ -105,7 +110,10 @@ export default function TeacherGig({ teacher }: TeacherGigProps) {
             </div>
 
             <p className="text-muted-foreground text-sm font-medium leading-relaxed mb-6 line-clamp-2 sm:line-clamp-none max-w-2xl">
-              {teacher.bio}
+              {teacher.gigTitle && (
+                <span className="font-black text-foreground block mb-1">{teacher.gigTitle}</span>
+              )}
+              {teacher.gigDescription}
             </p>
 
             <div className="grid grid-cols-2 sm:flex sm:items-center gap-4 sm:gap-8 mb-8">
@@ -153,8 +161,11 @@ export default function TeacherGig({ teacher }: TeacherGigProps) {
                   View Full Profile
                 </Button>
               </Link>
-              <Link to={`/booking/${teacher.id}`} className="flex-1">
-                <Button className="w-full h-14 rounded-2xl font-black shadow-lg shadow-primary/20">
+              <Link to={isTeacher ? "#" : `/booking/${teacher.id}`} className="flex-1">
+                <Button 
+                  className="w-full h-14 rounded-2xl font-black shadow-lg shadow-primary/20" 
+                  onClick={() => isTeacher && toast.info("Students can only book tutoring sessions")}
+                >
                   Book Now
                 </Button>
               </Link>

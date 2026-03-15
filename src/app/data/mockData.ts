@@ -25,6 +25,7 @@ export interface Student {
   joinedDate: string;
   totalSessions: number;
   favoriteSubjects: string[];
+  academicLevel?: string;
 }
 
 export interface Session {
@@ -239,6 +240,7 @@ export const currentStudent: Student = {
   joinedDate: "2024-09-15",
   totalSessions: 24,
   favoriteSubjects: ["Mathematics", "Computer Science"],
+  academicLevel: "Undergraduate",
 };
 
 export const mockSessions: Session[] = [

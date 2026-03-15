@@ -1,23 +1,35 @@
 import { z } from "zod";
-import { useAppDispatch } from "../redux/store";
-import { setStatus, setToken, setUser } from "../redux/authSlice";
-import { useEffect } from "react";
+
+const baseUser = {
+  id: z.string(),
+  email: z.string(),
+  verified: z.boolean(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+};
+
+const teacherUser = z.object({
+  ...baseUser,
+  role: z.literal("TEACHER"),
+  teacherId: z.string(),
+});
+
+const studentUser = z.object({
+  ...baseUser,
+  role: z.literal("STUDENT"),
+  studentId: z.string(),
+});
 
 export const refreshResponseSchema = z.object({
   message: z.string(),
 
-  user: z.object({
-    id: z.string(),
-    email: z.string(),
-    role: z.enum(["STUDENT", "TEACHER"]),
-    verified: z.boolean(),
-    createdAt: z.string(),
-    updatedAt: z.string(),
-  }),
+  user: z.union([teacherUser, studentUser]),
 
   accessToken: z.string(),
   refreshExpiresAt: z.string(),
-  newRefreshToken: z.string(),
+
+  // optional because you only send it in development
+  refreshToken: z.string().optional(),
 });
 
 export type RefreshResponse = z.infer<typeof refreshResponseSchema>;
