@@ -41,15 +41,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
-import { userInfo as fetchUserInfo } from "../api/userInfo";
-import { updateProfile } from "../api/updateProfile";
+import { studentInfo as fetchStudentInfo } from "../api/studentInfo";
+import { updateStudentProfile } from "../api/updateStudentProfile";
 import { subjects } from "../data/mockData";
 
 const profileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   academicLevel: z.string().min(1, "Please select an academic level"),
-  favoriteSubjects: z.array(z.string()).min(1, "Select at least one interest"),
+  interests: z.array(z.string()).min(1, "Select at least one interest"),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
@@ -63,6 +63,7 @@ export default function StudentProfile() {
 
   const isOwnProfile =
     !id || user?.studentId === id || user?.role === "student";
+  const studentId = id || user?.id;
 
   const {
     register,
@@ -77,40 +78,52 @@ export default function StudentProfile() {
   });
 
   const selectedLevel = watch("academicLevel");
-  const selectedSubjects = watch("favoriteSubjects") || [];
+  const selectedInterests = watch("interests") || [];
 
   useEffect(() => {
     const loadData = async () => {
+      if (!studentId) return;
       try {
-        const data = await fetchUserInfo();
+        const data = await fetchStudentInfo(studentId);
         if (data) {
           setProfileData(data);
           setValue("name", data.name || user?.name || "");
           setValue("email", data.email || user?.email || "");
           setValue("academicLevel", data.academicLevel || "Undergraduate");
-          setValue("favoriteSubjects", data.favoriteSubjects || []);
+          setValue("interests", data.interests || data.favoriteSubjects || []);
         }
       } catch (error) {
-        console.error("Failed to fetch user info:", error);
+        console.error("Failed to fetch student info:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    if (isOwnProfile) {
-      loadData();
-    }
-  }, [isOwnProfile, user, setValue]);
+    loadData();
+  }, [studentId, user, setValue]);
+
+  // userId: string;
+  // studentId: string;
+  // name?: string;
+  // avatar?: string;
+  // academicLevel?: string;
+  // interests?: string[];
 
   const onSubmit = async (data: ProfileFormValues) => {
     if (!isOwnProfile) return;
     try {
-      await updateProfile(data);
-      setProfileData({ ...profileData, ...data });
+      const newData = {
+        ...data,
+        userId: user && user.id,
+        studentId: id,
+      };
+      await updateStudentProfile(newData);
+      setProfileData({ ...profileData, ...newData });
       setIsEditing(false);
       toast.success("Profile updated successfully!");
     } catch (error) {
-      // Error is handled in updateProfile toast
+      // Error is handled in updateStudentProfile toast
+      toast.error("Failed");
     }
   };
 
@@ -120,16 +133,20 @@ export default function StudentProfile() {
     }
   };
 
-  const addSubject = (subject: string) => {
-    if (!selectedSubjects.includes(subject)) {
-      setValue("favoriteSubjects", [...selectedSubjects, subject]);
+  const addInterest = (interest: string) => {
+    if (!selectedInterests.includes(interest)) {
+      setValue("interests", [...selectedInterests, interest], {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
     }
   };
 
-  const removeSubject = (subject: string) => {
+  const removeInterest = (interest: string) => {
     setValue(
-      "favoriteSubjects",
-      selectedSubjects.filter((s) => s !== subject),
+      "interests",
+      selectedInterests.filter((i) => i !== interest),
+      { shouldDirty: true, shouldValidate: true },
     );
   };
 
@@ -138,16 +155,18 @@ export default function StudentProfile() {
       name: profileData?.name || user?.name || "",
       email: profileData?.email || user?.email || "",
       academicLevel: profileData?.academicLevel || "Undergraduate",
-      favoriteSubjects: profileData?.favoriteSubjects || [],
+      interests: profileData?.interests || profileData?.favoriteSubjects || [],
     });
     setIsEditing(false);
   };
 
   const inputClass = (hasError: boolean, isTouched: boolean | undefined) => {
-    if (!isTouched) return "bg-background/50 border-2 border-border/50";
+    const baseClass =
+      "h-14 rounded-2xl border-2 font-bold focus-visible:ring-primary transition-all";
+    if (!isTouched) return `${baseClass} bg-background/50 border-border/50`;
     if (hasError)
-      return "bg-red-500/5 border-2 border-red-500/50 focus-visible:ring-red-500/20 focus-visible:border-red-500";
-    return "bg-green-500/5 border-2 border-green-500/50 focus-visible:ring-green-500/20 focus-visible:border-green-500";
+      return `${baseClass} bg-red-500/5 border-red-500/50 focus-visible:ring-red-500/20 focus-visible:border-red-500`;
+    return `${baseClass} bg-green-500/5 border-green-500/50 focus-visible:ring-green-500/20 focus-visible:border-green-500`;
   };
 
   if (isLoading) {
@@ -159,84 +178,95 @@ export default function StudentProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden pb-20">
+    <div className="min-h-screen bg-background relative overflow-hidden pb-20 font-medium text-foreground">
       {/* Decorative Background */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
         <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
         <div className="absolute bottom-[10%] left-[-5%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px] animate-pulse" />
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 pt-12">
+      <div className="max-w-6xl mx-auto px-6 pt-12">
         {/* Navigation / Header */}
-        <div className="flex items-center justify-between mb-12">
-          <Link
-            to="/student/dashboard"
-            className="group flex items-center gap-2 px-4 py-2 rounded-full bg-background/50 backdrop-blur-md border border-border/50 shadow-sm hover:bg-primary hover:text-primary-foreground transition-all duration-300"
-          >
-            <ArrowLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
-            <span className="text-xs font-black uppercase tracking-widest">
-              Dashboard
-            </span>
-          </Link>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+          <div className="space-y-4">
+            <Link
+              to="/student/dashboard"
+              className="inline-flex items-center text-primary font-black group hover:gap-3 transition-all"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Dashboard
+            </Link>
+            <h1 className="text-4xl md:text-5xl font-black tracking-tight">
+              Student <span className="text-primary">Profile</span>
+            </h1>
+            <p className="text-muted-foreground font-semibold text-lg max-w-2xl">
+              Manage your learning journey and keep your information up to date.
+            </p>
+          </div>
 
           {isOwnProfile && !isEditing && (
             <Button
               onClick={() => setIsEditing(true)}
-              className="rounded-full px-6 bg-primary font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all flex items-center gap-2"
+              className="h-14 px-10 rounded-2xl font-black shadow-xl shadow-primary/20 text-lg flex items-center gap-2 group"
             >
-              <Edit className="h-4 w-4" />
+              <Edit className="h-5 w-5 group-hover:scale-110 transition-transform" />
               Edit Profile
             </Button>
           )}
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid gap-8 lg:grid-cols-12 items-start">
+          <div className="grid gap-10 lg:grid-cols-12 items-start">
             {/* Profile Sidebar */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="lg:col-span-4 space-y-6"
+              className="lg:col-span-4 space-y-8"
             >
-              <Card className="border-none shadow-2xl bg-card/60 backdrop-blur-2xl rounded-[32px] overflow-hidden">
-                <CardContent className="pt-10 pb-8 px-6 text-center">
-                  <div className="relative inline-block mb-6">
-                    <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full scale-110" />
-                    <Avatar className="h-32 w-32 border-4 border-background shadow-xl relative z-10">
+              <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-xl rounded-[40px] overflow-hidden relative">
+                <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
+                  <UserIcon className="w-32 h-32 rotate-12" />
+                </div>
+                <CardContent className="pt-12 pb-10 px-8 text-center relative z-10">
+                  <div className="relative inline-block mb-8 group">
+                    <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full scale-110 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Avatar className="h-36 w-36 border-4 border-background shadow-2xl relative z-10 transition-transform duration-500 group-hover:scale-105">
                       <AvatarImage
                         src={profileData?.avatar || user?.avatar}
                         alt={profileData?.name || user?.name}
+                        className="object-cover"
                       />
-                      <AvatarFallback className="text-3xl font-black bg-muted text-primary">
+                      <AvatarFallback className="text-4xl font-black bg-muted text-primary">
                         {(profileData?.name || user?.name || "U").charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                     {isOwnProfile && (
-                      <button
+                      <Button
                         type="button"
-                        className="absolute bottom-1 right-1 z-20 h-9 w-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg border-2 border-background hover:scale-110 transition-transform"
+                        size="icon"
+                        className="absolute bottom-1 right-1 z-20 h-10 w-10 rounded-xl bg-primary text-primary-foreground shadow-xl border-4 border-background hover:scale-110 transition-transform"
                       >
                         <Camera className="h-4 w-4" />
-                      </button>
+                      </Button>
                     )}
                   </div>
 
-                  <h2 className="text-2xl font-black tracking-tight text-foreground mb-1">
+                  <h2 className="text-3xl font-black tracking-tight text-foreground mb-2">
                     {profileData?.name || user?.name}
                   </h2>
-                  <p className="text-sm font-medium text-muted-foreground mb-6">
+                  <p className="text-base font-semibold text-muted-foreground mb-8">
                     {profileData?.email || user?.email}
                   </p>
 
-                  <div className="flex flex-col gap-2 px-4">
-                    <Badge className="w-full justify-center py-2 rounded-xl bg-primary/10 text-primary border-none font-black text-[10px] uppercase tracking-widest">
-                      <ShieldCheck className="h-3 w-3 mr-2" />
+                  <div className="flex flex-col gap-3 px-4">
+                    <Badge className="w-full justify-center py-2.5 rounded-xl bg-primary/10 text-primary border-none font-black text-xs uppercase tracking-widest">
+                      <ShieldCheck className="h-3.5 w-3.5 mr-2" />
                       {user?.role === "student"
                         ? "Student Account"
                         : "User Account"}
                     </Badge>
-                    <div className="flex items-center justify-center gap-2 mt-4 text-[11px] font-black uppercase tracking-widest text-muted-foreground/60">
-                      <Calendar className="h-3.5 w-3.5" />
+                    <div className="flex items-center justify-center gap-2 mt-4 text-xs font-black uppercase tracking-widest text-muted-foreground/60">
+                      <Calendar className="h-4 w-4" />
                       Joined{" "}
                       {new Date(
                         profileData?.joinedDate || Date.now(),
@@ -247,20 +277,20 @@ export default function StudentProfile() {
                     </div>
                   </div>
 
-                  <div className="mt-8 grid grid-cols-2 gap-3 pt-8 border-t border-border/50">
+                  <div className="mt-10 grid grid-cols-2 gap-4 pt-10 border-t border-border/50">
                     <div className="text-center">
-                      <p className="text-2xl font-black text-primary">
+                      <p className="text-3xl font-black text-primary">
                         {profileData?.totalSessions || 0}
                       </p>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      <p className="text-xs font-black uppercase tracking-widest text-muted-foreground mt-1">
                         Sessions
                       </p>
                     </div>
                     <div className="text-center border-l border-border/50">
-                      <p className="text-2xl font-black text-primary">
-                        {profileData?.favoriteSubjects?.length || 0}
+                      <p className="text-3xl font-black text-primary">
+                        {profileData?.interests?.length || 0}
                       </p>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      <p className="text-xs font-black uppercase tracking-widest text-muted-foreground mt-1">
                         Interests
                       </p>
                     </div>
@@ -268,57 +298,63 @@ export default function StudentProfile() {
                 </CardContent>
               </Card>
 
-              <Card className="border-none shadow-xl bg-card/60 backdrop-blur-2xl rounded-[32px] overflow-hidden">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-xs font-black uppercase tracking-widest text-primary flex items-center gap-2">
+              <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-xl rounded-[40px] overflow-hidden">
+                <CardHeader className="p-8 pb-4">
+                  <CardTitle className="text-sm font-black uppercase tracking-widest text-primary flex items-center gap-2">
                     <BookOpen className="h-4 w-4" />
                     Learning Interests
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex flex-wrap gap-2">
-                    {selectedSubjects.map((subject, index) => (
-                      <Badge
-                        key={index}
-                        className="bg-background/50 hover:bg-primary/10 text-foreground border-border/50 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors group flex items-center gap-2"
-                      >
-                        {subject}
-                        {isEditing && (
-                          <button
-                            type="button"
-                            onClick={() => removeSubject(subject)}
-                            className="text-muted-foreground hover:text-red-500 transition-colors"
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        )}
-                      </Badge>
-                    ))}
-                  </div>
+                <CardContent className="px-8 pb-8 space-y-6">
+                  {selectedInterests.length === 0 ? (
+                    <p className="text-muted-foreground text-sm font-medium">
+                      No interests added yet.
+                    </p>
+                  ) : (
+                    <div className="flex flex-wrap gap-2.5">
+                      {selectedInterests.map((interest, index) => (
+                        <Badge
+                          key={index}
+                          className="bg-background/80 hover:bg-primary/10 text-foreground border-border/50 px-4 py-2 rounded-xl text-xs font-bold transition-all group flex items-center gap-2"
+                        >
+                          {interest}
+                          {isEditing && (
+                            <button
+                              type="button"
+                              onClick={() => removeInterest(interest)}
+                              className="text-muted-foreground hover:text-red-500 transition-colors"
+                            >
+                              <X className="h-3.5 w-3.5" />
+                            </button>
+                          )}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
 
                   {isEditing && (
                     <div className="pt-2">
-                      <Select onValueChange={addSubject}>
-                        <SelectTrigger className="w-full h-10 rounded-xl bg-background/50 border-2 border-border/50 font-medium text-xs">
+                      <Select onValueChange={addInterest}>
+                        <SelectTrigger className="w-full h-12 rounded-2xl bg-background/50 border-2 border-border/50 font-bold text-sm">
                           <SelectValue placeholder="Add more interests..." />
                         </SelectTrigger>
                         <SelectContent>
                           {subjects
-                            .filter((s) => !selectedSubjects.includes(s))
+                            .filter((s) => !selectedInterests.includes(s))
                             .map((subject) => (
                               <SelectItem
                                 key={subject}
                                 value={subject}
-                                className="text-xs font-medium"
+                                className="text-sm font-bold"
                               >
                                 {subject}
                               </SelectItem>
                             ))}
                         </SelectContent>
                       </Select>
-                      {errors.favoriteSubjects && (
-                        <p className="text-[11px] font-bold text-red-500 mt-2 ml-1">
-                          {errors.favoriteSubjects.message}
+                      {errors.interests && (
+                        <p className="text-xs font-bold text-red-500 mt-2 ml-1">
+                          {errors.interests.message}
                         </p>
                       )}
                     </div>
@@ -332,39 +368,37 @@ export default function StudentProfile() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="lg:col-span-8 space-y-6"
+              className="lg:col-span-8 space-y-8"
             >
-              <Card className="border-none shadow-2xl bg-card/60 backdrop-blur-2xl rounded-[32px] overflow-hidden">
-                <CardHeader className="flex flex-row items-center justify-between pt-10 px-8 pb-6">
-                  <div>
-                    <CardTitle className="text-2xl font-black tracking-tight text-foreground mb-1">
-                      Personal Details
-                    </CardTitle>
-                    <CardDescription className="text-sm font-medium">
-                      {isEditing
-                        ? "Update your contact information and level."
-                        : "Your identity and contact info."}
-                    </CardDescription>
-                  </div>
+              <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-xl rounded-[40px] overflow-hidden">
+                <CardHeader className="p-10 pb-6">
+                  <CardTitle className="text-2xl font-black">
+                    Personal Details
+                  </CardTitle>
+                  <CardDescription className="text-base font-semibold">
+                    {isEditing
+                      ? "Update your contact information and level."
+                      : "Your identity and contact info."}
+                  </CardDescription>
                 </CardHeader>
-                <CardContent className="px-8 pb-10">
+                <CardContent className="p-10 pt-0 space-y-10">
                   <div className="space-y-8">
-                    <div className="grid md:grid-cols-2 gap-6">
+                    <div className="grid md:grid-cols-2 gap-8">
                       {/* NAME */}
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         <Label
                           htmlFor="name"
-                          className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1"
+                          className="text-sm font-black uppercase tracking-widest text-muted-foreground ml-1"
                         >
                           Full Name
                         </Label>
                         <div className="relative group">
-                          <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                          <UserIcon className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
                           <Input
                             id="name"
                             {...register("name")}
                             disabled={!isEditing}
-                            className={`pl-11 h-13 rounded-2xl transition-all font-medium ${inputClass(!!errors.name, touchedFields.name)}`}
+                            className={`pl-12 ${inputClass(!!errors.name, touchedFields.name)}`}
                           />
                         </div>
                         <AnimatePresence>
@@ -373,7 +407,7 @@ export default function StudentProfile() {
                               initial={{ opacity: 0, y: -5 }}
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, y: -5 }}
-                              className="text-[11px] font-bold text-red-500 ml-1"
+                              className="text-xs font-bold text-red-500 ml-1"
                             >
                               {errors.name.message}
                             </motion.p>
@@ -382,21 +416,21 @@ export default function StudentProfile() {
                       </div>
 
                       {/* EMAIL */}
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         <Label
                           htmlFor="email"
-                          className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1"
+                          className="text-sm font-black uppercase tracking-widest text-muted-foreground ml-1"
                         >
                           Email Address
                         </Label>
                         <div className="relative group">
-                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                          <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
                           <Input
                             id="email"
                             type="email"
                             {...register("email")}
                             disabled={!isEditing}
-                            className={`pl-11 h-13 rounded-2xl transition-all font-medium ${inputClass(!!errors.email, touchedFields.email)}`}
+                            className={`pl-12 ${inputClass(!!errors.email, touchedFields.email)}`}
                           />
                         </div>
                         <AnimatePresence>
@@ -405,7 +439,7 @@ export default function StudentProfile() {
                               initial={{ opacity: 0, y: -5 }}
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, y: -5 }}
-                              className="text-[11px] font-bold text-red-500 ml-1"
+                              className="text-xs font-bold text-red-500 ml-1"
                             >
                               {errors.email.message}
                             </motion.p>
@@ -415,34 +449,36 @@ export default function StudentProfile() {
                     </div>
 
                     {/* Academic Level */}
-                    <div className="pt-6 border-t border-border/50">
-                      <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
-                        <GraduationCap className="h-4 w-4 text-primary" />
+                    <div className="pt-8 border-t border-border/50">
+                      <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-2">
+                        <GraduationCap className="h-5 w-5 text-primary" />
                         Academic Level
                       </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <button
                           type="button"
                           onClick={() => handleLevelSelect("Undergraduate")}
                           disabled={!isEditing}
-                          className={`p-5 rounded-2xl border-2 flex items-center justify-between group transition-all ${
+                          className={`p-6 rounded-[24px] border-2 flex items-center justify-between group transition-all duration-300 ${
                             selectedLevel === "Undergraduate"
-                              ? "border-primary bg-primary/5"
+                              ? "border-primary bg-primary/5 shadow-inner"
                               : isEditing
-                                ? "border-border/50 bg-background/50 hover:border-primary/30 cursor-pointer"
+                                ? "border-border/50 bg-background/50 hover:border-primary/30 cursor-pointer hover:bg-background"
                                 : "border-border/50 bg-background/50"
                           }`}
                         >
                           <div className="text-left">
-                            <p className="text-sm font-black text-foreground group-hover:text-primary transition-colors">
+                            <p
+                              className={`text-base font-black transition-colors ${selectedLevel === "Undergraduate" ? "text-primary" : "text-foreground group-hover:text-primary"}`}
+                            >
                               Undergraduate
                             </p>
-                            <p className="text-[10px] font-medium text-muted-foreground">
+                            <p className="text-xs font-semibold text-muted-foreground mt-1">
                               Currently pursuing degree
                             </p>
                           </div>
                           {selectedLevel === "Undergraduate" && (
-                            <div className="h-6 w-6 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
+                            <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground shadow-lg animate-in zoom-in duration-300">
                               <CheckCircle className="h-4 w-4" />
                             </div>
                           )}
@@ -452,24 +488,26 @@ export default function StudentProfile() {
                           type="button"
                           onClick={() => handleLevelSelect("Postgraduate")}
                           disabled={!isEditing}
-                          className={`p-5 rounded-2xl border-2 flex items-center justify-between group transition-all ${
+                          className={`p-6 rounded-[24px] border-2 flex items-center justify-between group transition-all duration-300 ${
                             selectedLevel === "Postgraduate"
-                              ? "border-primary bg-primary/5"
+                              ? "border-primary bg-primary/5 shadow-inner"
                               : isEditing
-                                ? "border-border/50 bg-background/50 hover:border-primary/30 cursor-pointer"
+                                ? "border-border/50 bg-background/50 hover:border-primary/30 cursor-pointer hover:bg-background"
                                 : "border-border/50 bg-background/50"
                           }`}
                         >
                           <div className="text-left">
-                            <p className="text-sm font-black text-foreground group-hover:text-primary transition-colors">
+                            <p
+                              className={`text-base font-black transition-colors ${selectedLevel === "Postgraduate" ? "text-primary" : "text-foreground group-hover:text-primary"}`}
+                            >
                               Postgraduate
                             </p>
-                            <p className="text-[10px] font-medium text-muted-foreground">
+                            <p className="text-xs font-semibold text-muted-foreground mt-1">
                               Advanced studies
                             </p>
                           </div>
                           {selectedLevel === "Postgraduate" && (
-                            <div className="h-6 w-6 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
+                            <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground shadow-lg animate-in zoom-in duration-300">
                               <CheckCircle className="h-4 w-4" />
                             </div>
                           )}
@@ -481,21 +519,20 @@ export default function StudentProfile() {
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center justify-end gap-3 pt-6"
+                        className="flex items-center justify-end gap-4 pt-10"
                       >
                         <Button
                           type="button"
-                          variant="ghost"
+                          variant="outline"
                           onClick={handleCancel}
-                          className="rounded-xl px-6 font-black text-[10px] uppercase tracking-widest"
+                          className="h-14 px-8 rounded-2xl font-black border-2 hover:bg-accent transition-all"
                         >
-                          <X className="h-4 w-4 mr-2" />
                           Discard
                         </Button>
                         <Button
                           type="submit"
                           disabled={isSubmitting}
-                          className="rounded-xl px-8 h-12 bg-primary font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
+                          className="h-14 px-10 rounded-2xl font-black shadow-xl shadow-primary/20 text-lg group"
                         >
                           {isSubmitting ? (
                             <motion.div
@@ -505,13 +542,13 @@ export default function StudentProfile() {
                                 repeat: Infinity,
                                 ease: "linear",
                               }}
-                              className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full"
+                              className="h-5 w-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full"
                             />
                           ) : (
-                            <>
-                              <Save className="h-4 w-4 mr-2" />
+                            <div className="flex items-center gap-2">
+                              <Save className="h-5 w-5 group-hover:scale-110 transition-transform" />
                               Update Profile
-                            </>
+                            </div>
                           )}
                         </Button>
                       </motion.div>
@@ -521,33 +558,33 @@ export default function StudentProfile() {
               </Card>
 
               {/* Learning Stats */}
-              <div className="grid sm:grid-cols-2 gap-6">
-                <Card className="border-none shadow-xl bg-card/60 backdrop-blur-2xl rounded-[32px] overflow-hidden group hover:scale-[1.02] transition-transform">
-                  <CardContent className="p-6 flex items-center gap-5">
-                    <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                      <TrendingUp className="h-7 w-7" />
+              <div className="grid sm:grid-cols-2 gap-8">
+                <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-xl rounded-[40px] overflow-hidden group hover:scale-[1.02] transition-transform">
+                  <CardContent className="p-8 flex items-center gap-6">
+                    <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-500">
+                      <TrendingUp className="h-8 w-8" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      <p className="text-xs font-black uppercase tracking-widest text-muted-foreground">
                         Learning Streak
                       </p>
-                      <p className="text-2xl font-black text-foreground">
+                      <p className="text-3xl font-black text-foreground">
                         {profileData?.learningStreak || 0} Days
                       </p>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="border-none shadow-xl bg-card/60 backdrop-blur-2xl rounded-[32px] overflow-hidden group hover:scale-[1.02] transition-transform">
-                  <CardContent className="p-6 flex items-center gap-5">
-                    <div className="h-14 w-14 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500">
-                      <Sparkles className="h-7 w-7" />
+                <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-xl rounded-[40px] overflow-hidden group hover:scale-[1.02] transition-transform">
+                  <CardContent className="p-8 flex items-center gap-6">
+                    <div className="h-16 w-16 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors duration-500">
+                      <Sparkles className="h-8 w-8" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      <p className="text-xs font-black uppercase tracking-widest text-muted-foreground">
                         Global Rank
                       </p>
-                      <p className="text-2xl font-black text-foreground">
+                      <p className="text-3xl font-black text-foreground">
                         {profileData?.globalRank || "Top 100"}
                       </p>
                     </div>

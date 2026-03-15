@@ -25,6 +25,7 @@ export interface Student {
   joinedDate: string;
   totalSessions: number;
   favoriteSubjects: string[];
+  interests: string[];
   academicLevel?: string;
 }
 
@@ -240,6 +241,7 @@ export const currentStudent: Student = {
   joinedDate: "2024-09-15",
   totalSessions: 24,
   favoriteSubjects: ["Mathematics", "Computer Science"],
+  interests: ["Machine Learning", "Data Science", "Web Development", "Physics"],
   academicLevel: "Undergraduate",
 };
 
