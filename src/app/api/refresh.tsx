@@ -12,22 +12,21 @@ const teacherUser = z.object({
   ...baseUser,
   role: z.literal("TEACHER"),
   teacherId: z.string(),
+  stripeId: z.string(),
 });
 
 const studentUser = z.object({
   ...baseUser,
   role: z.literal("STUDENT"),
   studentId: z.string(),
+  stripeId: z.string(),
 });
 
 export const refreshResponseSchema = z.object({
   message: z.string(),
-
   user: z.union([teacherUser, studentUser]),
-
   accessToken: z.string(),
   refreshExpiresAt: z.string(),
-
   // optional because you only send it in development
   refreshToken: z.string().optional(),
 });
@@ -42,6 +41,5 @@ export async function refreshToken(): Promise<RefreshResponse> {
   });
 
   const json = await res.json();
-  console.log(json);
   return refreshResponseSchema.parse(json); // ✅ runtime validation + type inference
 }

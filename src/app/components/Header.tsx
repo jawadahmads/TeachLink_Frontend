@@ -1,4 +1,4 @@
-import { Link, useNavigate, useLocation } from "react-router";
+import { Link, useNavigate, useLocation, data } from "react-router";
 import {
   BookOpen,
   Bell,
@@ -10,6 +10,8 @@ import {
   Info,
   ChevronDown,
   Sparkles,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -22,10 +24,19 @@ import {
 } from "./ui/dropdown-menu";
 import { Badge } from "./ui/badge";
 import { useAppDispatch, useAppSelector } from "../redux/store";
+import { setUserInfo } from "../redux/userInfoSlice";
 import { logout } from "../api/logout";
+import { getTeacherInfoById } from "../api/teacherInfo";
 import { setToken, setUser, setStatus } from "../redux/authSlice";
 import { motion, AnimatePresence } from "motion/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
+import { toast } from "sonner";
+import {
+  createStripeAccount,
+  updateStripeAccountStatus,
+  getStripeAccountStatus,
+} from "../api/stripeAccount";
+import { userInfo } from "../api/userInfo";
 
 interface HeaderProps {
   userType?: "student" | "teacher" | "admin";
@@ -45,8 +56,13 @@ export default function Header({
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, token } = useAppSelector((state) => state.auth);
+  const userInfo = useAppSelector((state) => state.info.userInfo);
+  const { user, token, stripeAccountInfo } = useAppSelector(
+    (state) => state.auth,
+  );
+  const stripeAccountId = userInfo?.stripeId;
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,8 +74,10 @@ export default function Header({
 
   const userType =
     propUserType || (user?.role?.toLowerCase() as any) || "student";
+  const teacherId = user?.teacherId;
   const userName = propUserName || user?.name || user?.email || "User";
   const userAvatar = propUserAvatar || user?.avatar || "";
+  const accountId = user?.stripeId;
 
   const handleLogout = async () => {
     try {
@@ -72,6 +90,33 @@ export default function Header({
       console.error("Logout failed:", error);
     }
   };
+
+  const handleCreateStripeAccount = async () => {
+    setIsLoading(true);
+    try {
+      await createStripeAccount();
+    } catch (error) {
+      console.error("Failed to create Stripe account:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // const handleUpdateStripeStatus = async (status: "active" | "inactive") => {
+  //   if (!stripeAccountId) {
+  //     toast.error("No Stripe account found");
+  //     return;
+  //   }
+  //   setIsLoading(true);
+  //   try {
+  //     await updateStripeAccountStatus(status, stripeAccountId);
+  //     setStripeStatus(status);
+  //   } catch (error) {
+  //     console.error("Failed to update Stripe status:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const getProfileRoute = () => {
     if (userType === "teacher" && user?.id) {
@@ -274,7 +319,7 @@ export default function Header({
                       asChild
                       className="rounded-xl h-11 cursor-pointer focus:bg-primary/10 focus:text-primary transition-colors"
                     >
-                      <Link
+                      {/* <Link
                         to="/search"
                         className="flex items-center gap-3 w-full font-bold"
                       >
@@ -282,24 +327,62 @@ export default function Header({
                           <BookOpen className="h-4 w-4" />
                         </div>
                         Browse Experts
-                      </Link>
+                      </Link> */}
                     </DropdownMenuItem>
 
                     {userType === "teacher" && (
-                      <DropdownMenuItem
-                        asChild
-                        className="rounded-xl h-11 cursor-pointer focus:bg-primary/10 focus:text-primary transition-colors"
-                      >
-                        <Link
-                          to="/teacher/publish-gig"
-                          className="flex items-center gap-3 w-full font-bold"
+                      <>
+                        <DropdownMenuItem
+                          asChild
+                          className="rounded-xl h-11 cursor-pointer focus:bg-primary/10 focus:text-primary transition-colors"
                         >
-                          <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center text-green-500">
-                            <Sparkles />
+                          <Link
+                            to="/teacher/publish-gig"
+                            className="flex items-center gap-3 w-full font-bold"
+                          >
+                            <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center text-green-500">
+                              <Sparkles />
+                            </div>
+                            Publish Gig
+                          </Link>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuSeparator className="my-2" />
+
+                        <div className="px-3 py-2">
+                          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                            Stripe Account
+                          </p>
+                          <div className="flex gap-2">
+                            {stripeAccountInfo ? (
+                              <Badge
+                                variant="outline"
+                                className="text-green-500 bg-green-500/10 border-green-500/20 font-bold"
+                              >
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                Active
+                              </Badge>
+                            ) : (
+                              <Badge
+                                variant="outline"
+                                className="text-red-500 bg-red-500/10 border-red-500/20 font-bold"
+                              >
+                                <XCircle className="h-3 w-3 mr-1" />
+                                Inactive
+                              </Badge>
+                            )}
                           </div>
-                          Publish Gig
-                        </Link>
-                      </DropdownMenuItem>
+                        </div>
+
+                        {!stripeAccountInfo && (
+                          <DropdownMenuItem
+                            onSelect={handleCreateStripeAccount}
+                            className="rounded-xl h-11 cursor-pointer focus:bg-primary/10 focus:text-primary transition-colors font-bold"
+                          >
+                            Create Stripe Account
+                          </DropdownMenuItem>
+                        )}
+                      </>
                     )}
 
                     <DropdownMenuSeparator className="my-2" />

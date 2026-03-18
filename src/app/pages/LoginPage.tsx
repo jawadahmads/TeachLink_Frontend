@@ -17,7 +17,7 @@ import { loginSchema, type LoginForm } from "../schema/loginSchema";
 import { setQueryParam, getQueryParam } from "../utils/queryParams";
 import { login } from "../api/login";
 import { useAppDispatch } from "../redux/store";
-import { setStatus, setToken, setUser } from "../redux/authSlice";
+import { setStatus, setToken, setUser, fetchStripeAccountInfo } from "../redux/authSlice";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
@@ -52,15 +52,20 @@ export default function LoginPage() {
     setQueryParam("role", newRole);
     setValue("userType", newRole);
   };
+  const [message, setMessage] = useState<string | null>(null);
 
   const onSubmit: SubmitHandler<LoginForm> = async (
     data: LoginForm,
   ): Promise<void> => {
     try {
       const response = await login(data);
+      console.log("Login response:", response);
+      console.log("User object:", response.user);
+      console.log("Stripe ID:", response.user?.stripeId);
       dispatch(setToken(response.accessToken));
       dispatch(setUser(response.user));
-      toast.success("Login successful!");
+      dispatch(fetchStripeAccountInfo(response.user?.stripeId));
+      toast.success(response.message);
 
       const dashboard = response.user.role.toLowerCase();
       if (dashboard === "teacher") {

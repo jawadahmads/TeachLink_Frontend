@@ -11,6 +11,7 @@ import { setUser } from "../../../redux/authSlice";
 import { userInfo } from "../../../api/userInfo";
 import { setUserInfo } from "../../../redux/userInfoSlice";
 import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 interface DayAvailability {
   day: string;
@@ -22,6 +23,7 @@ export function useManageProfile() {
   const teacherInfo = useAppSelector((state) => state.info.userInfo);
   const dispatch = useAppDispatch();
 
+  const navigate = useNavigate();
   const [newSubject, setNewSubject] = useState("");
   const [newLanguage, setNewLanguage] = useState("");
   const [availabilityData, setAvailabilityData] = useState<DayAvailability[]>(
@@ -149,6 +151,7 @@ export function useManageProfile() {
 
       dispatch(setUserInfo(response.data));
       toast.success("Profile updated successfully!");
+      navigate("/teacher/publish-gig");
     } catch (error) {
       console.error("Error updating profile:", error);
       toast.error("Failed to update profile");

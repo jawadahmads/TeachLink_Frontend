@@ -18,6 +18,7 @@ interface UserInfo {
   subjects: Subject[];
   languages: Language[];
   availability: Availability[];
+  stripeId?: string;
 }
 
 interface Subject {
@@ -71,5 +72,6 @@ const userInfoSlice = createSlice({
   },
 });
 
-export const { setUserInfo, setLoading, setError, clearUserInfo } = userInfoSlice.actions;
+export const { setUserInfo, setLoading, setError, clearUserInfo } =
+  userInfoSlice.actions;
 export default userInfoSlice.reducer;

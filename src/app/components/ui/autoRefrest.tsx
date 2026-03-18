@@ -1,6 +1,11 @@
 import { useEffect } from "react";
 import { useAppDispatch } from "../../redux/store";
-import { setStatus, setToken, setUser } from "../../redux/authSlice";
+import {
+  setStatus,
+  setToken,
+  setUser,
+  fetchStripeAccountInfo,
+} from "../../redux/authSlice";
 import { refreshToken } from "../../api/refresh";
 
 export function AutoRefresh({ children }: { children: React.ReactNode }) {
@@ -8,13 +13,18 @@ export function AutoRefresh({ children }: { children: React.ReactNode }) {
 
   const callForRefreshToken = async () => {
     try {
-      const response = await refreshToken(); // TypeScript knows its type
+      const response = await refreshToken();
+      // console.log("Refresh response:", response);
+      // console.log("Stripe ID from refresh:", response.user?.stripeId);
       dispatch(setToken(response.accessToken));
       dispatch(setUser(response.user));
+      dispatch(setStatus("authenticated"));
+      const stripeResult = await dispatch(
+        fetchStripeAccountInfo(response.user?.stripeId),
+      );
+      console.log("Stripe account status from refresh:", stripeResult.payload);
     } catch (error) {
       console.error("Refresh failed:", error);
-      dispatch(setStatus("unauthenticated"));
-    } finally {
       dispatch(setStatus("unauthenticated"));
     }
   };
