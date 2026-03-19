@@ -1,85 +1,69 @@
 import { GraduationCap, Award, FileText, Info } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
-import { motion } from "motion/react";
-
-const itemVariants = {
-  hidden: { y: 30, opacity: 0, scale: 0.95 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.6,
-      ease: [0.25, 0.46, 0.45, 0.94],
-    },
-  },
-};
-
-interface TeacherInfo {
-  bio?: string;
-  education?: string;
-  experience?: string;
-}
 
 interface GigDetailsProps {
-  teacherInfo: TeacherInfo | null;
+  teacherInfo: {
+    bio?: string;
+    education?: string;
+    experience?: string;
+  } | null;
 }
 
 export function GigDetails({ teacherInfo }: GigDetailsProps) {
   return (
-    <Card className="border-none shadow-xl bg-card/50 backdrop-blur-xl rounded-[32px] overflow-hidden">
-      <CardHeader className="p-8 pb-0">
-        <CardTitle className="text-xl font-black flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-primary/10 text-primary">
-            <Info className="h-5 w-5" />
+    <Card className="border border-border/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] bg-card/40 backdrop-blur-3xl rounded-[48px] overflow-hidden relative group/card transition-all duration-700 hover:shadow-primary/5">
+      <CardHeader className="p-10 md:p-14 pb-0 relative z-10">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="p-3 rounded-2xl bg-primary/10 text-primary shadow-inner">
+            <Info className="h-6 w-6" />
           </div>
-          Professional Background
-        </CardTitle>
+          <CardTitle className="text-3xl font-black tracking-tight">Academic Pedigree</CardTitle>
+        </div>
       </CardHeader>
-      <CardContent className="p-8 space-y-6">
-        <motion.div variants={itemVariants} className="grid md:grid-cols-2 gap-4">
-          <div className="p-5 rounded-3xl bg-muted/30 border border-border/50 flex items-center gap-4 transition-all hover:bg-muted/50">
-            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-              <GraduationCap className="h-6 w-6" />
+      
+      <CardContent className="p-10 md:p-14 space-y-10 relative z-10">
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="p-8 rounded-[32px] bg-background/20 border border-border/10 flex items-center gap-6 transition-all group/item hover:bg-background/40 hover:-translate-y-1 duration-500">
+            <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center text-primary shrink-0 shadow-inner group-hover/item:scale-110 transition-transform duration-500">
+              <GraduationCap className="h-7 w-7" />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-0.5">
+              <p className="font-black text-sm uppercase tracking-widest text-muted-foreground mb-1">
                 Education
               </p>
-              <p className="font-bold leading-tight">
-                {teacherInfo?.education || "Not specified"}
+              <p className="text-xl font-black leading-tight tracking-tight">
+                {teacherInfo?.education || "Credentials Pending"}
               </p>
             </div>
           </div>
 
-          <div className="p-5 rounded-3xl bg-muted/30 border border-border/50 flex items-center gap-4 transition-all hover:bg-muted/50">
-            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-              <Award className="h-6 w-6" />
+          <div className="p-8 rounded-[32px] bg-background/20 border border-border/10 flex items-center gap-6 transition-all group/item hover:bg-background/40 hover:-translate-y-1 duration-500">
+            <div className="w-14 h-14 rounded-2xl bg-purple-500/20 flex items-center justify-center text-purple-400 shrink-0 shadow-inner group-hover/item:scale-110 transition-transform duration-500">
+              <Award className="h-7 w-7" />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-0.5">
+              <p className="font-black text-sm uppercase tracking-widest text-muted-foreground mb-1">
                 Experience
               </p>
-              <p className="font-bold leading-tight">
-                {teacherInfo?.experience || "Not specified"}
+              <p className="text-xl font-black leading-tight tracking-tight">
+                {teacherInfo?.experience || "Experience Pending"}
               </p>
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div variants={itemVariants}>
-          <div className="space-y-3">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1 flex items-center gap-2">
-              <FileText className="h-3 w-3" />
-              Teacher Bio
+        <div className="space-y-4">
+          <p className="font-black text-sm uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            Bio
+          </p>
+          <div className="p-10 rounded-[32px] bg-background/20 border border-border/10 transition-all hover:bg-background/40 duration-500 shadow-inner relative overflow-hidden group/bio">
+            <div className="absolute top-0 left-0 w-1 h-full bg-primary/20 group-hover/bio:bg-primary transition-colors" />
+            <p className="text-xl font-medium text-muted-foreground/80 leading-relaxed italic relative z-10">
+              "{teacherInfo?.bio || "No biographical data provided in registry."}"
             </p>
-            <div className="p-6 rounded-[32px] bg-muted/30 border border-border/50 transition-all hover:bg-muted/50">
-              <p className="font-medium text-muted-foreground leading-relaxed italic">
-                "{teacherInfo?.bio || "No bio provided"}"
-              </p>
-            </div>
           </div>
-        </motion.div>
+        </div>
       </CardContent>
     </Card>
   );

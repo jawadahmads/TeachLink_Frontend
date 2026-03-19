@@ -20,9 +20,9 @@ export function AutoRefresh({ children }: { children: React.ReactNode }) {
       dispatch(setUser(response.user));
       dispatch(setStatus("authenticated"));
       const stripeResult = await dispatch(
-        fetchStripeAccountInfo(response.user?.stripeId),
+        fetchStripeAccountInfo(response.user?.stripeId as string),
       );
-      console.log("Stripe account status from refresh:", stripeResult.payload);
+      // console.log("Stripe account status from refresh:", stripeResult.payload);
     } catch (error) {
       console.error("Refresh failed:", error);
       dispatch(setStatus("unauthenticated"));

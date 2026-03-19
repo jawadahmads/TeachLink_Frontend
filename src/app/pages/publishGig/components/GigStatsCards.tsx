@@ -1,4 +1,17 @@
 import { DollarSign, Globe } from "lucide-react";
+import { motion } from "motion/react";
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+      ease: [0.22, 1, 0.36, 1] as any,
+    },
+  },
+};
 
 interface GigStatsCardsProps {
   hourlyRate?: number;
@@ -7,34 +20,48 @@ interface GigStatsCardsProps {
 
 export function GigStatsCards({ hourlyRate, languages }: GigStatsCardsProps) {
   return (
-    <div className="space-y-4">
-      <div className="p-5 rounded-3xl bg-muted/30 border border-border/50 flex items-center gap-4 transition-all hover:bg-muted/50">
-        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-          <DollarSign className="h-6 w-6" />
+    <div className="space-y-6">
+      <motion.div
+        variants={itemVariants}
+        className="p-8 rounded-[32px] bg-card/40 backdrop-blur-3xl border border-border/10 flex items-center gap-6 transition-all group/stat hover:bg-background/20 duration-500"
+      >
+        <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center text-primary shrink-0 shadow-inner group-hover/stat:scale-110 transition-transform duration-500">
+          <DollarSign className="h-8 w-8" />
         </div>
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-0.5">
-            Hourly Rate
+          <p className="font-black text-sm uppercase tracking-widest text-muted-foreground mb-1">
+            Hourly Mastery
           </p>
-          <p className="text-2xl font-black text-primary leading-none">
-            ${hourlyRate}<span className="text-sm font-bold text-muted-foreground ml-1">/hr</span>
-          </p>
+          <div className="flex items-baseline gap-1">
+            <span className="text-3xl font-black tracking-tighter text-foreground">${hourlyRate}</span>
+            <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest">/hr</span>
+          </div>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="p-5 rounded-3xl bg-muted/30 border border-border/50 flex items-center gap-4 transition-all hover:bg-muted/50">
-        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-          <Globe className="h-6 w-6" />
+      <motion.div
+        variants={itemVariants}
+        className="p-8 rounded-[32px] bg-card/40 backdrop-blur-3xl border border-border/10 flex items-center gap-6 transition-all group/stat hover:bg-background/20 duration-500"
+      >
+        <div className="w-16 h-16 rounded-2xl bg-blue-500/20 flex items-center justify-center text-blue-400 shrink-0 shadow-inner group-hover/stat:scale-110 transition-transform duration-500">
+          <Globe className="h-8 w-8" />
         </div>
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-0.5">
-            Languages
+          <p className="font-black text-sm uppercase tracking-widest text-muted-foreground mb-1">
+            Linguistic Range
           </p>
-          <p className="text-lg font-black leading-tight">
-            {Array.isArray(languages) ? languages.join(", ") : languages}
-          </p>
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-black tracking-tight text-foreground">
+              {Array.isArray(languages) ? languages.slice(0, 2).join(", ") : languages}
+            </span>
+            {Array.isArray(languages) && languages.length > 2 && (
+              <span className="text-[10px] font-black text-primary/60 bg-primary/10 px-2 py-0.5 rounded-lg">
+                +{languages.length - 2}
+              </span>
+            )}
+          </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

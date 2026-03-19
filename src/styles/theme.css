@@ -137,8 +137,14 @@ html {
     @apply border-border outline-ring/50;
   }
 
+  html {
+    font-size: var(--font-size);
+    font-family: 'Outfit', sans-serif;
+  }
+
   body {
     @apply bg-background text-foreground;
+    font-family: 'Outfit', sans-serif;
   }
 
   /**

@@ -1,5 +1,6 @@
 import { Toaster } from "sonner";
 import { motion } from "motion/react";
+import { Fingerprint } from "lucide-react";
 import { Form } from "../../components/ui/form";
 import { useManageProfile } from "./hooks/useManageProfile";
 import { ProfileHeader } from "./components/ProfileHeader";
@@ -28,7 +29,7 @@ const itemVariants = {
     opacity: 1,
     transition: {
       duration: 0.5,
-      ease: "easeOut",
+      ease: [0.22, 1, 0.36, 1] as any,
     },
   },
 };
@@ -45,6 +46,7 @@ export default function ManageProfile() {
     availabilityData,
     setAvailabilityData,
     isSubmitting,
+    isLoading,
     handleAddSubject,
     handleRemoveSubject,
     handleAddLanguage,
@@ -52,23 +54,35 @@ export default function ManageProfile() {
     onSubmit,
   } = useManageProfile();
 
+  if (isLoading) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="min-h-screen bg-background flex items-center justify-center"
+      >
+        <div className="w-20 h-20 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </motion.div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden pb-20">
+    <div className="min-h-screen bg-background relative overflow-hidden pb-20 font-medium">
       <Toaster richColors />
-      {/* Decorative Background */}
+      {/* Premium Decorative Background */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-[-5%] left-[-5%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[10%] right-[-5%] w-[30%] h-[30%] bg-purple-500/5 rounded-full blur-[100px]" />
+        <div className="absolute top-[-10%] left-[-5%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[160px] animate-pulse-slow" />
+        <div className="absolute bottom-[5%] right-[-10%] w-[45%] h-[45%] bg-purple-500/10 rounded-full blur-[140px] animate-pulse-slow" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16 md:py-20">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form onSubmit={form.handleSubmit(onSubmit) as any}>
             <motion.div
               initial="hidden"
               animate="visible"
               variants={containerVariants}
-              className="space-y-10"
+              className="space-y-8"
             >
               {/* Header */}
               <motion.div variants={itemVariants}>
@@ -78,9 +92,9 @@ export default function ManageProfile() {
                 />
               </motion.div>
 
-              <div className="grid lg:grid-cols-3 gap-10">
+              <div className="grid lg:grid-cols-3 gap-8 items-start">
                 {/* Left Column - Main Details */}
-                <div className="lg:col-span-2 space-y-10">
+                <div className="lg:col-span-2 space-y-8">
                   {/* Profile Overview */}
                   <motion.div variants={itemVariants}>
                     <PersonalOverview control={form.control} watch={watch} />
@@ -101,7 +115,7 @@ export default function ManageProfile() {
                 </div>
 
                 {/* Right Column - Secondary Controls */}
-                <div className="space-y-10">
+                <div className="space-y-8">
                   {/* Subjects */}
                   <motion.div variants={itemVariants}>
                     <Expertise

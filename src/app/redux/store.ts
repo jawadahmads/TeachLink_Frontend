@@ -1,7 +1,7 @@
 import authReducer from "./authSlice";
-import process from "process";
 import userInfoReducer from "./userInfoSlice";
 import gigInfoReducer from "./gigSlice";
+import bookingReducer from "./bookingSlice";
 
 import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
@@ -11,6 +11,7 @@ export const store = configureStore({
     auth: authReducer,
     info: userInfoReducer,
     gig: gigInfoReducer,
+    booking: bookingReducer,
   },
 
   middleware: (getDefaultMiddleware) =>
@@ -18,7 +19,7 @@ export const store = configureStore({
       // disable strict serializable checks for e.g. non-serializable values (tokens etc.)
       serializableCheck: false,
     }),
-  devTools: process.env.NODE_ENV !== "production",
+  devTools: import.meta.env.MODE !== "production",
 });
 
 export type RootState = ReturnType<typeof store.getState>;

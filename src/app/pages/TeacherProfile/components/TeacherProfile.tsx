@@ -37,7 +37,7 @@ const itemVariants = {
     opacity: 1,
     transition: {
       duration: 0.5,
-      ease: "easeOut",
+      ease: [0.22, 1, 0.36, 1] as any,
     },
   },
 };
@@ -130,7 +130,7 @@ export default function TeacherProfile() {
             student?: { name: string; avatar?: string };
           }) => ({
             id: r.id,
-            studentId: r.studentId || r.student?.id || "",
+            studentId: r.studentId || (r.student as any)?.id || "",
             studentName: r.student?.name || "Student",
             studentAvatar: r.student?.avatar || "",
             teacherId: teacherId,
@@ -143,19 +143,21 @@ export default function TeacherProfile() {
       : [];
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-[-5%] left-[-5%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[10%] right-[-5%] w-[30%] h-[30%] bg-blue-500/5 rounded-full blur-[100px]" />
+    <div className="min-h-screen bg-background relative overflow-hidden font-medium text-foreground">
+      {/* Premium Decorative Background */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10 text-primary">
+        <div className="absolute top-[-5%] left-[-5%] w-[45%] h-[45%] bg-primary/10 rounded-full blur-[160px] animate-pulse-slow" />
+        <div className="absolute bottom-[10%] right-[-5%] w-[35%] h-[35%] bg-blue-500/10 rounded-full blur-[140px] animate-pulse-slow" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16 pb-32">
         <motion.div
           initial="hidden"
           animate="visible"
           variants={containerVariants}
-          className="space-y-10"
+          className="space-y-16"
         >
+          {/* Main Hero Section */}
           <motion.div variants={itemVariants}>
             <TeacherHero
               teacherId={teacherId}
@@ -176,39 +178,43 @@ export default function TeacherProfile() {
             />
           </motion.div>
 
-          <div className="grid lg:grid-cols-3 gap-10">
-            <div className="lg:col-span-2 space-y-10">
+          <div className="grid lg:grid-cols-3 gap-16">
+            {/* Left Column: Interactive Content */}
+            <div className="lg:col-span-2 space-y-16">
               <Tabs defaultValue="about" className="w-full">
-                <TabsList className="w-full h-16 bg-card/30 backdrop-blur-xl rounded-2xl p-2 border border-border/50">
-                  <TabsTrigger
-                    value="about"
-                    className="flex-1 rounded-xl font-black text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground shadow-sm"
-                  >
-                    About Me
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="reviews"
-                    className="flex-1 rounded-xl font-black text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground shadow-sm"
-                  >
-                    Student Reviews ({teacherReviews.length})
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="availability"
-                    className="flex-1 rounded-xl font-black text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground shadow-sm"
-                  >
-                    Availability
-                  </TabsTrigger>
-                </TabsList>
+                <div className="mb-10">
+                  <TabsList className="bg-background/20 backdrop-blur-md h-16 p-2 gap-2 rounded-[32px] border border-border/10 inline-flex shadow-inner">
+                    <TabsTrigger
+                      value="about"
+                      className="rounded-[24px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg shadow-none font-bold text-sm px-10 h-full transition-all duration-500"
+                    >
+                      Biography
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="reviews"
+                      className="rounded-[24px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg shadow-none font-bold text-sm px-10 h-full transition-all duration-500"
+                    >
+                      Student Echoes ({teacherReviews.length})
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="availability"
+                      className="rounded-[24px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg shadow-none font-bold text-sm px-10 h-full transition-all duration-500"
+                    >
+                      Availability
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
 
                 <AnimatePresence mode="wait">
                   <TabsContent
                     value="about"
-                    className="mt-8 focus-visible:ring-0"
+                    className="mt-0 focus-visible:ring-0"
                   >
                     <motion.div
-                      initial={{ opacity: 0, y: 10 }}
+                      initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as any }}
                     >
                       <TeacherAbout
                         teacherBio={teacherBio}
@@ -221,11 +227,13 @@ export default function TeacherProfile() {
 
                   <TabsContent
                     value="reviews"
-                    className="mt-8 focus-visible:ring-0"
+                    className="mt-0 focus-visible:ring-0"
                   >
                     <motion.div
-                      initial={{ opacity: 0, y: 10 }}
+                      initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as any }}
                     >
                       <TeacherReviews
                         reviews={teacherReviews}
@@ -236,11 +244,13 @@ export default function TeacherProfile() {
 
                   <TabsContent
                     value="availability"
-                    className="mt-8 focus-visible:ring-0"
+                    className="mt-0 focus-visible:ring-0"
                   >
                     <motion.div
-                      initial={{ opacity: 0, y: 10 }}
+                      initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as any }}
                     >
                       <TeacherAvailability
                         availability={availability}
@@ -255,7 +265,8 @@ export default function TeacherProfile() {
               </Tabs>
             </div>
 
-            <div className="space-y-8">
+            {/* Right Column: Dynamic Data Insights */}
+            <div className="space-y-12">
               <motion.div variants={itemVariants}>
                 <RatingBreakdown reviews={teacherReviews} />
               </motion.div>

@@ -53,11 +53,26 @@ export default function ChatPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // When messages change (new message sent/received), scroll smoothly to bottom
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behavior: "smooth" });
+      const timer = setTimeout(() => {
+        scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+      }, 50);
+      return () => clearTimeout(timer);
     }
-  }, [messages, selectedChatId]);
+  }, [messages]);
+
+  // When switching conversations, jump to bottom instantly
+  useEffect(() => {
+    if (scrollRef.current) {
+      // Small delay to ensure the messages for the new chat are rendered
+      const timer = setTimeout(() => {
+        scrollRef.current?.scrollIntoView({ behavior: "auto", block: "end" });
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedChatId]);
 
   // Group messages by conversation
   const conversations = mockTeachers.slice(0, 5).map((teacher) => {
@@ -141,7 +156,7 @@ export default function ChatPage() {
               display:
                 !isSidebarOpen && window.innerWidth < 768 ? "none" : "flex",
             }}
-            className="flex-shrink-0 border-r border-border flex flex-col bg-card/30"
+            className="flex-shrink-0 border-r border-border flex flex-col bg-card/30 min-h-0"
           >
             <div className="p-6 border-b border-border/50">
               <div className="flex items-center justify-between mb-6">
@@ -232,7 +247,7 @@ export default function ChatPage() {
           </motion.div>
 
           {/* RIGHT: Chat Area */}
-          <div className="flex-1 flex flex-col bg-background/20 relative">
+          <div className="flex-1 flex flex-col bg-background/20 relative min-h-0">
             <AnimatePresence mode="wait">
               {selectedConversation ? (
                 <motion.div
@@ -240,7 +255,7 @@ export default function ChatPage() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className="flex-1 flex flex-col h-full"
+                  className="flex-1 flex flex-col min-h-0"
                 >
                   {/* Chat Header */}
                   <div className="p-4 md:p-6 border-b border-border/50 flex items-center justify-between bg-card/30 backdrop-blur-md z-20">
@@ -372,7 +387,7 @@ export default function ChatPage() {
                           </motion.div>
                         );
                       })}
-                      <div ref={scrollRef} />
+                      <div ref={scrollRef} className="h-4" />
                     </div>
                   </ScrollArea>
 

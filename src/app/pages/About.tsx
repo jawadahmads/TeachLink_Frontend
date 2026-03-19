@@ -13,7 +13,12 @@ import {
   Zap,
   CheckCircle2,
   TrendingUp,
-  GraduationCap
+  GraduationCap,
+  History,
+  Compass,
+  Layers,
+  ShieldCheck,
+  Cpu
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
@@ -27,196 +32,213 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.15,
     },
   },
 };
 
 const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
+  hidden: { y: 40, opacity: 0 },
   visible: {
     y: 0,
     opacity: 1,
     transition: {
-      duration: 0.5,
-      ease: "easeOut",
+      duration: 0.8,
+      ease: [0.22, 1, 0.36, 1] as any,
     },
   },
 };
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Decorative Background */}
+    <div className="min-h-screen bg-background relative overflow-hidden font-medium">
+      {/* Cinematic Decorative Background */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-[-5%] left-[-5%] w-[45%] h-[45%] bg-primary/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[10%] right-[-5%] w-[35%] h-[35%] bg-blue-500/5 rounded-full blur-[100px]" />
-        <div className="absolute top-[30%] right-[10%] w-[20%] h-[20%] bg-purple-500/5 rounded-full blur-[80px]" />
+        <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-primary/5 rounded-full blur-[160px] animate-pulse-slow" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[140px] animate-pulse-slow" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full opacity-[0.02] pointer-events-none">
+           <div className="w-full h-full bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:40px_40px]" />
+        </div>
       </div>
 
       <motion.div 
         initial="hidden" 
         animate="visible" 
         variants={containerVariants}
+        className="space-y-32 pb-32"
       >
-        {/* Hero Section */}
-        <section className="relative pt-24 pb-20 px-4 text-center">
-          <div className="max-w-5xl mx-auto">
-            <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest mb-6">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>Pioneering Education</span>
+        {/* Cinematic Hero Section */}
+        <section className="relative pt-32 md:pt-48 pb-20 px-6 text-center">
+          <div className="max-w-6xl mx-auto">
+            <motion.div variants={itemVariants} className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.3em] mb-12 shadow-inner">
+              <History className="h-4 w-4 animate-pulse" />
+              <span>Foundational Chronicle</span>
             </motion.div>
             
             <motion.h1 
               variants={itemVariants}
-              className="text-5xl md:text-7xl font-black tracking-tight text-foreground mb-8 leading-[1.1]"
+              className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-foreground mb-12 leading-[0.85] relative"
             >
-              Reimagining How the <br />
-              <span className="text-primary">World Learns</span>
+              Nexus <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">
+                Foundations
+              </span>
+              <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-48 h-48 bg-primary/20 blur-[100px] -z-10" />
             </motion.h1>
             
             <motion.p 
               variants={itemVariants}
-              className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-medium mb-12"
+              className="text-2xl md:text-3xl text-muted-foreground max-w-4xl mx-auto leading-relaxed font-bold mb-16"
             >
-              TeachLink was born from a simple belief: that quality education shouldn't be limited by geography. 
-              We're building the infrastructure for the next generation of global knowledge sharing.
+              TeachLink is more than a platform; it's a <span className="text-foreground">pedagogical transmission center</span>. 
+              We're architecting the global infrastructure for the next generation of academic intelligence.
             </motion.p>
             
-            <motion.div variants={itemVariants} className="flex flex-wrap justify-center gap-4">
+            <motion.div variants={itemVariants} className="flex flex-wrap justify-center gap-6">
               <Link to="/search">
-                <Button size="lg" className="h-16 px-10 rounded-full font-black text-lg shadow-xl shadow-primary/20 group">
-                  Start Your Journey
-                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                <Button size="lg" className="h-20 px-12 rounded-[28px] font-black text-xs uppercase tracking-widest shadow-[0_20px_40px_-10px_rgba(var(--primary),0.3)] hover:shadow-primary/50 transition-all group bg-primary relative overflow-hidden">
+                  <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 slant" />
+                  <span className="relative z-10 flex items-center gap-3">
+                    Initiate Link <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform" />
+                  </span>
                 </Button>
               </Link>
               <Link to="/signup?role=teacher">
-                <Button size="lg" variant="outline" className="h-16 px-10 rounded-full font-black text-lg border-2">
-                  Join as an Expert
+                <Button size="lg" variant="outline" className="h-20 px-12 rounded-[28px] font-black text-xs uppercase tracking-widest border-2 border-border/10 bg-background/40 backdrop-blur-xl hover:bg-background/60 transition-all">
+                  Broadcast Expertise
                 </Button>
               </Link>
             </motion.div>
           </div>
         </section>
 
-        {/* Stats Section */}
-        <section className="py-20 px-4">
-          <div className="max-w-7xl mx-auto p-12 rounded-[40px] bg-card/50 backdrop-blur-xl border border-border/50 shadow-2xl relative overflow-hidden">
-             <div className="absolute top-0 right-0 p-8 opacity-5">
-                <Globe className="w-64 h-64 rotate-12" />
-             </div>
-             <div className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center relative z-10">
+        {/* Immersive Stats Matrix */}
+        <section className="px-6 relative">
+          <div className="max-w-7xl mx-auto">
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                {[
-                 { label: "Active Students", value: "25k+", icon: Users, color: "text-blue-500" },
-                 { label: "Verified Tutors", value: "1.2k+", icon: Award, color: "text-primary" },
-                 { label: "Subjects Taught", value: "85+", icon: BookOpen, color: "text-purple-500" },
-                 { label: "Global Reach", value: "140+", icon: Globe, color: "text-green-500" },
+                 { label: "Neural Connections", value: "25k+", icon: Users, color: "text-blue-500", bg: "bg-blue-500/10" },
+                 { label: "Elite Mentors", value: "1.2k+", icon: ShieldCheck, color: "text-primary", bg: "bg-primary/10" },
+                 { label: "Subject Clusters", value: "85+", icon: Layers, color: "text-purple-500", bg: "bg-purple-500/10" },
+                 { label: "Global Reach", value: "140+", icon: Globe, color: "text-green-500", bg: "bg-green-500/10" },
                ].map((stat, i) => (
-                 <motion.div key={i} variants={itemVariants} className="space-y-2">
-                    <div className={`w-12 h-12 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-4 ${stat.color}`}>
-                       <stat.icon className="h-6 w-6" />
+                 <motion.div 
+                  key={i} 
+                  variants={itemVariants} 
+                  whileHover={{ y: -10, scale: 1.02 }}
+                  className="p-10 rounded-[40px] bg-card/40 backdrop-blur-3xl border border-border/10 shadow-2xl group transition-all duration-500"
+                 >
+                    <div className={`w-14 h-14 rounded-2xl ${stat.bg} flex items-center justify-center mb-8 border border-border/5 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
+                       <stat.icon className={`h-7 w-7 ${stat.color} group-hover:animate-pulse`} />
                     </div>
-                    <h3 className="text-4xl font-black">{stat.value}</h3>
-                    <p className="text-sm font-black uppercase tracking-widest text-muted-foreground/60">{stat.label}</p>
+                    <h3 className="text-5xl font-black mb-2 tracking-tighter text-foreground">{stat.value}</h3>
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40">{stat.label}</p>
                  </motion.div>
                ))}
              </div>
           </div>
         </section>
 
-        {/* Our Story Section */}
-        <section className="py-24 px-4">
-          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20 items-center">
-            <motion.div variants={itemVariants} className="relative">
-              <div className="absolute -top-10 -left-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl" />
-              <div className="relative rounded-[48px] overflow-hidden border-8 border-background shadow-2xl">
+        {/* Narrative Shard Section */}
+        <section className="py-24 px-6 relative overflow-hidden">
+           <div className="absolute top-1/2 left-0 -translate-y-1/2 w-64 h-64 bg-primary/5 blur-[120px] rounded-full" />
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-24 items-center">
+            <motion.div variants={itemVariants} className="relative group">
+              <div className="absolute -inset-4 bg-primary/10 blur-[100px] rounded-full opacity-0 group-hover:opacity-40 transition-opacity duration-1000" />
+              <div className="relative rounded-[60px] overflow-hidden border border-border/10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] bg-background">
                 <img
                   src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&h=1200&fit=crop"
                   alt="Our Team"
-                  className="w-full h-auto grayscale hover:grayscale-0 transition-all duration-700"
+                  className="w-full h-auto grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-60" />
               </div>
-              <div className="absolute -bottom-10 -right-10 bg-card p-8 rounded-3xl shadow-2xl border border-border max-w-[280px]">
-                 <p className="text-lg font-black mb-2 italic">"Education is the most powerful weapon which you can use to change the world."</p>
-                 <p className="text-xs font-black uppercase tracking-widest text-primary">— Nelson Mandela</p>
-              </div>
+              
+              <motion.div 
+                whileHover={{ scale: 1.05 }}
+                className="absolute -bottom-10 -right-6 lg:-right-12 bg-card/60 backdrop-blur-3xl p-10 rounded-[48px] shadow-2xl border border-border/10 max-w-[320px] z-20"
+              >
+                 <Sparkles className="h-8 w-8 text-primary mb-6 animate-float" />
+                 <p className="text-xl font-black mb-4 leading-snug italic text-transparent bg-clip-text bg-gradient-to-br from-foreground to-foreground/40 text-foreground">"The nexus link isn't just data; it's the transfer of pure human potential."</p>
+                 <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary">Foundutional Directive 01</p>
+              </motion.div>
             </motion.div>
 
-            <motion.div variants={itemVariants} className="space-y-8">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 text-[10px] font-black uppercase tracking-widest">
-                <Target className="h-3.5 w-3.5" />
-                <span>Our Vision</span>
+            <motion.div variants={itemVariants} className="space-y-12">
+              <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[10px] font-black uppercase tracking-[0.3em]">
+                <Compass className="h-4 w-4" />
+                <span>Navigating the Future</span>
               </div>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
-                Democratizing Access to <br />
-                <span className="text-primary">Personalized Learning</span>
+              <h2 className="text-5xl md:text-7xl font-black tracking-tight leading-[0.85] text-foreground">
+                Democratizing <br />
+                The Neural <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Cloud</span>
               </h2>
-              <div className="space-y-6 text-lg text-muted-foreground font-medium leading-relaxed">
+              <div className="space-y-8 text-xl text-muted-foreground font-medium leading-relaxed max-w-xl">
                 <p>
-                  We believe every student deserves a mentor who understands their unique learning style, 
-                  pace, and ambitions. Our platform is more than just a marketplace; it's a ecosystem 
-                  built on trust and pedagogical excellence.
+                  Every transmission on TeachLink is a bridge across geography. We believe your physical coordinates should never dictate your intellectual trajectory.
                 </p>
                 <p>
-                  By leveraging cutting-edge real-time technology, we've removed the physical barriers 
-                  to mentorship. A student in London can now learn data science from an expert in 
-                  Singapore as seamlessly as if they were in the same room.
+                  By leveraging real-time architectural standards, we've created a zero-latency ecosystem where mastery is distributed instantly from the nexus to the learner.
                 </p>
               </div>
-              <div className="grid grid-cols-2 gap-6 pt-4">
-                 <div className="flex items-center gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-green-500" />
-                    <span className="font-bold">100% Vetted Tutors</span>
-                 </div>
-                 <div className="flex items-center gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-green-500" />
-                    <span className="font-bold">HD Video Conferencing</span>
-                 </div>
-                 <div className="flex items-center gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-green-500" />
-                    <span className="font-bold">24/7 Global Support</span>
-                 </div>
-                 <div className="flex items-center gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-green-500" />
-                    <span className="font-bold">Encrypted Payments</span>
-                 </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-8 border-t border-border/10">
+                 {[
+                   { text: "Vetted Intelligence", icon: ShieldCheck },
+                   { text: "Nexus Stream HD", icon: Video },
+                   { text: "Universal Support", icon: Globe },
+                   { text: "Encrypted Shards", icon: Lock }
+                 ].map((feat, i) => (
+                    <div key={i} className="flex items-center gap-4 group/item">
+                       <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover/item:bg-primary group-hover/item:text-white transition-all duration-500 shadow-inner">
+                          <feat.icon className="h-5 w-5" />
+                       </div>
+                       <span className="font-black text-xs uppercase tracking-widest text-foreground/80 group-hover/item:text-primary transition-colors">{feat.text}</span>
+                    </div>
+                 ))}
               </div>
             </motion.div>
           </div>
         </section>
 
-        {/* Values Grid */}
-        <section className="py-24 px-4 bg-muted/30">
-          <div className="max-w-7xl mx-auto text-center mb-16">
-            <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-600 text-[10px] font-black uppercase tracking-widest mb-4">
-              <Heart className="h-3.5 w-3.5" />
-              <span>Core Values</span>
+        {/* Values Matrix Section */}
+        <section className="py-32 px-6 relative bg-card/20 backdrop-blur-3xl border-y border-border/10">
+          <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none">
+             <div className="w-full h-full bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]" />
+          </div>
+          
+          <div className="max-w-7xl mx-auto text-center mb-24 relative z-10">
+            <motion.div variants={itemVariants} className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-500 text-[10px] font-black uppercase tracking-[0.3em] mb-8 shadow-inner">
+              <Heart className="h-4 w-4 fill-current" />
+              <span>Core Directives</span>
             </motion.div>
-            <motion.h2 variants={itemVariants} className="text-4xl md:text-5xl font-black mb-6">Built on Foundation of Trust</motion.h2>
-            <motion.p variants={itemVariants} className="text-xl text-muted-foreground font-medium max-w-2xl mx-auto">
-              Our values guide every decision we make, from the features we build to the teachers we verify.
+            <motion.h2 variants={itemVariants} className="text-5xl md:text-7xl font-black mb-8 tracking-tighter leading-[0.85]">
+              Architecting <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">Trust</span>
+            </motion.h2>
+            <motion.p variants={itemVariants} className="text-2xl text-muted-foreground font-medium max-w-3xl mx-auto leading-relaxed">
+              These directives guide our every transmission, ensuring the Nexus remains a sanctuary for pedagogical expansion.
             </motion.p>
           </div>
 
-          <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-8">
+          <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-10 relative z-10">
             {[
               {
-                title: "Pedagogical Excellence",
-                desc: "We don't just find teachers; we find educators who know how to inspire and adapt to every learner's needs.",
+                title: "Pedagogical Flow",
+                desc: "We prioritize educators who master the art of transmission, adapting high-level concepts into digestible neural packets.",
                 icon: GraduationCap,
                 color: "text-blue-500",
                 bg: "bg-blue-500/10"
               },
               {
-                title: "Safety & Integrity",
-                desc: "Our rigorous 5-step vetting process ensures that every mentor on our platform meets the highest standards.",
+                title: "Nexus Integrity",
+                desc: "Every node in our network undergoes a rigorous verification cycle to maintain the supreme quality of our signal.",
                 icon: Shield,
                 color: "text-primary",
                 bg: "bg-primary/10"
               },
               {
-                title: "Human Connection",
-                desc: "Technology is just the bridge. The real magic happens in the meaningful connection between mentor and student.",
+                title: "Human Resonance",
+                desc: "Beyond the code, we prioritize the frequency of human connection — where real intellectual transformation occurs.",
                 icon: Zap,
                 color: "text-purple-500",
                 bg: "bg-purple-500/10"
@@ -225,13 +247,15 @@ export default function AboutPage() {
               <motion.div
                 key={i}
                 variants={itemVariants}
-                className="group p-10 rounded-[40px] bg-card border border-border/50 hover:shadow-2xl hover:-translate-y-2 transition-all"
+                whileHover={{ y: -20, scale: 1.02 }}
+                className="group p-12 rounded-[60px] bg-background/40 backdrop-blur-2xl border border-border/10 hover:border-primary/20 hover:shadow-[0_40px_80px_-20px_rgba(var(--primary),0.1)] transition-all duration-700 relative overflow-hidden"
               >
-                <div className={`w-16 h-16 rounded-[24px] ${value.bg} flex items-center justify-center mb-8 group-hover:scale-110 transition-transform`}>
-                  <value.icon className={`h-8 w-8 ${value.color}`} />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl rounded-full translate-x-16 -translate-y-16 group-hover:scale-150 transition-transform duration-1000" />
+                <div className={`w-20 h-20 rounded-[32px] ${value.bg} flex items-center justify-center mb-10 group-hover:scale-110 group-hover:-rotate-12 transition-all duration-700 shadow-inner border border-border/5`}>
+                  <value.icon className={`h-10 w-10 ${value.color}`} />
                 </div>
-                <h3 className="text-2xl font-black mb-4">{value.title}</h3>
-                <p className="text-muted-foreground font-medium leading-relaxed">
+                <h3 className="text-3xl font-black mb-6 tracking-tight text-foreground">{value.title}</h3>
+                <p className="text-lg text-muted-foreground/80 font-medium leading-relaxed">
                   {value.desc}
                 </p>
               </motion.div>
@@ -239,72 +263,91 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Team Section (Modern Grid) */}
-        <section className="py-24 px-4">
+        {/* Elite Team Gallery */}
+        <section className="py-32 px-6">
           <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
-              <div className="max-w-2xl">
-                <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-600 text-[10px] font-black uppercase tracking-widest mb-4">
-                  <Users className="h-3.5 w-3.5" />
-                  <span>The Minds Behind</span>
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-24 gap-12 border-b border-border/10 pb-16">
+              <div className="max-w-3xl">
+                <motion.div variants={itemVariants} className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 text-[10px] font-black uppercase tracking-[0.3em] mb-8 shadow-inner">
+                  <Cpu className="h-4 w-4" />
+                  <span>The Nexus Architects</span>
                 </motion.div>
-                <motion.h2 variants={itemVariants} className="text-4xl md:text-5xl font-black">Meet Our Founders</motion.h2>
+                <motion.h2 variants={itemVariants} className="text-5xl md:text-8xl font-black tracking-tight leading-[0.85] text-foreground">
+                  The <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">Intelligence</span> <br /> Behind
+                </motion.h2>
               </div>
-              <motion.p variants={itemVariants} className="text-xl text-muted-foreground font-medium max-w-md">
-                A diverse team of educators, engineers, and designers working to change the future of learning.
+              <motion.p variants={itemVariants} className="text-2xl text-muted-foreground font-medium max-w-md leading-relaxed">
+                A specialized unit of designers, engineers, and visionaries dedicated to the science of global knowledge transfer.
               </motion.p>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
               {[
-                { name: "Sarah Jenkins", role: "CEO & Co-founder", bio: "Former Educator with 15+ years in EdTech innovation.", img: "https://i.pravatar.cc/400?img=32" },
-                { name: "David Chen", role: "CTO", bio: "Engineering veteran focused on real-time collaboration systems.", img: "https://i.pravatar.cc/400?img=12" },
-                { name: "Marcus Thorne", role: "Head of Pedagogy", bio: "PhD in Learning Sciences, specializing in remote mentorship.", img: "https://i.pravatar.cc/400?img=11" }
+                { name: "Sarah Jenkins", role: "Chief Executive Agent", bio: "Architecting the pedagogical future with 15+ cycles of EdTech expertise.", img: "https://i.pravatar.cc/400?img=32" },
+                { name: "David Chen", role: "Transmission Lead", bio: "Leading the core engineering team on zero-latency neural stream systems.", img: "https://i.pravatar.cc/400?img=12" },
+                { name: "Marcus Thorne", role: "Pedagogical Scientist", bio: "PhD in Learning Sciences, specializing in remote hyper-mentorship.", img: "https://i.pravatar.cc/400?img=11" }
               ].map((member, i) => (
                 <motion.div
                   key={i}
                   variants={itemVariants}
                   className="group relative"
                 >
-                  <div className="aspect-[4/5] rounded-[40px] overflow-hidden mb-6">
+                   <div className="absolute inset-0 bg-primary/5 blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                  <div className="aspect-[4/5] rounded-[60px] overflow-hidden mb-10 border border-border/10 shadow-2xl relative z-10 bg-card active:scale-[0.98] transition-transform duration-500">
                     <img 
                       src={member.img} 
                       alt={member.name} 
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110"
+                      className="w-full h-full object-cover grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000"
                     />
+                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-background to-transparent" />
+                    <div className="absolute bottom-10 left-10 right-10 z-20">
+                       <h3 className="text-3xl font-black text-white mb-2 tracking-tight group-hover:text-primary transition-colors">{member.name}</h3>
+                       <Badge className="bg-primary/20 text-primary border-none text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-lg shadow-inner">{member.role}</Badge>
+                    </div>
                   </div>
-                  <h3 className="text-2xl font-black group-hover:text-primary transition-colors">{member.name}</h3>
-                  <p className="text-sm font-black uppercase tracking-widest text-primary mb-3">{member.role}</p>
-                  <p className="text-muted-foreground font-medium">{member.bio}</p>
+                  <div className="px-6">
+                    <p className="text-lg text-muted-foreground font-medium leading-relaxed max-w-xs">{member.bio}</p>
+                  </div>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Final CTA */}
-        <section className="py-24 px-4 relative">
-          <div className="max-w-6xl mx-auto rounded-[48px] bg-primary p-12 md:p-20 text-center text-primary-foreground overflow-hidden relative shadow-2xl">
-             <div className="absolute top-0 right-0 p-12 opacity-10">
-                <Sparkles className="w-96 h-96 rotate-45" />
+        {/* Final Transmission Section */}
+        <section className="px-6 relative pb-16">
+          <div className="max-w-6xl mx-auto rounded-[80px] bg-card/40 backdrop-blur-3xl p-16 md:p-32 text-center border border-border/10 shadow-[0_60px_120px_-30px_rgba(0,0,0,0.4)] overflow-hidden relative group">
+             {/* Animated Pulses */}
+             <div className="absolute top-0 right-0 p-32 opacity-10 group-hover:scale-125 transition-transform duration-[3000ms]">
+                <Sparkles className="w-[800px] h-[800px] text-primary rotate-45 animate-pulse-slow" />
              </div>
-             <motion.div variants={itemVariants} className="relative z-10">
-                <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight">
-                  Join the Global Learning <br />Revolution Today
+             <div className="absolute bottom-[-20%] left-[-20%] w-[60%] h-[60%] bg-primary/5 rounded-full blur-[160px]" />
+             
+             <motion.div variants={itemVariants} className="relative z-20">
+                <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.3em] mb-12 shadow-inner mx-auto">
+                   <Zap className="h-4 w-4 fill-current" />
+                   <span>Signal Active</span>
+                </div>
+                
+                <h2 className="text-6xl md:text-9xl font-black mb-12 leading-[0.85] tracking-tighter text-foreground">
+                  Initiate Your <br />
+                  Global <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">Sync</span>
                 </h2>
-                <p className="text-xl opacity-90 max-w-2xl mx-auto mb-12 font-medium">
-                  Whether you're looking to master a new skill or share your expertise with the world, 
-                  there's a place for you at TeachLink.
+                
+                <p className="text-2xl md:text-3xl text-muted-foreground max-w-3xl mx-auto mb-16 font-bold leading-relaxed">
+                  The nexus is waiting for your signature. Join the elite network of educators and visionaries today.
                 </p>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                   <Link to="/signup" className="w-full sm:w-auto">
-                    <Button size="lg" variant="secondary" className="w-full h-16 px-12 rounded-full font-black text-xl shadow-xl">
-                      Get Started Free
+                    <Button size="lg" className="w-full sm:w-64 h-24 rounded-[32px] bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white font-black text-xs uppercase tracking-[0.2em] shadow-[0_20px_40px_-10px_rgba(37,99,235,0.4)] hover:shadow-blue-500/60 transition-all relative overflow-hidden group/ctabtn border-none">
+                      <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/ctabtn:translate-x-[100%] transition-transform duration-700 slant" />
+                      <span className="relative z-10">Sync Free</span>
                     </Button>
                   </Link>
-                  <Link to="/about" className="w-full sm:w-auto">
-                    <Button size="lg" variant="outline" className="w-full h-16 px-12 rounded-full font-black text-xl border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary transition-all">
-                      Learn More
+                  <Link to="/" className="w-full sm:w-auto">
+                    <Button size="lg" variant="outline" className="w-full sm:w-64 h-24 rounded-[32px] font-black text-xs uppercase tracking-[0.2em] border-2 border-border/10 hover:bg-background/40 transition-all text-muted-foreground hover:text-foreground">
+                      Return to Home
                     </Button>
                   </Link>
                 </div>
@@ -312,14 +355,36 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Footer Link */}
-        <section className="py-20 text-center">
-           <Link to="/" className="inline-flex items-center gap-2 group">
-              <span className="text-muted-foreground font-bold group-hover:text-primary transition-colors">Back to Home</span>
-              <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+        {/* Footer Navigation Link */}
+        <section className="text-center pt-8">
+           <Link to="/" className="inline-flex items-center gap-4 group/back">
+              <div className="w-12 h-12 rounded-full bg-muted/20 flex items-center justify-center group-hover/back:bg-primary/10 transition-colors">
+                 <ArrowRight className="h-5 w-5 text-muted-foreground group-hover/back:text-primary rotate-180 group-hover/back:-translate-x-1 transition-all" />
+              </div>
+              <span className="text-muted-foreground font-black text-[10px] uppercase tracking-[0.3em] group-hover/back:text-primary transition-colors">Back to Terminal</span>
            </Link>
         </section>
       </motion.div>
     </div>
+  );
+}
+
+function Lock({ className }: { className?: string }) {
+  return (
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="24" 
+      height="24" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      className={className}
+    >
+      <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+    </svg>
   );
 }

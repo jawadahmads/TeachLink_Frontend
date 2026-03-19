@@ -18,32 +18,28 @@ export function PopularityCard({
   sessionCompletion = 100,
 }: PopularityCardProps) {
   return (
-    <Card className="border-none shadow-xl bg-card/50 backdrop-blur-xl rounded-[32px]">
-      <CardHeader>
-        <CardTitle className="text-xl font-black flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-primary" />
+    <Card className="border border-border/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] bg-card/40 backdrop-blur-3xl rounded-[48px] overflow-hidden group">
+      <CardHeader className="p-8 pb-4">
+        <CardTitle className="text-2xl font-black flex items-center gap-3 tracking-tighter">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+            <TrendingUp className="h-5 w-5" />
+          </div>
           Popularity
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="flex items-center justify-between p-4 rounded-2xl bg-muted/50 border border-border/50">
-          <span className="text-sm font-bold text-muted-foreground">
-            Rebooking Rate
-          </span>
-          <span className="font-black text-primary">{rebookingRate}%</span>
-        </div>
-        <div className="flex items-center justify-between p-4 rounded-2xl bg-muted/50 border border-border/50">
-          <span className="text-sm font-bold text-muted-foreground">
-            Response Rate
-          </span>
-          <span className="font-black text-primary">{responseRate}%</span>
-        </div>
-        <div className="flex items-center justify-between p-4 rounded-2xl bg-muted/50 border border-border/50">
-          <span className="text-sm font-bold text-muted-foreground">
-            Session Completion
-          </span>
-          <span className="font-black text-primary">{sessionCompletion}%</span>
-        </div>
+      <CardContent className="p-8 pt-0 space-y-4">
+        {[
+          { label: "Rebooking Rate", value: `${rebookingRate}%` },
+          { label: "Response Rate", value: `${responseRate}%` },
+          { label: "Completion", value: `${sessionCompletion}%` },
+        ].map((item, i) => (
+          <div key={i} className="flex items-center justify-between p-5 rounded-[24px] bg-background/20 border border-border/10 hover:border-primary/20 hover:bg-primary/5 transition-all duration-500">
+            <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest">
+              {item.label}
+            </span>
+            <span className="font-black text-primary text-lg tracking-tighter">{item.value}</span>
+          </div>
+        ))}
       </CardContent>
     </Card>
   );

@@ -18,6 +18,8 @@ import PublishGig from "./pages/publishGig/index";
 import IsAuthenticated from "./components/helper/Authenticated";
 import IsNotAuthenticated from "./components/helper/IsNotAuthenticated";
 import MainLayout from "./components/MainLayout";
+import ReturnPage from "./pages/return";
+
 
 export const router = createBrowserRouter([
   {
@@ -60,6 +62,7 @@ export const router = createBrowserRouter([
           { path: "notifications", Component: NotificationsPage },
           { path: "admin", Component: AdminDashboard },
           { path: "about", Component: AboutPage },
+          { path: "return", Component: ReturnPage },
         ],
       },
     ],

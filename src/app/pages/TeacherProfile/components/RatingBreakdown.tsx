@@ -17,23 +17,26 @@ interface RatingBreakdownProps {
 
 export function RatingBreakdown({ reviews }: RatingBreakdownProps) {
   return (
-    <Card className="border-none shadow-xl bg-card/50 backdrop-blur-xl rounded-[32px] overflow-hidden">
-      <CardHeader>
-        <CardTitle className="text-xl font-black">
+    <Card className="border border-border/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] bg-card/40 backdrop-blur-3xl rounded-[48px] overflow-hidden group">
+      <CardHeader className="p-8 pb-4">
+        <CardTitle className="text-2xl font-black tracking-tighter flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center text-yellow-500 group-hover:scale-110 transition-transform">
+            <Star className="h-5 w-5 fill-current" />
+          </div>
           Performance Profile
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-5">
+      <CardContent className="p-8 pt-0 space-y-6">
         {[5, 4, 3, 2, 1].map((rating) => {
           const count = reviews.filter((r) => r.rating === rating).length;
           const total = reviews.length || 1;
           const percentage = (count / total) * 100;
           return (
-            <div key={rating} className="space-y-1.5">
-              <div className="flex items-center justify-between text-xs font-black">
-                <div className="flex items-center gap-1.5">
-                  <span>{rating} Stars</span>
-                  <div className="flex gap-0.5">
+            <div key={rating} className="space-y-2.5">
+              <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground/60">{rating} Stars</span>
+                  <div className="flex gap-0.5 opacity-40">
                     {[...Array(rating)].map((_, i) => (
                       <Star
                         key={i}
@@ -42,15 +45,18 @@ export function RatingBreakdown({ reviews }: RatingBreakdownProps) {
                     ))}
                   </div>
                 </div>
-                <span className="text-muted-foreground">{count}</span>
+                <span className="text-muted-foreground/40">{count}</span>
               </div>
-              <div className="h-2 bg-muted rounded-full overflow-hidden">
+              <div className="h-3 bg-background/20 rounded-full overflow-hidden border border-border/5">
                 <motion.div
                   initial={{ width: 0 }}
-                  animate={{ width: `${percentage}%` }}
-                  transition={{ duration: 1, delay: 0.5 }}
-                  className="h-full bg-yellow-400 rounded-full shadow-[0_0_10px_rgba(250,204,21,0.5)]"
-                />
+                  whileInView={{ width: `${percentage}%` }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] as any }}
+                  className="h-full bg-yellow-400 rounded-full shadow-[0_0_15px_rgba(250,204,21,0.4)] relative"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
+                </motion.div>
               </div>
             </div>
           );

@@ -1,10 +1,4 @@
 import { Sparkles, ArrowLeft } from "lucide-react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "../../../components/ui/card";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { motion } from "motion/react";
@@ -32,51 +26,32 @@ export function PublishGigHeader({
   onBack,
 }: PublishGigHeaderProps) {
   return (
-    <div>
-      <motion.div variants={itemVariants}>
-        <Button
-          variant="ghost"
+    <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 mb-4">
+      <div className="space-y-6">
+        <button
           onClick={onBack}
-          className="mb-6 h-12 px-4 rounded-xl font-black hover:bg-primary/10"
+          className="inline-flex items-center text-primary font-black text-xs uppercase tracking-[0.2em] group bg-primary/10 px-6 py-2 rounded-full border border-primary/20 hover:bg-primary/20 transition-all mb-4"
         >
-          <ArrowLeft className="mr-2 h-5 w-5" />
-          Back
-        </Button>
-      </motion.div>
+          <ArrowLeft className="mr-3 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+          Back to Elite Dashboard
+        </button>
+        <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.85] text-foreground">
+          Launch Your <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-600 to-indigo-600">
+            Pedagogical Legacy
+          </span>
+        </h1>
+        <p className="text-2xl text-muted-foreground/80 leading-relaxed max-w-2xl font-medium">
+          Broadcast your authority to the global student network and 
+          start receiving high-impact bookings today.
+        </p>
+      </div>
 
-      <motion.div variants={itemVariants}>
-        <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-xl rounded-[40px] overflow-hidden">
-          <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
-            <Sparkles className="w-48 h-48 rotate-12" />
-          </div>
-
-          <CardHeader className="p-8 md:p-12 pb-0">
-            <motion.div
-              variants={itemVariants}
-              className="flex items-center gap-3 mb-2"
-            >
-              <Badge
-                variant="secondary"
-                className="bg-green-500/10 text-green-600 border-none font-black px-4 py-1"
-              >
-                {isPublished ? "Live" : "Draft"}
-              </Badge>
-            </motion.div>
-
-            <motion.div variants={itemVariants}>
-              <CardTitle className="text-3xl md:text-4xl font-black">
-                Publish Your Gig
-              </CardTitle>
-            </motion.div>
-
-            <motion.div variants={itemVariants}>
-              <CardDescription className="text-base font-semibold text-muted-foreground">
-                Make your profile visible to students and start receiving
-                bookings.
-              </CardDescription>
-            </motion.div>
-          </CardHeader>
-        </Card>
+      <motion.div
+        variants={itemVariants}
+        className="hidden lg:block absolute -top-12 -right-8 opacity-10 pointer-events-none -z-10 rotate-12"
+      >
+        <Sparkles className="w-64 h-64 text-primary" />
       </motion.div>
     </div>
   );

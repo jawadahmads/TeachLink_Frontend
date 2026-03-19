@@ -22,30 +22,31 @@ interface BackgroundCredentialsProps {
 
 export function BackgroundCredentials({ control }: BackgroundCredentialsProps) {
   return (
-    <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-xl rounded-[40px] overflow-hidden">
-      <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
-        <GraduationCap className="w-48 h-48 rotate-12" />
+    <Card className="border border-border/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] bg-card/40 backdrop-blur-3xl rounded-[48px] overflow-hidden relative group/card">
+      <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover/card:scale-110 transition-transform duration-1000">
+        <GraduationCap className="w-48 h-48 rotate-12 text-primary" />
       </div>
-      <CardHeader className="p-8 md:p-12 pb-0">
-        <CardTitle className="text-2xl font-black">
-          Background & Credentials
-        </CardTitle>
-        <CardDescription className="text-base font-semibold">
-          Showcase your qualifications and professional journey.
+      <CardHeader className="p-10 md:p-14 pb-0">
+        <div className="flex items-center gap-4 mb-2">
+          <div className="h-1 w-8 bg-primary/30 rounded-full" />
+          <CardTitle className="text-3xl font-black tracking-tighter">Academic Lineage</CardTitle>
+        </div>
+        <CardDescription className="text-lg font-medium text-muted-foreground/60 ml-12">
+          Your credentials and professional evolution.
         </CardDescription>
       </CardHeader>
-      <CardContent className="p-8 md:p-12 space-y-10">
+      <CardContent className="p-10 md:p-14 space-y-8 pt-8">
         <div className="grid sm:grid-cols-2 gap-8">
           <FormField
             control={control}
             name="education"
             render={({ field }) => (
               <FormItem className="space-y-4">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                    <GraduationCap className="h-5 w-5" />
+                <div className="flex items-center gap-4 mb-2">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-sm">
+                    <GraduationCap className="h-6 w-6" />
                   </div>
-                  <FormLabel className="font-black text-lg">
+                  <FormLabel className="font-black text-sm uppercase tracking-widest text-muted-foreground">
                     Education
                   </FormLabel>
                 </div>
@@ -53,7 +54,7 @@ export function BackgroundCredentials({ control }: BackgroundCredentialsProps) {
                   <Input
                     {...field}
                     placeholder="e.g., PhD in Mathematics, MIT"
-                    className="h-14 rounded-2xl border-2 font-bold focus-visible:ring-primary"
+                    className="h-14 rounded-2xl border-border/10 bg-background/20 backdrop-blur-sm font-bold text-base focus-visible:ring-0 focus:border-primary/50 transition-all px-6 placeholder:text-muted-foreground/30 placeholder:font-medium"
                   />
                 </FormControl>
                 <FormMessage />
@@ -65,11 +66,11 @@ export function BackgroundCredentials({ control }: BackgroundCredentialsProps) {
             name="experience"
             render={({ field }) => (
               <FormItem className="space-y-4">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                    <Award className="h-5 w-5" />
+                <div className="flex items-center gap-4 mb-2">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-sm">
+                    <Award className="h-6 w-6" />
                   </div>
-                  <FormLabel className="font-black text-lg">
+                  <FormLabel className="font-black text-sm uppercase tracking-widest text-muted-foreground">
                     Experience
                   </FormLabel>
                 </div>
@@ -77,7 +78,7 @@ export function BackgroundCredentials({ control }: BackgroundCredentialsProps) {
                   <Input
                     {...field}
                     placeholder="e.g., 10+ years teaching experience"
-                    className="h-14 rounded-2xl border-2 font-bold focus-visible:ring-primary"
+                    className="h-14 rounded-2xl border-border/10 bg-background/20 backdrop-blur-sm font-bold text-base focus-visible:ring-0 focus:border-primary/50 transition-all px-6 placeholder:text-muted-foreground/30 placeholder:font-medium"
                   />
                 </FormControl>
                 <FormMessage />

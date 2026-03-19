@@ -70,35 +70,38 @@ export function TeachingSchedule({
   };
 
   return (
-    <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-xl rounded-[40px] overflow-hidden">
-      <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
-        <Calendar className="w-48 h-48 rotate-12" />
+    <Card className="border border-border/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] bg-card/40 backdrop-blur-3xl rounded-[48px] overflow-hidden relative group/card">
+      <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover/card:scale-110 transition-transform duration-1000">
+        <Calendar className="w-48 h-48 rotate-12 text-primary" />
       </div>
-      <CardHeader className="p-8 md:p-12 pb-0">
-        <CardTitle className="text-2xl font-black">Teaching Schedule</CardTitle>
-        <CardDescription className="text-base font-semibold">
-          Set your weekly availability for student bookings.
+      <CardHeader className="p-10 md:p-14 pb-0">
+        <div className="flex items-center gap-4 mb-2">
+          <div className="h-1 w-8 bg-primary/30 rounded-full" />
+          <CardTitle className="text-3xl font-black tracking-tighter">Temporal Horizon</CardTitle>
+        </div>
+        <CardDescription className="text-lg font-medium text-muted-foreground/60 ml-12">
+          Synchronize your professional rhythm with world-class talent.
         </CardDescription>
       </CardHeader>
-      <CardContent className="p-8 md:p-12 space-y-8">
-        <div className="grid sm:grid-cols-2 gap-4">
+      <CardContent className="p-10 md:p-14 space-y-6 pt-8">
+        <div className="grid sm:grid-cols-2 gap-6">
           {availabilityData.map((dayData, idx) => (
             <div
               key={idx}
-              className="p-6 rounded-3xl border-2 border-border/50 bg-card hover:border-primary/50 transition-all group"
+              className="p-6 rounded-[32px] border border-border/10 bg-background/20 backdrop-blur-sm hover:border-primary/40 hover:bg-primary/5 transition-all duration-500 group"
             >
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <Select
                     value={dayData.day}
                     onValueChange={(value) => handleDayChange(idx, value)}
                   >
-                    <SelectTrigger className="w-36 h-8 font-black text-lg bg-transparent border-none focus-visible:ring-0 px-0">
+                    <SelectTrigger className="w-36 h-10 font-black text-sm uppercase tracking-widest bg-transparent border-none focus:ring-0 px-0 text-foreground hover:text-primary transition-all">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="rounded-2xl border-border/10 shadow-2xl">
                       {DAYS.map((day) => (
-                        <SelectItem key={day.value} value={day.value}>
+                        <SelectItem key={day.value} value={day.value} className="font-bold">
                           {day.label}
                         </SelectItem>
                       ))}
@@ -109,22 +112,22 @@ export function TeachingSchedule({
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                  className="h-8 w-8 rounded-xl text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-all opacity-0 group-hover:opacity-100"
                   onClick={() => handleRemoveDay(idx)}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2.5">
                 {dayData.slots.map((slot, sIdx) => (
                   <Badge
                     key={sIdx}
                     variant="secondary"
-                    className="px-3 py-1 font-bold rounded-lg border-none bg-muted hover:bg-red-100 hover:text-red-600 transition-colors cursor-pointer group/slot"
+                    className="px-4 py-1.5 font-black text-[10px] uppercase tracking-widest rounded-full border border-primary/10 bg-primary/5 text-primary hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 transition-all cursor-pointer group/slot shadow-sm"
                     onClick={() => handleRemoveTimeSlot(idx, sIdx)}
                   >
                     {slot}
-                    <X className="ml-2 h-3 w-3 opacity-0 group-hover/slot:opacity-100 transition-opacity" />
+                    <X className="ml-2 h-3 w-3 opacity-40 group-hover/slot:opacity-100 transition-opacity" />
                   </Badge>
                 ))}
                 <AddTimeSlotButton index={idx} onAddTime={handleAddTimeSlot} />
@@ -164,41 +167,43 @@ function AddTimeSlotButton({ index, onAddTime }: AddTimeSlotButtonProps) {
         type="button"
         variant="outline"
         size="sm"
-        className="h-7 rounded-lg font-black text-[10px] uppercase tracking-widest border-dashed"
+        className="h-8 px-4 rounded-full font-black text-[9px] uppercase tracking-[0.2em] border-dashed border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 hover:border-primary/40 transition-all"
         onClick={() => setIsOpen(true)}
       >
-        <Plus className="h-3 w-3 mr-1" /> Add
+        <Plus className="h-3 w-3 mr-2" /> Add Slot
       </Button>
     );
   }
 
   return (
-    <div className="flex gap-1">
+    <div className="flex items-center gap-2 bg-background/40 backdrop-blur-md border border-border/10 p-1 rounded-xl shadow-lg ring-1 ring-primary/10">
       <Input
         type="time"
         value={time}
         onChange={(e) => setTime(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-        className="h-7 w-28 text-xs rounded-lg"
+        className="h-8 w-24 text-[10px] font-black tracking-widest border-none bg-transparent focus-visible:ring-0 p-2"
         autoFocus
       />
-      <Button
-        type="button"
-        size="sm"
-        className="h-7 px-2 font-black"
-        onClick={handleAdd}
-      >
-        <Plus className="h-3 w-3" />
-      </Button>
-      <Button
-        type="button"
-        size="sm"
-        variant="ghost"
-        className="h-7 px-1"
-        onClick={() => setIsOpen(false)}
-      >
-        <X className="h-3 w-3" />
-      </Button>
+      <div className="flex gap-1 pr-1">
+        <Button
+          type="button"
+          size="icon"
+          className="h-7 w-7 rounded-lg bg-primary shadow-sm hover:scale-110 active:scale-95 transition-all"
+          onClick={handleAdd}
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          size="icon"
+          variant="ghost"
+          className="h-7 w-7 rounded-lg text-muted-foreground/40 hover:text-foreground hover:bg-muted/20 transition-all"
+          onClick={() => setIsOpen(false)}
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
     </div>
   );
 }

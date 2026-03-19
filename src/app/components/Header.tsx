@@ -239,7 +239,7 @@ export default function Header({
 
                 {/* User Menu */}
                 <DropdownMenu>
-                  <DropdownMenuTrigger>
+                  <DropdownMenuTrigger >
                     <Button
                       variant="ghost"
                       className="flex items-center gap-2.5 pl-1.5 pr-3 h-11 rounded-2xl hover:bg-primary/5 border border-transparent hover:border-border/50 transition-all focus-visible:ring-0"

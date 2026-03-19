@@ -89,7 +89,7 @@ export function usePublishGig() {
     };
 
     const response = await createGig(gigData);
-    console.log(response);
+    console.log(response);  
     navigate("/search");
   };
 

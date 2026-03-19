@@ -30,6 +30,7 @@ export function useManageProfile() {
     [],
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const subjectsArray =
     teacherInfo && Array.isArray(teacherInfo.subjects)
@@ -41,7 +42,7 @@ export function useManageProfile() {
       : [];
 
   const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileSchema),
+    resolver: zodResolver(profileSchema) as any,
     defaultValues: {
       name: teacherInfo?.name || "",
       avatar: teacherInfo?.avatar || "",
@@ -93,6 +94,7 @@ export function useManageProfile() {
           languages: languagesArray,
           availability: availabilityArray,
         });
+        setIsLoading(false);
       }
     };
 
@@ -137,7 +139,7 @@ export function useManageProfile() {
     );
   };
 
-  const onSubmit = async (data: ProfileFormValues) => {
+  const onSubmit = async (data: any) => {
     setIsSubmitting(true);
     try {
       const userId: string = user?.id || "unknown";
@@ -174,6 +176,7 @@ export function useManageProfile() {
     availabilityData,
     setAvailabilityData,
     isSubmitting,
+    isLoading,
     handleAddSubject,
     handleRemoveSubject,
     handleAddLanguage,

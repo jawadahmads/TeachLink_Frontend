@@ -44,22 +44,20 @@ export function Expertise({
   const subjects = watch("subjects");
 
   return (
-    <Card className="border-none shadow-xl bg-card/50 backdrop-blur-xl rounded-[32px] overflow-hidden">
-      <CardHeader className="p-8 pb-0">
-        <CardTitle className="text-xl font-black flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-primary/10 text-primary">
-            <BookOpen className="h-5 w-5" />
-          </div>
-          Expertise
-        </CardTitle>
+    <Card className="border border-border/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] bg-card/40 backdrop-blur-3xl rounded-[48px] overflow-hidden relative group/card">
+      <CardHeader className="p-10 pb-0">
+        <div className="flex items-center gap-4 mb-2">
+          <div className="h-1 w-8 bg-primary/30 rounded-full" />
+          <CardTitle className="text-2xl font-black tracking-tighter">Mastery Domains</CardTitle>
+        </div>
       </CardHeader>
-      <CardContent className="p-8 space-y-6">
+      <CardContent className="p-10 space-y-6 pt-6">
         <FormField
           control={control}
           name="subjects"
           render={() => (
             <FormItem className="space-y-6">
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2.5">
                 <AnimatePresence>
                   {subjects?.map((subject: string) => (
                     <motion.div
@@ -68,12 +66,12 @@ export function Expertise({
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0.8, opacity: 0 }}
                     >
-                      <Badge className="bg-primary/10 text-primary border-primary/20 px-4 py-2 rounded-xl font-black text-sm group">
+                      <Badge className="bg-primary/5 text-primary border-primary/20 px-4 py-2 rounded-xl font-black text-xs uppercase tracking-wider group shadow-sm transition-all hover:bg-primary/10">
                         {subject}
                         <button
                           type="button"
                           onClick={() => handleRemoveSubject(subject)}
-                          className="ml-2 hover:text-destructive"
+                          className="ml-2 hover:text-destructive transition-colors"
                         >
                           <X className="h-3.5 w-3.5" />
                         </button>
@@ -82,17 +80,17 @@ export function Expertise({
                   ))}
                 </AnimatePresence>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <Select value={newSubject} onValueChange={setNewSubject}>
-                  <SelectTrigger className="h-12 rounded-xl border-2 font-bold">
-                    <SelectValue placeholder="Add subject..." />
+                  <SelectTrigger className="h-14 rounded-2xl border-border/10 bg-background/20 backdrop-blur-sm font-bold text-base focus:ring-0 px-6 transition-all hover:border-primary/40">
+                    <SelectValue placeholder="Add domain..." />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl border-2 shadow-2xl">
+                  <SelectContent className="rounded-2xl border-border/10 shadow-2xl">
                     {availableSubjects.map((s) => (
                       <SelectItem
                         key={s}
                         value={s}
-                        className="font-bold rounded-lg m-1"
+                        className="font-bold rounded-xl m-1 px-4"
                       >
                         {s}
                       </SelectItem>
@@ -102,9 +100,9 @@ export function Expertise({
                 <Button
                   type="button"
                   onClick={handleAddSubject}
-                  className="h-12 w-12 rounded-xl bg-primary shadow-lg shadow-primary/20"
+                  className="h-14 w-14 rounded-2xl bg-primary shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all shrink-0"
                 >
-                  <Plus className="h-5 w-5" />
+                  <Plus className="h-6 w-6" />
                 </Button>
               </div>
               <FormMessage />
