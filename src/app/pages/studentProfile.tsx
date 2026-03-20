@@ -54,6 +54,23 @@ const profileSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as any },
+  },
+};
+
 export default function StudentProfile() {
   const { id } = useParams();
   const { user } = useAppSelector((state) => state.auth);
@@ -98,39 +115,24 @@ export default function StudentProfile() {
         setIsLoading(false);
       }
     };
-
     loadData();
   }, [studentId, user, setValue]);
-
-  // userId: string;
-  // studentId: string;
-  // name?: string;
-  // avatar?: string;
-  // academicLevel?: string;
-  // interests?: string[];
 
   const onSubmit = async (data: ProfileFormValues) => {
     if (!isOwnProfile) return;
     try {
-      const newData = {
-        ...data,
-        userId: user && user.id,
-        studentId: id,
-      };
+      const newData = { ...data, userId: user && user.id, studentId: id };
       await updateStudentProfile(newData);
       setProfileData({ ...profileData, ...newData });
       setIsEditing(false);
       toast.success("Profile updated successfully!");
     } catch (error) {
-      // Error is handled in updateStudentProfile toast
       toast.error("Failed");
     }
   };
 
   const handleLevelSelect = (level: string) => {
-    if (isEditing) {
-      setValue("academicLevel", level);
-    }
+    if (isEditing) setValue("academicLevel", level);
   };
 
   const addInterest = (interest: string) => {
@@ -161,229 +163,249 @@ export default function StudentProfile() {
   };
 
   const inputClass = (hasError: boolean, isTouched: boolean | undefined) => {
-    const baseClass =
+    const base =
       "h-14 rounded-2xl border-2 font-bold focus-visible:ring-primary transition-all";
-    if (!isTouched) return `${baseClass} bg-background/50 border-border/50`;
+    if (!isTouched) return `${base} bg-background/50 border-border/50`;
     if (hasError)
-      return `${baseClass} bg-red-500/5 border-red-500/50 focus-visible:ring-red-500/20 focus-visible:border-red-500`;
-    return `${baseClass} bg-green-500/5 border-green-500/50 focus-visible:ring-green-500/20 focus-visible:border-green-500`;
+      return `${base} bg-red-500/5 border-red-500/50 focus-visible:ring-red-500/20`;
+    return `${base} bg-green-500/5 border-green-500/50 focus-visible:ring-green-500/20`;
   };
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden pb-20 font-medium text-foreground">
-      {/* Decorative Background */}
+    <div className="flex-1 min-h-screen bg-background relative overflow-hidden font-medium text-foreground">
+      {/* Background — identical to StudentDashboard */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-[10%] left-[-5%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute top-[-10%] right-[-5%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[160px] animate-pulse-slow" />
+        <div className="absolute bottom-[10%] left-[-10%] w-[45%] h-[45%] bg-blue-500/10 rounded-full blur-[140px] animate-pulse-slow" />
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 pt-12">
-        {/* Navigation / Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
-          <div className="space-y-4">
-            <Link
-              to="/student/dashboard"
-              className="inline-flex items-center text-primary font-black group hover:gap-3 transition-all"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Dashboard
-            </Link>
-            <h1 className="text-4xl md:text-5xl font-black tracking-tight">
-              Student <span className="text-primary">Profile</span>
-            </h1>
-            <p className="text-muted-foreground font-semibold text-lg max-w-2xl">
-              Manage your learning journey and keep your information up to date.
-            </p>
-          </div>
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-20 pb-40">
+        <motion.div initial="hidden" animate="visible" variants={containerVariants}>
 
-          {isOwnProfile && !isEditing && (
-            <Button
-              onClick={() => setIsEditing(true)}
-              className="h-14 px-10 rounded-2xl font-black shadow-xl shadow-primary/20 text-lg flex items-center gap-2 group"
-            >
-              <Edit className="h-5 w-5 group-hover:scale-110 transition-transform" />
-              Edit Profile
-            </Button>
-          )}
-        </div>
+          {/* ── PAGE HEADER ── */}
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-20"
+          >
+            <div className="space-y-6">
+              {/* Pill badge — same as StudentDashboard */}
+              <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em]">
+                <Sparkles className="h-4 w-4" />
+                <span>Identity & Learning Profile</span>
+              </div>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid gap-10 lg:grid-cols-12 items-start">
-            {/* Profile Sidebar */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="lg:col-span-4 space-y-8"
-            >
-              <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-xl rounded-[40px] overflow-hidden relative">
-                <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
-                  <UserIcon className="w-32 h-32 rotate-12" />
-                </div>
-                <CardContent className="pt-12 pb-10 px-8 text-center relative z-10">
-                  <div className="relative inline-block mb-8 group">
-                    <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full scale-110 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <Avatar className="h-36 w-36 border-4 border-background shadow-2xl relative z-10 transition-transform duration-500 group-hover:scale-105">
-                      <AvatarImage
-                        src={profileData?.avatar || user?.avatar}
-                        alt={profileData?.name || user?.name}
-                        className="object-cover"
-                      />
-                      <AvatarFallback className="text-4xl font-black bg-muted text-primary">
-                        {(profileData?.name || user?.name || "U").charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                    {isOwnProfile && (
-                      <Button
-                        type="button"
-                        size="icon"
-                        className="absolute bottom-1 right-1 z-20 h-10 w-10 rounded-xl bg-primary text-primary-foreground shadow-xl border-4 border-background hover:scale-110 transition-transform"
-                      >
-                        <Camera className="h-4 w-4" />
-                      </Button>
-                    )}
+              <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.85] text-foreground">
+                Student <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-600 to-indigo-600">
+                  Profile
+                </span>
+              </h1>
+
+              <p className="text-2xl text-muted-foreground/80 leading-relaxed max-w-2xl font-medium">
+                Manage your{" "}
+                <span className="text-foreground font-black underline decoration-primary/30 decoration-4 underline-offset-8">
+                  learning identity
+                </span>{" "}
+                and keep your information synced.
+              </p>
+            </div>
+
+            {isOwnProfile && !isEditing && (
+              <Button
+                onClick={() => setIsEditing(true)}
+                className="h-18 px-10 rounded-[28px] font-black text-lg shadow-[0_20px_40px_-10px_theme(colors.primary.DEFAULT/0.3)] hover:shadow-primary/50 transition-all active:scale-95 group"
+              >
+                <Edit className="mr-3 h-6 w-6 group-hover:rotate-12 transition-transform" />
+                Edit Profile
+              </Button>
+            )}
+          </motion.div>
+
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="grid gap-8 lg:grid-cols-12 items-start">
+
+              {/* ── SIDEBAR ── */}
+              <motion.div
+                variants={itemVariants}
+                className="lg:col-span-4 space-y-6"
+              >
+                {/* Identity Card */}
+                <Card className="border border-border/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] bg-card/40 backdrop-blur-3xl rounded-[48px] overflow-hidden relative">
+                  <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
+                    <UserIcon className="w-40 h-40 rotate-12" />
                   </div>
-
-                  <h2 className="text-3xl font-black tracking-tight text-foreground mb-2">
-                    {profileData?.name || user?.name}
-                  </h2>
-                  <p className="text-base font-semibold text-muted-foreground mb-8">
-                    {profileData?.email || user?.email}
-                  </p>
-
-                  <div className="flex flex-col gap-3 px-4">
-                    <Badge className="w-full justify-center py-2.5 rounded-xl bg-primary/10 text-primary border-none font-black text-xs uppercase tracking-widest">
-                      <ShieldCheck className="h-3.5 w-3.5 mr-2" />
-                      {user?.role === "student"
-                        ? "Student Account"
-                        : "User Account"}
-                    </Badge>
-                    <div className="flex items-center justify-center gap-2 mt-4 text-xs font-black uppercase tracking-widest text-muted-foreground/60">
-                      <Calendar className="h-4 w-4" />
-                      Joined{" "}
-                      {new Date(
-                        profileData?.joinedDate || Date.now(),
-                      ).toLocaleDateString(undefined, {
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </div>
-                  </div>
-
-                  <div className="mt-10 grid grid-cols-2 gap-4 pt-10 border-t border-border/50">
-                    <div className="text-center">
-                      <p className="text-3xl font-black text-primary">
-                        {profileData?.totalSessions || 0}
-                      </p>
-                      <p className="text-xs font-black uppercase tracking-widest text-muted-foreground mt-1">
-                        Sessions
-                      </p>
-                    </div>
-                    <div className="text-center border-l border-border/50">
-                      <p className="text-3xl font-black text-primary">
-                        {profileData?.interests?.length || 0}
-                      </p>
-                      <p className="text-xs font-black uppercase tracking-widest text-muted-foreground mt-1">
-                        Interests
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-xl rounded-[40px] overflow-hidden">
-                <CardHeader className="p-8 pb-4">
-                  <CardTitle className="text-sm font-black uppercase tracking-widest text-primary flex items-center gap-2">
-                    <BookOpen className="h-4 w-4" />
-                    Learning Interests
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="px-8 pb-8 space-y-6">
-                  {selectedInterests.length === 0 ? (
-                    <p className="text-muted-foreground text-sm font-medium">
-                      No interests added yet.
-                    </p>
-                  ) : (
-                    <div className="flex flex-wrap gap-2.5">
-                      {selectedInterests.map((interest, index) => (
-                        <Badge
-                          key={index}
-                          className="bg-background/80 hover:bg-primary/10 text-foreground border-border/50 px-4 py-2 rounded-xl text-xs font-bold transition-all group flex items-center gap-2"
+                  <CardContent className="pt-12 pb-10 px-8 text-center relative z-10">
+                    {/* Avatar */}
+                    <div className="relative inline-block mb-8 group/avatar">
+                      <Avatar className="h-36 w-36 border-4 border-background shadow-xl relative z-10 transition-all duration-500 group-hover/avatar:scale-105">
+                        <AvatarImage
+                          src={profileData?.avatar || user?.avatar}
+                          alt={profileData?.name || user?.name}
+                          className="object-cover"
+                        />
+                        <AvatarFallback className="text-4xl font-black bg-muted text-primary">
+                          {(profileData?.name || user?.name || "U").charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      {isOwnProfile && (
+                        <Button
+                          type="button"
+                          size="icon"
+                          className="absolute -bottom-1 -right-1 z-20 h-10 w-10 rounded-2xl bg-primary text-white shadow-xl border-4 border-background hover:scale-110 active:scale-95 transition-all"
                         >
-                          {interest}
-                          {isEditing && (
-                            <button
-                              type="button"
-                              onClick={() => removeInterest(interest)}
-                              className="text-muted-foreground hover:text-red-500 transition-colors"
-                            >
-                              <X className="h-3.5 w-3.5" />
-                            </button>
-                          )}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-
-                  {isEditing && (
-                    <div className="pt-2">
-                      <Select onValueChange={addInterest}>
-                        <SelectTrigger className="w-full h-12 rounded-2xl bg-background/50 border-2 border-border/50 font-bold text-sm">
-                          <SelectValue placeholder="Add more interests..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {subjects
-                            .filter((s) => !selectedInterests.includes(s))
-                            .map((subject) => (
-                              <SelectItem
-                                key={subject}
-                                value={subject}
-                                className="text-sm font-bold"
-                              >
-                                {subject}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                      {errors.interests && (
-                        <p className="text-xs font-bold text-red-500 mt-2 ml-1">
-                          {errors.interests.message}
-                        </p>
+                          <Camera className="h-4 w-4" />
+                        </Button>
                       )}
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-            </motion.div>
 
-            {/* Main Content Area */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="lg:col-span-8 space-y-8"
-            >
-              <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-xl rounded-[40px] overflow-hidden">
-                <CardHeader className="p-10 pb-6">
-                  <CardTitle className="text-2xl font-black">
-                    Personal Details
-                  </CardTitle>
-                  <CardDescription className="text-base font-semibold">
-                    {isEditing
-                      ? "Update your contact information and level."
-                      : "Your identity and contact info."}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-10 pt-0 space-y-10">
-                  <div className="space-y-8">
-                    <div className="grid md:grid-cols-2 gap-8">
+                    <h2 className="text-3xl font-black tracking-tighter text-foreground mb-1">
+                      {profileData?.name || user?.name}
+                    </h2>
+                    <p className="text-sm font-medium text-muted-foreground/70 mb-8">
+                      {profileData?.email || user?.email}
+                    </p>
+
+                    <div className="flex flex-col gap-3 px-4">
+                      <Badge className="w-full justify-center py-2.5 rounded-xl bg-primary/10 text-primary border border-primary/10 font-black text-xs uppercase tracking-widest">
+                        <ShieldCheck className="h-3.5 w-3.5 mr-2" />
+                        {user?.role === "student" ? "Student Account" : "User Account"}
+                      </Badge>
+                      <div className="flex items-center justify-center gap-2 mt-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">
+                        <Calendar className="h-3.5 w-3.5" />
+                        Joined{" "}
+                        {new Date(
+                          profileData?.joinedDate || Date.now(),
+                        ).toLocaleDateString(undefined, {
+                          month: "long",
+                          year: "numeric",
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Mini stats */}
+                    <div className="mt-10 grid grid-cols-2 gap-0 pt-8 border-t border-border/10">
+                      <div className="text-center py-2">
+                        <p className="text-4xl font-black tracking-tighter text-primary">
+                          {profileData?.totalSessions || 0}
+                        </p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/50 mt-1">
+                          Sessions
+                        </p>
+                      </div>
+                      <div className="text-center py-2 border-l border-border/10">
+                        <p className="text-4xl font-black tracking-tighter text-primary">
+                          {profileData?.interests?.length || 0}
+                        </p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/50 mt-1">
+                          Interests
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Interests Card */}
+                <Card className="border border-border/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] bg-card/40 backdrop-blur-3xl rounded-[48px] overflow-hidden">
+                  <CardHeader className="p-8 pb-4">
+                    <CardTitle className="text-sm font-black uppercase tracking-widest text-primary flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-2xl bg-primary/10 flex items-center justify-center">
+                        <BookOpen className="h-4 w-4 text-primary" />
+                      </div>
+                      Learning Interests
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="px-8 pb-8 space-y-4">
+                    {selectedInterests.length === 0 ? (
+                      <p className="text-muted-foreground/50 text-sm font-medium italic">
+                        No interests added yet.
+                      </p>
+                    ) : (
+                      <div className="flex flex-wrap gap-2">
+                        {selectedInterests.map((interest, index) => (
+                          <Badge
+                            key={index}
+                            className="bg-background/60 hover:bg-primary/10 text-foreground border border-border/20 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2"
+                          >
+                            {interest}
+                            {isEditing && (
+                              <button
+                                type="button"
+                                onClick={() => removeInterest(interest)}
+                                className="text-muted-foreground hover:text-red-500 transition-colors ml-1"
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                            )}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+
+                    {isEditing && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="pt-3 border-t border-border/10"
+                      >
+                        <Select onValueChange={addInterest}>
+                          <SelectTrigger className="w-full h-12 rounded-2xl bg-background/40 border-2 border-border/20 font-bold text-sm">
+                            <SelectValue placeholder="Add interest..." />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-2xl border-border/10 bg-card/90 backdrop-blur-xl">
+                            {subjects
+                              .filter((s) => !selectedInterests.includes(s))
+                              .map((subject) => (
+                                <SelectItem
+                                  key={subject}
+                                  value={subject}
+                                  className="text-sm font-bold py-2.5"
+                                >
+                                  {subject}
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
+                        {errors.interests && (
+                          <p className="text-xs font-bold text-red-500 mt-2 ml-1">
+                            {errors.interests.message}
+                          </p>
+                        )}
+                      </motion.div>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* ── MAIN CONTENT ── */}
+              <motion.div
+                variants={itemVariants}
+                className="lg:col-span-8 space-y-6"
+              >
+                {/* Personal Details Card */}
+                <Card className="border border-border/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] bg-card/40 backdrop-blur-3xl rounded-[48px] overflow-hidden">
+                  <CardHeader className="p-10 pb-6">
+                    <CardTitle className="text-3xl font-black tracking-tighter flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+                        <UserIcon className="h-6 w-6 text-primary" />
+                      </div>
+                      Personal Details
+                    </CardTitle>
+                    <CardDescription className="text-base font-medium text-muted-foreground/70 mt-2 ml-16">
+                      {isEditing
+                        ? "Update your contact information and academic level."
+                        : "Your identity and contact information."}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-10 pt-0 space-y-8">
+                    <div className="grid md:grid-cols-2 gap-6">
                       {/* NAME */}
                       <div className="space-y-3">
                         <Label
@@ -393,7 +415,7 @@ export default function StudentProfile() {
                           Full Name
                         </Label>
                         <div className="relative group">
-                          <UserIcon className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                          <UserIcon className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
                           <Input
                             id="name"
                             {...register("name")}
@@ -424,7 +446,7 @@ export default function StudentProfile() {
                           Email Address
                         </Label>
                         <div className="relative group">
-                          <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                          <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
                           <Input
                             id="email"
                             type="email"
@@ -449,90 +471,76 @@ export default function StudentProfile() {
                     </div>
 
                     {/* Academic Level */}
-                    <div className="pt-8 border-t border-border/50">
+                    <div className="pt-8 border-t border-border/10">
                       <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-2">
-                        <GraduationCap className="h-5 w-5 text-primary" />
+                        <GraduationCap className="h-4 w-4 text-primary" />
                         Academic Level
                       </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <button
-                          type="button"
-                          onClick={() => handleLevelSelect("Undergraduate")}
-                          disabled={!isEditing}
-                          className={`p-6 rounded-[24px] border-2 flex items-center justify-between group transition-all duration-300 ${
-                            selectedLevel === "Undergraduate"
-                              ? "border-primary bg-primary/5 shadow-inner"
-                              : isEditing
-                                ? "border-border/50 bg-background/50 hover:border-primary/30 cursor-pointer hover:bg-background"
-                                : "border-border/50 bg-background/50"
-                          }`}
-                        >
-                          <div className="text-left">
-                            <p
-                              className={`text-base font-black transition-colors ${selectedLevel === "Undergraduate" ? "text-primary" : "text-foreground group-hover:text-primary"}`}
-                            >
-                              Undergraduate
-                            </p>
-                            <p className="text-xs font-semibold text-muted-foreground mt-1">
-                              Currently pursuing degree
-                            </p>
-                          </div>
-                          {selectedLevel === "Undergraduate" && (
-                            <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground shadow-lg animate-in zoom-in duration-300">
-                              <CheckCircle className="h-4 w-4" />
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {[
+                          {
+                            id: "Undergraduate",
+                            label: "Undergraduate",
+                            desc: "Currently pursuing degree",
+                          },
+                          {
+                            id: "Postgraduate",
+                            label: "Postgraduate",
+                            desc: "Advanced studies",
+                          },
+                        ].map((tier) => (
+                          <button
+                            key={tier.id}
+                            type="button"
+                            onClick={() => handleLevelSelect(tier.id)}
+                            disabled={!isEditing}
+                            className={`p-6 rounded-[28px] border-2 flex items-center justify-between group transition-all duration-300 ${
+                              selectedLevel === tier.id
+                                ? "border-primary bg-primary/5 shadow-inner"
+                                : isEditing
+                                  ? "border-border/20 bg-background/30 hover:border-primary/30 cursor-pointer hover:bg-background/50"
+                                  : "border-border/10 bg-background/20"
+                            }`}
+                          >
+                            <div className="text-left">
+                              <p
+                                className={`text-base font-black tracking-tight transition-colors ${selectedLevel === tier.id ? "text-primary" : "text-foreground group-hover:text-primary"}`}
+                              >
+                                {tier.label}
+                              </p>
+                              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 mt-1">
+                                {tier.desc}
+                              </p>
                             </div>
-                          )}
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => handleLevelSelect("Postgraduate")}
-                          disabled={!isEditing}
-                          className={`p-6 rounded-[24px] border-2 flex items-center justify-between group transition-all duration-300 ${
-                            selectedLevel === "Postgraduate"
-                              ? "border-primary bg-primary/5 shadow-inner"
-                              : isEditing
-                                ? "border-border/50 bg-background/50 hover:border-primary/30 cursor-pointer hover:bg-background"
-                                : "border-border/50 bg-background/50"
-                          }`}
-                        >
-                          <div className="text-left">
-                            <p
-                              className={`text-base font-black transition-colors ${selectedLevel === "Postgraduate" ? "text-primary" : "text-foreground group-hover:text-primary"}`}
-                            >
-                              Postgraduate
-                            </p>
-                            <p className="text-xs font-semibold text-muted-foreground mt-1">
-                              Advanced studies
-                            </p>
-                          </div>
-                          {selectedLevel === "Postgraduate" && (
-                            <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground shadow-lg animate-in zoom-in duration-300">
-                              <CheckCircle className="h-4 w-4" />
-                            </div>
-                          )}
-                        </button>
+                            {selectedLevel === tier.id && (
+                              <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center text-white shadow-lg animate-in zoom-in duration-300">
+                                <CheckCircle className="h-4 w-4" />
+                              </div>
+                            )}
+                          </button>
+                        ))}
                       </div>
                     </div>
 
+                    {/* Action Buttons */}
                     {isEditing && (
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center justify-end gap-4 pt-10"
+                        className="flex items-center justify-end gap-4 pt-8 border-t border-border/10"
                       >
                         <Button
                           type="button"
                           variant="outline"
                           onClick={handleCancel}
-                          className="h-14 px-8 rounded-2xl font-black border-2 hover:bg-accent transition-all"
+                          className="h-14 px-8 rounded-[24px] font-black border-2 border-border/20 hover:bg-muted/50 transition-all active:scale-95"
                         >
                           Discard
                         </Button>
                         <Button
                           type="submit"
                           disabled={isSubmitting}
-                          className="h-14 px-10 rounded-2xl font-black shadow-xl shadow-primary/20 text-lg group"
+                          className="h-14 px-10 rounded-[24px] font-black shadow-[0_20px_40px_-10px_theme(colors.primary.DEFAULT/0.3)] hover:shadow-primary/50 text-lg group transition-all active:scale-95"
                         >
                           {isSubmitting ? (
                             <motion.div
@@ -553,47 +561,24 @@ export default function StudentProfile() {
                         </Button>
                       </motion.div>
                     )}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Learning Stats */}
-              <div className="grid sm:grid-cols-2 gap-8">
-                <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-xl rounded-[40px] overflow-hidden group hover:scale-[1.02] transition-transform">
-                  <CardContent className="p-8 flex items-center gap-6">
-                    <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-500">
-                      <TrendingUp className="h-8 w-8" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-black uppercase tracking-widest text-muted-foreground">
-                        Learning Streak
-                      </p>
-                      <p className="text-3xl font-black text-foreground">
-                        {profileData?.learningStreak || 0} Days
-                      </p>
-                    </div>
                   </CardContent>
                 </Card>
 
-                <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-xl rounded-[40px] overflow-hidden group hover:scale-[1.02] transition-transform">
-                  <CardContent className="p-8 flex items-center gap-6">
-                    <div className="h-16 w-16 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors duration-500">
-                      <Sparkles className="h-8 w-8" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-black uppercase tracking-widest text-muted-foreground">
-                        Global Rank
-                      </p>
-                      <p className="text-3xl font-black text-foreground">
-                        {profileData?.globalRank || "Top 100"}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </motion.div>
-          </div>
-        </form>
+                {/* Back link */}
+                <div className="flex items-center gap-3 pt-2">
+                  <Link
+                    to="/student/dashboard"
+                    className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 hover:text-primary transition-colors group"
+                  >
+                    <ArrowLeft className="h-3.5 w-3.5 group-hover:-translate-x-1 transition-transform" />
+                    Back to Dashboard
+                  </Link>
+                </div>
+              </motion.div>
+            </div>
+          </form>
+
+        </motion.div>
       </div>
     </div>
   );

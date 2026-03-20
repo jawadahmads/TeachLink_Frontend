@@ -136,7 +136,7 @@ export default function SearchTeachers() {
   const FilterContent = () => (
     <div className="space-y-12">
       <div>
-        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-6">
+        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-6">
           Subjects
         </h3>
         <div className="space-y-4 max-h-[400px] overflow-y-auto pr-4 custom-scrollbar">
@@ -157,7 +157,7 @@ export default function SearchTeachers() {
       </div>
 
       <div>
-        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-6">
+        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-6">
           Investment Range
         </h3>
         <Select value={priceRange} onValueChange={setPriceRange}>
@@ -174,7 +174,7 @@ export default function SearchTeachers() {
       </div>
 
       <div>
-        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 mb-6">
+        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-6">
           Preferred Schedule
         </h3>
         <Select value={selectedDay} onValueChange={setSelectedDay}>
@@ -260,10 +260,11 @@ export default function SearchTeachers() {
                     />
                   </div>
                   <div className="flex gap-4">
-                    <div className="flex items-center bg-card/40 backdrop-blur-xl rounded-[28px] border border-border/10 px-6 h-18 min-w-[240px] shadow-sm">
-                      <span className="text-[10px] font-black text-muted-foreground/40 mr-4 uppercase tracking-[0.2em]">
+                    <div className="flex items-center bg-card/40 backdrop-blur-xl rounded-[28px] border border-border/10 px-5 h-18 min-w-[220px] shadow-sm gap-3">
+                      <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] shrink-0">
                         Sort
                       </span>
+                      <div className="h-4 w-px bg-border/30" />
                       <Select value={sortBy} onValueChange={setSortBy}>
                         <SelectTrigger className="border-none bg-transparent h-auto p-0 focus:ring-0 font-black text-base tracking-tight">
                           <SelectValue />
@@ -310,7 +311,7 @@ export default function SearchTeachers() {
             <motion.div variants={itemVariants} className="hidden md:block">
               <div className="sticky top-28">
                 <div className="flex items-center justify-between mb-8 px-4">
-                  <h2 className="text-2xl font-black flex items-center gap-3 tracking-tighter uppercase text-[10px] tracking-[0.25em] text-muted-foreground/60">
+                  <h2 className="text-sm font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                     <Filter className="h-4 w-4 text-primary" />
                     Advanced Filters
                   </h2>

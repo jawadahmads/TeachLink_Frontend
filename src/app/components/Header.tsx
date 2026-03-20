@@ -1,4 +1,4 @@
-import { Link, useNavigate, useLocation, data } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import {
   BookOpen,
   Bell,
@@ -12,6 +12,8 @@ import {
   Sparkles,
   CheckCircle,
   XCircle,
+  Menu,
+  X,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -24,19 +26,11 @@ import {
 } from "./ui/dropdown-menu";
 import { Badge } from "./ui/badge";
 import { useAppDispatch, useAppSelector } from "../redux/store";
-import { setUserInfo } from "../redux/userInfoSlice";
 import { logout } from "../api/logout";
-import { getTeacherInfoById } from "../api/teacherInfo";
 import { setToken, setUser, setStatus } from "../redux/authSlice";
 import { motion, AnimatePresence } from "motion/react";
-import { useState, useEffect, use } from "react";
-import { toast } from "sonner";
-import {
-  createStripeAccount,
-  updateStripeAccountStatus,
-  getStripeAccountStatus,
-} from "../api/stripeAccount";
-import { userInfo } from "../api/userInfo";
+import { useState, useEffect } from "react";
+import { createStripeAccount } from "../api/stripeAccount";
 
 interface HeaderProps {
   userType?: "student" | "teacher" | "admin";
@@ -56,28 +50,26 @@ export default function Header({
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const userInfo = useAppSelector((state) => state.info.userInfo);
   const { user, token, stripeAccountInfo } = useAppSelector(
     (state) => state.auth,
   );
-  const stripeAccountId = userInfo?.stripeId;
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const userType =
-    propUserType || (user?.role?.toLowerCase() as any) || "student";
-  const teacherId = user?.teacherId;
+  // Close mobile menu on route change
+  useEffect(() => setMobileOpen(false), [location.pathname]);
+
+  const userType = propUserType || (user?.role?.toLowerCase() as any) || "student";
   const userName = propUserName || user?.name || user?.email || "User";
   const userAvatar = propUserAvatar || user?.avatar || "";
-  const accountId = user?.stripeId;
 
   const handleLogout = async () => {
     try {
@@ -102,29 +94,9 @@ export default function Header({
     }
   };
 
-  // const handleUpdateStripeStatus = async (status: "active" | "inactive") => {
-  //   if (!stripeAccountId) {
-  //     toast.error("No Stripe account found");
-  //     return;
-  //   }
-  //   setIsLoading(true);
-  //   try {
-  //     await updateStripeAccountStatus(status, stripeAccountId);
-  //     setStripeStatus(status);
-  //   } catch (error) {
-  //     console.error("Failed to update Stripe status:", error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
   const getProfileRoute = () => {
-    if (userType === "teacher" && user?.id) {
-      return `/teacher/${user.teacherId}`;
-    }
-    if (userType === "student" && user?.id) {
-      return `/student/${user.studentId}`;
-    }
+    if (userType === "teacher" && user?.id) return `/teacher/${user.teacherId}`;
+    if (userType === "student" && user?.id) return `/student/${user.studentId}`;
     return `/${userType}/dashboard`;
   };
 
@@ -140,56 +112,51 @@ export default function Header({
       ];
 
   return (
-    <header
-      className={`sticky top-0 z-50 w-full transition-all duration-500 ${
-        isScrolled ? "py-2" : "py-4"
-      }`}
-    >
+    <header className={`sticky top-0 z-50 w-full transition-all duration-500 ${isScrolled ? "py-2" : "py-4"}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ y: -20, opacity: 0 }}
+          initial={{ y: -24, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className={`relative flex justify-between items-center h-16 px-6 sm:px-8 rounded-[24px] border border-border/40 shadow-xl transition-all duration-500 ${
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className={`relative flex items-center justify-between h-16 px-5 sm:px-7 rounded-[28px] border transition-all duration-500 ${
             isScrolled
-              ? "bg-background/80 backdrop-blur-2xl"
-              : "bg-background/40 backdrop-blur-lg"
+              ? "bg-background/85 backdrop-blur-2xl border-border/30 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.2)]"
+              : "bg-background/50 backdrop-blur-xl border-border/20 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.1)]"
           }`}
         >
-          {/* Logo Section */}
+          {/* ── LOGO ── */}
           <Link
             to={token ? `/${userType}/dashboard` : "/"}
-            className="flex items-center gap-2.5 group transition-transform hover:scale-105"
+            className="flex items-center gap-3 group shrink-0"
           >
-            <div className="relative">
-              <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <BookOpen className="h-8 w-8 text-primary relative z-10" />
+            <div className="relative flex items-center justify-center h-9 w-9 rounded-2xl bg-primary/10 border border-primary/20 group-hover:bg-primary/20 transition-all duration-300">
+              <BookOpen className="h-5 w-5 text-primary" />
+              <div className="absolute inset-0 bg-primary/20 rounded-2xl blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
-            <span className="text-2xl font-black tracking-tighter text-foreground group-hover:text-primary transition-colors">
-              Teach<span className="text-primary">Link</span>
+            <span className="text-xl font-black tracking-tight text-foreground group-hover:text-primary transition-colors duration-300">
+              Teach<span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">Link</span>
             </span>
           </Link>
 
-          {/* Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1">
+          {/* ── NAV LINKS (desktop) ── */}
+          <nav className="hidden lg:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.path;
               return (
                 <Link
                   key={link.name}
                   to={link.path}
-                  className={`relative px-4 py-2 text-sm font-bold transition-all duration-300 rounded-full hover:text-primary ${
-                    isActive ? "text-primary" : "text-muted-foreground"
+                  className={`relative px-4 py-2 text-sm font-bold rounded-full transition-all duration-300 ${
+                    isActive
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {isActive && (
                     <motion.div
-                      layoutId="activeNav"
-                      className="absolute inset-0 bg-primary/10 rounded-full -z-10"
-                      transition={{
-                        type: "spring",
-                        bounce: 0.2,
-                        duration: 0.6,
-                      }}
+                      layoutId="activeNavPill"
+                      className="absolute inset-0 bg-primary/8 rounded-full border border-primary/15 -z-10"
+                      transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
                     />
                   )}
                   {link.name}
@@ -198,38 +165,38 @@ export default function Header({
             })}
           </nav>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* ── RIGHT SIDE ── */}
+          <div className="flex items-center gap-2">
             {token ? (
               <>
-                <div className="flex items-center gap-1 sm:gap-2 mr-2 border-r border-border/50 pr-2 sm:pr-4">
-                  {/* Messages */}
+                {/* Action icons */}
+                <div className="flex items-center gap-1 mr-1">
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="relative h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all group"
+                    className="relative h-10 w-10 rounded-2xl hover:bg-primary/8 hover:text-primary transition-all"
                     asChild
                   >
                     <Link to="/chat">
-                      <MessageSquare className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                      <MessageSquare className="h-[18px] w-[18px]" />
                       {unreadMessages > 0 && (
-                        <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-[10px] font-black border-2 border-background animate-pulse">
+                        <Badge className="absolute -top-0.5 -right-0.5 h-4 w-4 flex items-center justify-center p-0 text-[9px] font-black border-2 border-background">
                           {unreadMessages}
                         </Badge>
                       )}
                     </Link>
                   </Button>
 
-                  {/* Notifications */}
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="relative h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all group"
+                    className="relative h-10 w-10 rounded-2xl hover:bg-primary/8 hover:text-primary transition-all"
                     asChild
                   >
                     <Link to="/notifications">
-                      <Bell className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                      <Bell className="h-[18px] w-[18px]" />
                       {unreadNotifications > 0 && (
-                        <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-[10px] font-black border-2 border-background animate-pulse">
+                        <Badge className="absolute -top-0.5 -right-0.5 h-4 w-4 flex items-center justify-center p-0 text-[9px] font-black border-2 border-background">
                           {unreadNotifications}
                         </Badge>
                       )}
@@ -237,161 +204,127 @@ export default function Header({
                   </Button>
                 </div>
 
-                {/* User Menu */}
+                {/* Divider */}
+                <div className="h-6 w-px bg-border/40 mx-1 hidden sm:block" />
+
+                {/* User dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger >
                     <Button
                       variant="ghost"
-                      className="flex items-center gap-2.5 pl-1.5 pr-3 h-11 rounded-2xl hover:bg-primary/5 border border-transparent hover:border-border/50 transition-all focus-visible:ring-0"
+                      className="flex items-center gap-2.5 pl-1.5 pr-3 h-11 rounded-2xl hover:bg-muted/60 border border-transparent hover:border-border/30 transition-all focus-visible:ring-0 group"
                     >
-                      <Avatar className="h-8 w-8 border-2 border-background shadow-md">
-                        <AvatarImage src={userAvatar} alt={userName} />
-                        <AvatarFallback className="bg-primary text-primary-foreground font-black">
-                          {userName.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
+                      <div className="relative">
+                        <div className="absolute inset-[-2px] rounded-full bg-gradient-to-br from-primary/40 to-blue-500/40 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <Avatar className="h-8 w-8 border-2 border-background shadow-md relative z-10">
+                          <AvatarImage src={userAvatar} alt={userName} />
+                          <AvatarFallback className="bg-primary/10 text-primary font-black text-sm">
+                            {userName.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
                       <div className="hidden sm:flex flex-col items-start text-left">
-                        <span className="text-xs font-black truncate max-w-[80px] leading-none mb-1">
+                        <span className="text-[13px] font-black truncate max-w-[80px] leading-none mb-0.5">
                           {userName.split(" ")[0]}
                         </span>
-                        <Badge
-                          variant="outline"
-                          className="text-[9px] h-3.5 px-1 py-0 font-black uppercase tracking-widest bg-primary/5 border-primary/20 text-primary"
-                        >
+                        <span className="text-[9px] font-black uppercase tracking-[0.15em] text-primary/70">
                           {userType}
-                        </Badge>
+                        </span>
                       </div>
-                      <ChevronDown className="h-3.5 w-3.5 text-muted-foreground hidden sm:block" />
+                      <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/60 hidden sm:block group-hover:rotate-180 transition-transform duration-300" />
                     </Button>
                   </DropdownMenuTrigger>
+
                   <DropdownMenuContent
                     align="end"
-                    className="w-64 p-2 mt-2 rounded-[24px] border-2 shadow-2xl backdrop-blur-xl bg-card/95"
+                    sideOffset={8}
+                    className="w-64 p-2 rounded-[24px] border border-border/20 shadow-[0_24px_64px_-12px_rgba(0,0,0,0.25)] backdrop-blur-2xl bg-card/95"
                   >
-                    <div className="flex items-center gap-3 p-3 mb-2 bg-muted/30 rounded-[18px]">
-                      <Avatar className="h-10 w-10 border-2 border-background shadow-sm">
+                    {/* User header */}
+                    <div className="flex items-center gap-3 p-3 mb-1 bg-muted/30 rounded-[18px] border border-border/10">
+                      <Avatar className="h-11 w-11 border-2 border-background shadow-sm">
                         <AvatarImage src={userAvatar} alt={userName} />
-                        <AvatarFallback className="bg-primary text-primary-foreground font-black">
+                        <AvatarFallback className="bg-primary/10 text-primary font-black">
                           {userName.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col overflow-hidden">
-                        <p className="text-sm font-black truncate">
-                          {userName}
-                        </p>
-                        <p className="text-[10px] font-bold text-muted-foreground truncate uppercase tracking-widest">
-                          {userType} Account
+                        <p className="text-sm font-black truncate leading-snug">{userName}</p>
+                        <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">
+                          {userType} account
                         </p>
                       </div>
                     </div>
 
-                    <DropdownMenuItem
-                      asChild
-                      className="rounded-xl h-11 cursor-pointer focus:bg-primary/10 focus:text-primary transition-colors"
-                    >
-                      <Link
-                        to={`/${userType}/dashboard`}
-                        className="flex items-center gap-3 w-full font-bold"
-                      >
-                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                          <Settings className="h-4 w-4" />
-                        </div>
-                        Dashboard
-                      </Link>
-                    </DropdownMenuItem>
+                    <div className="space-y-0.5 mt-1">
+                      <DropdownMenuItem asChild className="rounded-2xl h-11 cursor-pointer focus:bg-primary/8 focus:text-primary transition-colors">
+                        <Link to={`/${userType}/dashboard`} className="flex items-center gap-3 w-full font-bold">
+                          <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/10">
+                            <Settings className="h-4 w-4" />
+                          </div>
+                          Dashboard
+                        </Link>
+                      </DropdownMenuItem>
 
-                    <DropdownMenuItem
-                      asChild
-                      className="rounded-xl h-11 cursor-pointer focus:bg-primary/10 focus:text-primary transition-colors"
-                    >
-                      <Link
-                        to={getProfileRoute()}
-                        className="flex items-center gap-3 w-full font-bold"
-                      >
-                        <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
-                          <User className="h-4 w-4" />
-                        </div>
-                        My Profile
-                      </Link>
-                    </DropdownMenuItem>
+                      <DropdownMenuItem asChild className="rounded-2xl h-11 cursor-pointer focus:bg-blue-500/8 focus:text-blue-500 transition-colors">
+                        <Link to={getProfileRoute()} className="flex items-center gap-3 w-full font-bold">
+                          <div className="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/10">
+                            <User className="h-4 w-4" />
+                          </div>
+                          My Profile
+                        </Link>
+                      </DropdownMenuItem>
 
-                    <DropdownMenuItem
-                      asChild
-                      className="rounded-xl h-11 cursor-pointer focus:bg-primary/10 focus:text-primary transition-colors"
-                    >
-                      {/* <Link
-                        to="/search"
-                        className="flex items-center gap-3 w-full font-bold"
-                      >
-                        <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500">
-                          <BookOpen className="h-4 w-4" />
-                        </div>
-                        Browse Experts
-                      </Link> */}
-                    </DropdownMenuItem>
+                      {userType === "teacher" && (
+                        <>
+                          <DropdownMenuItem asChild className="rounded-2xl h-11 cursor-pointer focus:bg-green-500/8 focus:text-green-500 transition-colors">
+                            <Link to="/teacher/publish-gig" className="flex items-center gap-3 w-full font-bold">
+                              <div className="w-8 h-8 rounded-xl bg-green-500/10 flex items-center justify-center text-green-500 border border-green-500/10">
+                                <Sparkles className="h-4 w-4" />
+                              </div>
+                              Publish Gig
+                            </Link>
+                          </DropdownMenuItem>
 
-                    {userType === "teacher" && (
-                      <>
-                        <DropdownMenuItem
-                          asChild
-                          className="rounded-xl h-11 cursor-pointer focus:bg-primary/10 focus:text-primary transition-colors"
-                        >
-                          <Link
-                            to="/teacher/publish-gig"
-                            className="flex items-center gap-3 w-full font-bold"
-                          >
-                            <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center text-green-500">
-                              <Sparkles />
-                            </div>
-                            Publish Gig
-                          </Link>
-                        </DropdownMenuItem>
+                          <DropdownMenuSeparator className="my-2 bg-border/20" />
 
-                        <DropdownMenuSeparator className="my-2" />
-
-                        <div className="px-3 py-2">
-                          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
-                            Stripe Account
-                          </p>
-                          <div className="flex gap-2">
+                          {/* Stripe Section */}
+                          <div className="px-3 py-2.5 rounded-2xl bg-muted/20 border border-border/10 mb-1">
+                            <p className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-[0.2em] mb-2">
+                              Stripe Account
+                            </p>
                             {stripeAccountInfo ? (
-                              <Badge
-                                variant="outline"
-                                className="text-green-500 bg-green-500/10 border-green-500/20 font-bold"
-                              >
-                                <CheckCircle className="h-3 w-3 mr-1" />
+                              <Badge className="bg-green-500/10 text-green-600 border border-green-500/20 font-bold text-xs">
+                                <CheckCircle className="h-3 w-3 mr-1.5" />
                                 Active
                               </Badge>
                             ) : (
-                              <Badge
-                                variant="outline"
-                                className="text-red-500 bg-red-500/10 border-red-500/20 font-bold"
-                              >
-                                <XCircle className="h-3 w-3 mr-1" />
-                                Inactive
-                              </Badge>
+                              <div className="space-y-2">
+                                <Badge className="bg-red-500/10 text-red-500 border border-red-500/20 font-bold text-xs">
+                                  <XCircle className="h-3 w-3 mr-1.5" />
+                                  Inactive
+                                </Badge>
+                                <button
+                                  onClick={handleCreateStripeAccount}
+                                  disabled={isLoading}
+                                  className="w-full mt-2 h-9 text-xs font-black uppercase tracking-wider text-primary bg-primary/8 border border-primary/20 rounded-xl hover:bg-primary/15 transition-all active:scale-95 disabled:opacity-50"
+                                >
+                                  {isLoading ? "Creating…" : "Create Account"}
+                                </button>
+                              </div>
                             )}
                           </div>
-                        </div>
+                        </>
+                      )}
+                    </div>
 
-                        {!stripeAccountInfo && (
-                          <DropdownMenuItem
-                            onSelect={handleCreateStripeAccount}
-                            className="rounded-xl h-11 cursor-pointer focus:bg-primary/10 focus:text-primary transition-colors font-bold"
-                          >
-                            Create Stripe Account
-                          </DropdownMenuItem>
-                        )}
-                      </>
-                    )}
-
-                    <DropdownMenuSeparator className="my-2" />
+                    <DropdownMenuSeparator className="my-2 bg-border/20" />
 
                     <DropdownMenuItem
                       onSelect={handleLogout}
-                      className="rounded-xl h-11 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10 transition-colors font-bold"
+                      className="rounded-2xl h-11 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/8 transition-colors font-bold"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-destructive/10 flex items-center justify-center mr-3">
+                      <div className="w-8 h-8 rounded-xl bg-destructive/10 flex items-center justify-center mr-3 border border-destructive/10">
                         <LogOut className="h-4 w-4" />
                       </div>
                       Log Out
@@ -400,24 +333,88 @@ export default function Header({
                 </DropdownMenu>
               </>
             ) : (
-              <div className="flex items-center gap-2 sm:gap-4">
+              <div className="flex items-center gap-2">
                 <Link to="/login">
                   <Button
                     variant="ghost"
-                    className="font-bold text-sm h-11 px-6 rounded-full hover:bg-primary/5 hover:text-primary transition-all"
+                    className="font-bold text-sm h-10 px-5 rounded-2xl hover:bg-muted/60 hover:text-primary transition-all"
                   >
                     Log In
                   </Button>
                 </Link>
                 <Link to="/signup">
-                  <Button className="font-black text-sm h-11 px-8 rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all">
+                  <Button className="font-black text-sm h-10 px-6 rounded-2xl shadow-[0_8px_24px_-4px_theme(colors.primary.DEFAULT/0.35)] hover:shadow-primary/50 transition-all active:scale-95">
                     Get Started
                   </Button>
                 </Link>
               </div>
             )}
+
+            {/* Mobile hamburger */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden h-10 w-10 rounded-2xl hover:bg-muted/60 ml-1"
+              onClick={() => setMobileOpen((v) => !v)}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                {mobileOpen ? (
+                  <motion.div
+                    key="close"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <X className="h-5 w-5" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="open"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <Menu className="h-5 w-5" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </Button>
           </div>
         </motion.div>
+
+        {/* ── MOBILE MENU ── */}
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -12, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -12, scale: 0.97 }}
+              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              className="lg:hidden mt-2 p-4 rounded-[24px] border border-border/20 bg-background/90 backdrop-blur-2xl shadow-[0_16px_48px_-8px_rgba(0,0,0,0.2)]"
+            >
+              <nav className="flex flex-col gap-1">
+                {navLinks.map((link) => {
+                  const isActive = location.pathname === link.path;
+                  return (
+                    <Link
+                      key={link.name}
+                      to={link.path}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-sm transition-all ${
+                        isActive
+                          ? "bg-primary/10 text-primary border border-primary/15"
+                          : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                      }`}
+                    >
+                      {link.name}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </header>
   );
