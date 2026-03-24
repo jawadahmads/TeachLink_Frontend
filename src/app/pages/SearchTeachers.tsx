@@ -25,6 +25,7 @@ import TeacherGig from "../components/TeacherGig";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { fetchGigs } from "../redux/gigSlice";
 import { toast } from "sonner";
+import type { TeacherSearchResult, PriceRange, SortOption } from "../../types";
 
 const containerVariants = {
   hidden: { opacity: 0 },

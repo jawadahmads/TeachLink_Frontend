@@ -1,25 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-interface BookingData {
-  selectedDay: string;
-  selectedTime: string;
-  subject: string;
-  notes?: string;
-  studentName: string;
-  studentEmail: string;
-  teacherId: string;
-  teacherName: string;
-  hourlyRate: number;
-  platformFee: number;
-  grandTotal: number;
-  sessionDuration: string;
-  bookingDate: string;
-  studentId: string;
-}
-
-interface BookingState {
-  pendingBooking: BookingData | null;
-}
+import type { BookingData, BookingState } from "../../types";
 
 // Helper to load from localStorage for persistence across Stripe redirect
 const loadStoredBooking = (): BookingData | null => {

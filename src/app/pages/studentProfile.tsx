@@ -188,8 +188,11 @@ export default function StudentProfile() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-20 pb-40">
-        <motion.div initial="hidden" animate="visible" variants={containerVariants}>
-
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+        >
           {/* ── PAGE HEADER ── */}
           <motion.div
             variants={itemVariants}
@@ -231,7 +234,6 @@ export default function StudentProfile() {
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid gap-8 lg:grid-cols-12 items-start">
-
               {/* ── SIDEBAR ── */}
               <motion.div
                 variants={itemVariants}
@@ -276,7 +278,9 @@ export default function StudentProfile() {
                     <div className="flex flex-col gap-3 px-4">
                       <Badge className="w-full justify-center py-2.5 rounded-xl bg-primary/10 text-primary border border-primary/10 font-black text-xs uppercase tracking-widest">
                         <ShieldCheck className="h-3.5 w-3.5 mr-2" />
-                        {user?.role === "student" ? "Student Account" : "User Account"}
+                        {user?.role === "student"
+                          ? "Student Account"
+                          : "User Account"}
                       </Badge>
                       <div className="flex items-center justify-center gap-2 mt-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">
                         <Calendar className="h-3.5 w-3.5" />
@@ -577,7 +581,6 @@ export default function StudentProfile() {
               </motion.div>
             </div>
           </form>
-
         </motion.div>
       </div>
     </div>

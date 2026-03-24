@@ -18,6 +18,7 @@ import { ScrollArea } from "../components/ui/scroll-area";
 import { mockMessages, mockTeachers, currentStudent } from "../data/mockData";
 import { useAppSelector } from "../redux/store";
 import { motion, AnimatePresence } from "motion/react";
+import type { Message, Conversation, Student } from "../../types";
 
 const containerVariants = {
   hidden: { opacity: 0 },

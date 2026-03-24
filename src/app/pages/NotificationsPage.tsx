@@ -36,6 +36,7 @@ import {
 import { useAppSelector } from "../redux/store";
 import { motion, AnimatePresence } from "motion/react";
 import { Toaster, toast } from "sonner";
+import type { Notification } from "../../types";
 
 const containerVariants = {
   hidden: { opacity: 0 },

@@ -1,85 +1,13 @@
-export interface Teacher {
-  id: string;
-  name: string;
-  avatar: string;
-  subjects: string[];
-  rating: number;
-  reviewCount: number;
-  hourlyRate: number;
-  bio: string;
-  education: string;
-  experience: string;
-  languages: string[];
-  availability: { day: string; slots: string[] }[];
-  totalStudents: number;
-  totalHours: number;
-  responseTime: string;
-  verified: boolean;
-}
-
-export interface Student {
-  id: string;
-  name: string;
-  avatar: string;
-  email: string;
-  joinedDate: string;
-  totalSessions: number;
-  favoriteSubjects: string[];
-  interests: string[];
-  academicLevel?: string;
-}
-
-export interface Session {
-  id: string;
-  teacherId: string;
-  teacherName: string;
-  teacherAvatar: string;
-  studentId: string;
-  studentName: string;
-  studentAvatar: string;
-  subject: string;
-  date: string;
-  time: string;
-  duration: number;
-  status: "upcoming" | "completed" | "cancelled" | "in-progress";
-  price: number;
-  rating?: number;
-  review?: string;
-}
-
-export interface Review {
-  id: string;
-  studentId: string;
-  studentName: string;
-  studentAvatar: string;
-  teacherId: string;
-  rating: number;
-  comment: string;
-  date: string;
-  subject: string;
-}
-
-export interface Message {
-  id: string;
-  senderId: string;
-  senderName: string;
-  senderAvatar: string;
-  receiverId: string;
-  content: string;
-  timestamp: string;
-  read: boolean;
-}
-
-export interface Notification {
-  id: string;
-  userId: string;
-  type: "session" | "message" | "review" | "payment" | "system";
-  title: string;
-  message: string;
-  timestamp: string;
-  read: boolean;
-  actionUrl?: string;
-}
+import {
+  Teacher,
+  Student,
+  Session,
+  Review,
+  Message,
+  Notification,
+  AdminStats,
+  SUBJECTS,
+} from "../../types";
 
 export const mockTeachers: Teacher[] = [
   {
@@ -465,26 +393,9 @@ export const mockNotifications: Notification[] = [
   },
 ];
 
-export const subjects = [
-  "Mathematics",
-  "Physics",
-  "Chemistry",
-  "Biology",
-  "Computer Science",
-  "English",
-  "Spanish",
-  "French",
-  "Economics",
-  "Business",
-  "Finance",
-  "History",
-  "Literature",
-  "Programming",
-  "Web Development",
-  "Data Science",
-];
+export const subjects = [...SUBJECTS];
 
-export const adminStats = {
+export const adminStats: AdminStats = {
   totalUsers: 2456,
   totalTeachers: 234,
   totalStudents: 2222,

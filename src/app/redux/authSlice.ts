@@ -1,12 +1,8 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { getStripeAccountStatus } from "../api/stripeAccount";
-
-type AuthState = {
-  token: string | null;
-  user: Record<string, any> | null;
-  stripeAccountInfo: any;
-  status: "loading" | "authenticated" | "unauthenticated";
-};
+import { fetchStudentDashboard } from "./dashboardSlice";
+import type { AuthState } from "../../types";
+import type { AppDispatch } from "./store";
 
 const initialAuthState: AuthState = {
   token: null,
@@ -66,7 +62,19 @@ const authSlice = createSlice({
   },
 });
 
-// export actions we can perform
+export const setUserWithDashboard = <T>(userData: T | null) => 
+  (dispatch: AppDispatch) => {
+    dispatch(setUser(userData));
+    if (userData) {
+      dispatch(fetchStudentDashboard());
+    }
+  };
+
+export const logoutWithCleanup = () => 
+  (dispatch: AppDispatch) => {
+    dispatch(logout());
+    localStorage.removeItem("pendingBooking");
+  };
+
 export const { setToken, setUser, setStatus, logout } = authSlice.actions;
-// export reducer for redux store
 export default authSlice.reducer;

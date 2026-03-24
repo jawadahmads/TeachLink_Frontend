@@ -1,46 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-interface UserInfo {
-  id: string;
-  userId: string;
-  name: string;
-  avatar: string;
-  rating: number;
-  reviewCount: number;
-  hourlyRate: number;
-  bio: string;
-  education: string;
-  experience: string;
-  responseTime: string | null;
-  verified: boolean;
-  totalStudents: number;
-  totalHours: number;
-  subjects: Subject[];
-  languages: Language[];
-  availability: Availability[];
-  stripeId?: string;
-}
-
-interface Subject {
-  id: string;
-  name: string;
-}
-
-interface Language {
-  id: string;
-  name: string;
-}
-
-interface Availability {
-  day: string;
-  slots: string[];
-}
-
-interface UserInfoState {
-  userInfo: UserInfo | null;
-  loading: boolean;
-  error: string | null;
-}
+import type { UserInfo, UserInfoState } from "../../types";
 
 const initialUserInfoState: UserInfoState = {
   userInfo: null,

@@ -33,6 +33,7 @@ import {
 } from "../components/ui/tabs";
 import { mockTeachers, mockSessions } from "../data/mockData";
 import { motion } from "motion/react";
+import type { Session, Teacher } from "../../types";
 
 const containerVariants = {
   hidden: { opacity: 0 },

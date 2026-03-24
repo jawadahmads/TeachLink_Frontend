@@ -34,17 +34,7 @@ import { useAppSelector, useAppDispatch } from "../redux/store";
 import { fetchGigs } from "../redux/gigSlice";
 import { createCheckout } from "../api/checkout";
 import { setBooking } from "../redux/bookingSlice";
-
-
-interface BookingFormData {
-  selectedDay: string;
-  selectedTime: string;
-  subject: string;
-  notes: string;
-  studentName: string;
-  studentEmail: string;
-  agreeToTerms: boolean;
-}
+import type { BookingFormData } from "../../types";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -84,6 +74,7 @@ export default function BookingPage() {
     formState: { errors },
   } = useForm<BookingFormData>({
     defaultValues: {
+      selectedDate: "",
       selectedDay: "",
       selectedTime: "",
       subject: "",
@@ -143,6 +134,7 @@ export default function BookingPage() {
 
   const [step, setStep] = useState(1);
 
+  const selectedDate = watchedData.selectedDate;
   const selectedDay = watchedData.selectedDay;
   const selectedTime = watchedData.selectedTime;
   const subject = watchedData.subject || teacher.subjects[0];
@@ -150,6 +142,7 @@ export default function BookingPage() {
   const onSubmit = async (data: BookingFormData) => {
     const errors: string[] = [];
 
+    if (!data.selectedDate) errors.push("Please select a date");
     if (!data.selectedDay) errors.push("Please select a day");
     if (!data.selectedTime) errors.push("Please select a time slot");
     if (!data.subject) errors.push("Please select a subject");
@@ -184,7 +177,6 @@ export default function BookingPage() {
       dispatch(setBooking(bookingData));
       window.location.href = res.url;
     }
-
 
     // toast.success("Booking Confirmed!", {
     //   description: `Your session with ${teacher.name} on ${data.selectedDay} at ${data.selectedTime} has been booked.`,
@@ -271,7 +263,8 @@ export default function BookingPage() {
                 </span>
               </h1>
               <p className="text-muted-foreground text-lg font-medium max-w-lg">
-                Personalized mentorship with {teacher.name}. Tailored to your goals, pace, and schedule.
+                Personalized mentorship with {teacher.name}. Tailored to your
+                goals, pace, and schedule.
               </p>
             </div>
 
@@ -282,32 +275,42 @@ export default function BookingPage() {
                   const isActive = step === s.id;
                   const isCompleted = step > s.id;
                   const isUpcoming = step < s.id;
-                  
+
                   return (
                     <button
                       key={s.id}
                       disabled={s.id > step + 1 && step < s.id}
                       onClick={() => s.id < step && setStep(s.id)}
                       className={`relative flex items-center gap-4 px-8 py-5 rounded-[24px] transition-all duration-700 group ${
-                        isActive ? "text-primary-foreground" : isCompleted ? "text-success/80" : "text-muted-foreground/60 hover:text-foreground"
+                        isActive
+                          ? "text-primary-foreground"
+                          : isCompleted
+                            ? "text-success/80"
+                            : "text-muted-foreground/60 hover:text-foreground"
                       }`}
                     >
                       {isActive && (
                         <motion.div
                           layoutId="activeTab"
                           className="absolute inset-0 bg-primary shadow-[0_12px_32px_-8px_theme(colors.primary.DEFAULT / 0.4)] rounded-[24px]"
-                          transition={{ type: "spring", bounce: 0.15, duration: 0.6 }}
+                          transition={{
+                            type: "spring",
+                            bounce: 0.15,
+                            duration: 0.6,
+                          }}
                         />
                       )}
-                      
+
                       <div className="relative flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-black transition-all duration-500 ${
-                          isActive 
-                            ? "bg-primary-foreground/20 rotate-[10deg] scale-110 shadow-lg shadow-black/5" 
-                            : isCompleted 
-                              ? "bg-success/15 rotate-0" 
-                              : "bg-muted/30 group-hover:bg-muted group-hover:scale-105"
-                        }`}>
+                        <div
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-black transition-all duration-500 ${
+                            isActive
+                              ? "bg-primary-foreground/20 rotate-[10deg] scale-110 shadow-lg shadow-black/5"
+                              : isCompleted
+                                ? "bg-success/15 rotate-0"
+                                : "bg-muted/30 group-hover:bg-muted group-hover:scale-105"
+                          }`}
+                        >
                           {isCompleted ? (
                             <CheckCircle2 className="h-5 w-5" />
                           ) : (
@@ -316,14 +319,14 @@ export default function BookingPage() {
                         </div>
                         <div className="flex flex-col items-start leading-none gap-1">
                           <span className="text-[9px] font-black uppercase tracking-[0.25em] opacity-40">
-                             Step 0{s.id}
+                            Step 0{s.id}
                           </span>
                           <span className="text-base font-black tracking-tight">
                             {s.label}
                           </span>
                         </div>
                       </div>
-                      
+
                       {idx < steps.length - 1 && (
                         <div className="ml-8 w-px h-6 bg-border/20 last:hidden" />
                       )}
@@ -333,7 +336,6 @@ export default function BookingPage() {
               </nav>
             </div>
           </motion.div>
-
 
           <div className="grid lg:grid-cols-3 gap-10">
             {/* Main Content */}
@@ -366,64 +368,156 @@ export default function BookingPage() {
                         </p>
                       </CardHeader>
                       <CardContent className="p-10 space-y-12">
-                        {/* High-Fidelity Date Selection */}
+                        {/* Date Picker for Next 7 Days */}
                         <div className="space-y-6">
                           <div className="flex items-center justify-between">
                             <Label className="text-xl font-black flex items-center gap-2">
-                              Available Days
+                              Select Date
                               <Sparkles className="h-4 w-4 text-primary" />
                             </Label>
                             <span className="text-sm font-bold text-primary bg-primary/5 px-3 py-1 rounded-full uppercase tracking-widest">
                               Next 7 Days
                             </span>
                           </div>
-                          
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                            {teacher.availability.map((day, index) => (
-                              <button
-                                key={index}
-                                type="button"
-                                onClick={() => {
-                                  setValue("selectedDay", day.day);
-                                  setValue("selectedTime", "");
-                                }}
-                                className={`group relative p-6 rounded-[28px] border-2 transition-all duration-500 text-left ${
-                                  selectedDay === day.day
-                                    ? "bg-primary border-primary shadow-2xl shadow-primary/30 scale-105"
-                                    : "bg-card/50 border-transparent hover:border-primary/30 hover:bg-card/80"
-                                }`}
-                              >
-                                <p className={`text-[10px] font-black uppercase tracking-widest mb-1 ${
-                                  selectedDay === day.day ? "text-primary-foreground/70" : "text-muted-foreground"
-                                }`}>
-                                  {day.day.substring(0, 3)}
-                                </p>
-                                <p className={`text-2xl font-black ${
-                                  selectedDay === day.day ? "text-primary-foreground" : "text-foreground"
-                                }`}>
-                                  {day.day.split(' ')[0]}
-                                </p>
-                                
-                                <div className={`mt-4 w-8 h-1 rounded-full transition-all duration-500 ${
-                                  selectedDay === day.day ? "bg-white" : "bg-primary/20 group-hover:w-12 group-hover:bg-primary/40"
-                                }`} />
-                                
-                                {selectedDay === day.day && (
-                                  <motion.div 
-                                    layoutId="dayCheck"
-                                    className="absolute top-4 right-4 text-primary-foreground"
+
+                          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-3">
+                            {Array.from({ length: 7 }, (_, i) => {
+                              const date = new Date();
+                              date.setDate(date.getDate() + i);
+                              const dateStr = date.toISOString().split("T")[0];
+                              const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
+                              const dayNum = date.getDate();
+                              const monthName = date.toLocaleDateString("en-US", { month: "short" });
+                              const isSelected = selectedDate === dateStr;
+                              
+                              return (
+                                <button
+                                  key={i}
+                                  type="button"
+                                  onClick={() => {
+                                    setValue("selectedDate", dateStr);
+                                    setValue("selectedDay", dayName.toUpperCase());
+                                    setValue("selectedTime", "");
+                                  }}
+                                  className={`group relative p-4 rounded-[20px] border-2 transition-all duration-300 flex flex-col items-center justify-center gap-1 ${
+                                    isSelected
+                                      ? "bg-primary border-primary shadow-xl shadow-primary/20"
+                                      : "bg-card/50 border-transparent hover:border-primary/30 hover:bg-card/80"
+                                  }`}
+                                >
+                                  <p
+                                    className={`text-[10px] font-black uppercase tracking-widest ${
+                                      isSelected
+                                        ? "text-primary-foreground/70"
+                                        : "text-muted-foreground"
+                                    }`}
                                   >
-                                    <CheckCircle2 className="h-5 w-5" />
-                                  </motion.div>
-                                )}
-                              </button>
-                            ))}
+                                    {dayName}
+                                  </p>
+                                  <p
+                                    className={`text-2xl font-black ${
+                                      isSelected
+                                        ? "text-primary-foreground"
+                                        : "text-foreground"
+                                    }`}
+                                  >
+                                    {dayNum}
+                                  </p>
+                                  <p
+                                    className={`text-[10px] font-bold ${
+                                      isSelected
+                                        ? "text-primary-foreground/70"
+                                        : "text-muted-foreground"
+                                    }`}
+                                  >
+                                    {monthName}
+                                  </p>
+                                  {isSelected && (
+                                    <motion.div
+                                      layoutId="dateCheck"
+                                      className="absolute -top-1 -right-1"
+                                    >
+                                      <CheckCircle2 className="h-5 w-5 text-primary-foreground bg-primary rounded-full" />
+                                    </motion.div>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* High-Fidelity Day Selection */}
+                        <div className="space-y-6">
+                          <div className="flex items-center justify-between">
+                            <Label className="text-xl font-black flex items-center gap-2">
+                              Available Time Slots
+                              <Sparkles className="h-4 w-4 text-primary" />
+                            </Label>
+                            <span className="text-sm font-bold text-primary bg-primary/5 px-3 py-1 rounded-full uppercase tracking-widest">
+                              {selectedDate || "Select date first"}
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            {teacher.availability
+                              .filter((day) => selectedDay && day.day.includes(selectedDay.substring(0, 3)))
+                              .map((day, index) => (
+                                <button
+                                  key={index}
+                                  type="button"
+                                  onClick={() => {
+                                    setValue("selectedDay", day.day);
+                                    setValue("selectedTime", "");
+                                  }}
+                                  className={`group relative p-6 rounded-[28px] border-2 transition-all duration-500 text-left ${
+                                    selectedDay === day.day
+                                      ? "bg-primary border-primary shadow-2xl shadow-primary/30 scale-105"
+                                      : "bg-card/50 border-transparent hover:border-primary/30 hover:bg-card/80"
+                                  }`}
+                                >
+                                  <p
+                                    className={`text-[10px] font-black uppercase tracking-widest mb-1 ${
+                                      selectedDay === day.day
+                                        ? "text-primary-foreground/70"
+                                        : "text-muted-foreground"
+                                    }`}
+                                  >
+                                    {day.day.substring(0, 3)}
+                                  </p>
+                                  <p
+                                    className={`text-2xl font-black ${
+                                      selectedDay === day.day
+                                        ? "text-primary-foreground"
+                                        : "text-foreground"
+                                    }`}
+                                  >
+                                    {day.day.split(" ")[0]}
+                                  </p>
+
+                                  <div
+                                    className={`mt-4 w-8 h-1 rounded-full transition-all duration-500 ${
+                                      selectedDay === day.day
+                                        ? "bg-white"
+                                        : "bg-primary/20 group-hover:w-12 group-hover:bg-primary/40"
+                                    }`}
+                                  />
+
+                                  {selectedDay === day.day && (
+                                    <motion.div
+                                      layoutId="dayCheck"
+                                      className="absolute top-4 right-4 text-primary-foreground"
+                                    >
+                                      <CheckCircle2 className="h-5 w-5" />
+                                    </motion.div>
+                                  )}
+                                </button>
+                              ))}
                           </div>
                         </div>
 
                         {/* Modern Time Slot Selection */}
                         <AnimatePresence mode="wait">
-                          {selectedDay ? (
+                          {selectedDate && selectedDay ? (
                             <motion.div
                               key="timeSlots"
                               initial={{ opacity: 0, y: 20 }}
@@ -437,7 +531,7 @@ export default function BookingPage() {
                                 </Label>
                                 <div className="h-px flex-1 bg-black/5" />
                               </div>
-                              
+
                               <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3">
                                 {teacher.availability
                                   .find((d) => d.day === selectedDay)
@@ -445,14 +539,18 @@ export default function BookingPage() {
                                     <button
                                       key={index}
                                       type="button"
-                                      onClick={() => setValue("selectedTime", slot)}
+                                      onClick={() =>
+                                        setValue("selectedTime", slot)
+                                      }
                                       className={`h-14 rounded-2xl font-bold border-2 transition-all duration-300 flex items-center justify-center gap-2 ${
                                         selectedTime === slot
                                           ? "bg-primary text-primary-foreground border-primary shadow-xl shadow-primary/20 scale-[1.02]"
                                           : "bg-card/50 border-transparent hover:border-primary/20 hover:bg-card/80 text-muted-foreground hover:text-primary"
                                       }`}
                                     >
-                                      <Clock className={`h-4 w-4 ${selectedTime === slot ? "text-primary-foreground" : "text-primary/40"}`} />
+                                      <Clock
+                                        className={`h-4 w-4 ${selectedTime === slot ? "text-primary-foreground" : "text-primary/40"}`}
+                                      />
                                       {slot}
                                     </button>
                                   ))}
@@ -462,7 +560,8 @@ export default function BookingPage() {
                             <div className="p-16 text-center border-2 border-dashed border-black/5 rounded-[32px] bg-muted/10">
                               <CalendarIcon className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
                               <p className="text-muted-foreground font-bold italic">
-                                Please select a day first to view available times.
+                                Please select a day first to view available
+                                times.
                               </p>
                             </div>
                           )}
@@ -471,9 +570,9 @@ export default function BookingPage() {
                         {/* Summary Insight */}
                         <div className="p-8 rounded-[32px] bg-gradient-to-br from-primary/5 to-blue-500/5 border border-primary/10 relative overflow-hidden group">
                           <div className="absolute -right-8 -bottom-8 opacity-[0.05] group-hover:scale-110 transition-transform duration-1000">
-                             <Sparkles className="w-32 h-32" />
+                            <Sparkles className="w-32 h-32" />
                           </div>
-                          
+
                           <div className="flex flex-col sm:flex-row items-center justify-between gap-6 relative">
                             <div className="flex items-center gap-6">
                               <div className="w-16 h-16 rounded-[22px] bg-card shadow-xl flex items-center justify-center">
@@ -484,14 +583,20 @@ export default function BookingPage() {
                                   Standard Mentorship
                                 </p>
                                 <p className="text-muted-foreground font-medium">
-                                  60-minute focused session with personalized feedback.
+                                  60-minute focused session with personalized
+                                  feedback.
                                 </p>
                               </div>
                             </div>
                             <div className="text-right">
-                              <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Price Per Session</p>
+                              <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">
+                                Price Per Session
+                              </p>
                               <p className="text-4xl font-black text-foreground">
-                                ${teacher.hourlyRate}<span className="text-xl text-muted-foreground">/hr</span>
+                                ${teacher.hourlyRate}
+                                <span className="text-xl text-muted-foreground">
+                                  /hr
+                                </span>
                               </p>
                             </div>
                           </div>
@@ -499,7 +604,7 @@ export default function BookingPage() {
 
                         <Button
                           type="button"
-                          disabled={!selectedDay || !selectedTime}
+                          disabled={!selectedDate || !selectedDay || !selectedTime}
                           className="w-full h-20 rounded-[28px] font-black text-xl shadow-[0_20px_40px_-10px_theme(colors.primary.DEFAULT / 0.4)] transition-all duration-300 hover:scale-[1.02] active:scale-95 group relative overflow-hidden"
                           onClick={() => setStep(2)}
                         >
@@ -509,27 +614,45 @@ export default function BookingPage() {
                         </Button>
                       </CardContent>
                     </Card>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                       {[
-                         { icon: ShieldCheck, title: "Verified Teacher", desc: "Professionally vetted" },
-                         { icon: Star, title: "Highest Rated", desc: "Top 1% in subject" },
-                         { icon: BookOpen, title: "Curated Material", desc: "Free learning resources" }
-                       ].map((feat, i) => (
-                         <div key={i} className="flex items-center gap-4 p-6 rounded-[24px] bg-muted/30 border border-border/20">
-                            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                               <feat.icon className="h-5 w-5" />
-                            </div>
-                            <div>
-                               <p className="font-bold text-sm tracking-tight">{feat.title}</p>
-                               <p className="text-xs text-muted-foreground font-medium">{feat.desc}</p>
-                            </div>
-                         </div>
-                       ))}
+                      {[
+                        {
+                          icon: ShieldCheck,
+                          title: "Verified Teacher",
+                          desc: "Professionally vetted",
+                        },
+                        {
+                          icon: Star,
+                          title: "Highest Rated",
+                          desc: "Top 1% in subject",
+                        },
+                        {
+                          icon: BookOpen,
+                          title: "Curated Material",
+                          desc: "Free learning resources",
+                        },
+                      ].map((feat, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center gap-4 p-6 rounded-[24px] bg-muted/30 border border-border/20"
+                        >
+                          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                            <feat.icon className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <p className="font-bold text-sm tracking-tight">
+                              {feat.title}
+                            </p>
+                            <p className="text-xs text-muted-foreground font-medium">
+                              {feat.desc}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </motion.div>
                 )}
-
 
                 {step === 2 && (
                   <motion.div
@@ -565,7 +688,7 @@ export default function BookingPage() {
                             </h4>
                             <div className="h-px flex-1 bg-black/5" />
                           </div>
-                          
+
                           <div className="space-y-6">
                             <Label className="text-lg font-black block">
                               What subject would you like to focus on?
@@ -587,7 +710,7 @@ export default function BookingPage() {
                               ))}
                             </div>
                             {errors.subject && (
-                              <motion.p 
+                              <motion.p
                                 initial={{ opacity: 0, y: -10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 className="text-sm text-destructive font-bold flex items-center gap-2"
@@ -599,7 +722,10 @@ export default function BookingPage() {
                           </div>
 
                           <div className="space-y-4">
-                            <Label htmlFor="notes" className="text-lg font-black block">
+                            <Label
+                              htmlFor="notes"
+                              className="text-lg font-black block"
+                            >
                               Detailed Notes (Optional)
                             </Label>
                             <Textarea
@@ -619,25 +745,33 @@ export default function BookingPage() {
                             </h4>
                             <div className="h-px flex-1 bg-black/5" />
                           </div>
-                          
+
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-3">
-                              <Label htmlFor="studentName" className="text-sm font-black uppercase tracking-widest text-muted-foreground ml-2">
+                              <Label
+                                htmlFor="studentName"
+                                className="text-sm font-black uppercase tracking-widest text-muted-foreground ml-2"
+                              >
                                 Full Name
                               </Label>
                               <Input
                                 id="studentName"
                                 placeholder="E.g. Alexander Pierce"
-                                {...register("studentName", { required: "Name is required" })}
+                                {...register("studentName", {
+                                  required: "Name is required",
+                                })}
                                 className={`h-16 rounded-2xl border-2 transition-all duration-300 px-6 font-bold text-lg ${
-                                  errors.studentName 
-                                    ? "border-destructive/30 bg-destructive/5" 
+                                  errors.studentName
+                                    ? "border-destructive/30 bg-destructive/5"
                                     : "border-transparent bg-muted/50 focus:bg-card focus:border-primary/20"
                                 }`}
                               />
                             </div>
                             <div className="space-y-3">
-                              <Label htmlFor="studentEmail" className="text-sm font-black uppercase tracking-widest text-muted-foreground ml-2">
+                              <Label
+                                htmlFor="studentEmail"
+                                className="text-sm font-black uppercase tracking-widest text-muted-foreground ml-2"
+                              >
                                 Email Address
                               </Label>
                               <Input
@@ -647,20 +781,21 @@ export default function BookingPage() {
                                 {...register("studentEmail", {
                                   required: "Email is required",
                                   pattern: {
-                                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                    value:
+                                      /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                                     message: "Invalid email address",
                                   },
                                 })}
                                 className={`h-16 rounded-2xl border-2 transition-all duration-300 px-6 font-bold text-lg ${
-                                  errors.studentEmail 
-                                    ? "border-destructive/30 bg-destructive/5" 
+                                  errors.studentEmail
+                                    ? "border-destructive/30 bg-destructive/5"
                                     : "border-transparent bg-muted/50 focus:bg-card focus:border-primary/20"
                                 }`}
                               />
                             </div>
                           </div>
                           {(errors.studentName || errors.studentEmail) && (
-                            <motion.p 
+                            <motion.p
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
                               className="text-sm text-destructive font-bold flex items-center gap-2"
@@ -685,13 +820,19 @@ export default function BookingPage() {
                             type="button"
                             className="h-20 rounded-[28px] font-black text-xl shadow-[0_20px_40px_-10px_theme(colors.primary.DEFAULT / 0.4)] transition-all duration-300 hover:scale-[1.02] active:scale-95 flex-1 group"
                             onClick={() => {
-                              const mandatoryFields: (keyof BookingFormData)[] = ["subject", "studentName", "studentEmail"];
-                              const missing = mandatoryFields.filter(f => !watchedData[f]);
+                              const mandatoryFields: (keyof BookingFormData)[] =
+                                ["subject", "studentName", "studentEmail"];
+                              const missing = mandatoryFields.filter(
+                                (f) => !watchedData[f],
+                              );
 
                               if (missing.length > 0) {
                                 toast.error("Required Information Missing", {
-                                  description: "Please complete all mandatory fields to proceed.",
-                                  icon: <AlertCircle className="h-5 w-5 text-destructive" />,
+                                  description:
+                                    "Please complete all mandatory fields to proceed.",
+                                  icon: (
+                                    <AlertCircle className="h-5 w-5 text-destructive" />
+                                  ),
                                 });
                                 return;
                               }
@@ -706,7 +847,6 @@ export default function BookingPage() {
                     </Card>
                   </motion.div>
                 )}
-
 
                 {step === 3 && (
                   <motion.div
@@ -738,70 +878,88 @@ export default function BookingPage() {
                           {/* Trust Section */}
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="p-6 rounded-3xl bg-primary/5 border border-primary/10 flex items-start gap-4">
-                               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                                 <ShieldCheck className="h-5 w-5" />
-                               </div>
-                               <div>
-                                 <p className="font-black text-sm uppercase tracking-wider mb-1">Encrypted Payment</p>
-                                 <p className="text-xs text-muted-foreground font-medium leading-relaxed">
-                                   Your transaction is protected by industry-standard SSL encryption.
-                                 </p>
-                               </div>
+                              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                                <ShieldCheck className="h-5 w-5" />
+                              </div>
+                              <div>
+                                <p className="font-black text-sm uppercase tracking-wider mb-1">
+                                  Encrypted Payment
+                                </p>
+                                <p className="text-xs text-muted-foreground font-medium leading-relaxed">
+                                  Your transaction is protected by
+                                  industry-standard SSL encryption.
+                                </p>
+                              </div>
                             </div>
                             <div className="p-6 rounded-3xl bg-blue-500/5 border border-blue-500/10 flex items-start gap-4">
-                               <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600 shrink-0">
-                                 <CheckCircle2 className="h-5 w-5" />
-                               </div>
-                               <div>
-                                 <p className="font-black text-sm uppercase tracking-wider mb-1">Satisfaction Guarantee</p>
-                                 <p className="text-xs text-muted-foreground font-bold leading-relaxed">
-                                   Full refund if you are not satisfied with your instructor.
-                                 </p>
-                               </div>
+                              <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600 shrink-0">
+                                <CheckCircle2 className="h-5 w-5" />
+                              </div>
+                              <div>
+                                <p className="font-black text-sm uppercase tracking-wider mb-1">
+                                  Satisfaction Guarantee
+                                </p>
+                                <p className="text-xs text-muted-foreground font-bold leading-relaxed">
+                                  Full refund if you are not satisfied with your
+                                  instructor.
+                                </p>
+                              </div>
                             </div>
                           </div>
 
                           {/* Price Receipt */}
                           <div className="space-y-6">
-                             <div className="flex items-center gap-3">
-                               <h4 className="text-sm font-black uppercase tracking-widest text-primary bg-primary/5 px-4 py-1.5 rounded-full">
-                                 Final Summary
-                               </h4>
-                               <div className="h-px flex-1 bg-black/5" />
-                             </div>
-                             
-                             <div className="bg-muted/30 border border-border/20 rounded-[32px] p-8 space-y-6">
-                               <div className="space-y-4">
-                                 <div className="flex justify-between items-center group">
-                                   <div className="flex items-center gap-3">
-                                     <div className="w-8 h-8 rounded-lg bg-black/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                                       <CalendarIcon className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                                     </div>
-                                     <span className="font-bold text-muted-foreground">Session Fee</span>
-                                   </div>
-                                   <span className="font-black text-lg">${teacher.hourlyRate.toFixed(2)}</span>
-                                 </div>
-                                 <div className="flex justify-between items-center group">
-                                   <div className="flex items-center gap-3">
-                                     <div className="w-8 h-8 rounded-lg bg-black/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                                       <Sparkles className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                                     </div>
-                                     <span className="font-bold text-muted-foreground">Service Fee (10%)</span>
-                                   </div>
-                                   <span className="font-black text-lg">${platformFee.toFixed(2)}</span>
-                                 </div>
-                               </div>
-                               
-                               <div className="pt-6 border-t-2 border-dashed border-black/5 flex justify-between items-end">
-                                 <div>
-                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-1">Total to Pay</p>
-                                    <p className="text-4xl font-black tracking-tighter">Total Amount</p>
-                                 </div>
-                                 <p className="text-5xl font-black text-primary leading-none tracking-tighter">
-                                   ${grandTotal.toFixed(2)}
-                                 </p>
-                               </div>
-                             </div>
+                            <div className="flex items-center gap-3">
+                              <h4 className="text-sm font-black uppercase tracking-widest text-primary bg-primary/5 px-4 py-1.5 rounded-full">
+                                Final Summary
+                              </h4>
+                              <div className="h-px flex-1 bg-black/5" />
+                            </div>
+
+                            <div className="bg-muted/30 border border-border/20 rounded-[32px] p-8 space-y-6">
+                              <div className="space-y-4">
+                                <div className="flex justify-between items-center group">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-lg bg-black/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                                      <CalendarIcon className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                                    </div>
+                                    <span className="font-bold text-muted-foreground">
+                                      Session Fee
+                                    </span>
+                                  </div>
+                                  <span className="font-black text-lg">
+                                    ${teacher.hourlyRate.toFixed(2)}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between items-center group">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-lg bg-black/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                                      <Sparkles className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                                    </div>
+                                    <span className="font-bold text-muted-foreground">
+                                      Service Fee (10%)
+                                    </span>
+                                  </div>
+                                  <span className="font-black text-lg">
+                                    ${platformFee.toFixed(2)}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="pt-6 border-t-2 border-dashed border-black/5 flex justify-between items-end">
+                                <div>
+                                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-1">
+                                    Total to Pay
+                                  </p>
+                                  <p className="text-4xl font-black tracking-tighter">
+                                    Total Amount
+                                  </p>
+                                </div>
+                                <p className="text-5xl font-black text-primary leading-none tracking-tighter">
+                                  ${grandTotal.toFixed(2)}
+                                </p>
+                              </div>
+                            </div>
                           </div>
 
                           {/* Terms & CTA */}
@@ -810,27 +968,43 @@ export default function BookingPage() {
                               <input
                                 type="checkbox"
                                 id="agreeToTerms"
-                                {...register("agreeToTerms", { required: "Agreement is required" })}
+                                {...register("agreeToTerms", {
+                                  required: "Agreement is required",
+                                })}
                                 className="mt-1 w-6 h-6 rounded-md accent-primary shrink-0 cursor-pointer shadow-sm"
                               />
                               <Label
                                 htmlFor="agreeToTerms"
                                 className="text-sm font-medium cursor-pointer leading-relaxed text-muted-foreground"
                               >
-                                I verify that I have reviewed the appointment details and agree to the{" "}
-                                <Link to="/terms" className="text-primary font-bold hover:underline">Terms of Service</Link>
-                                {" "}and{" "}<Link to="/privacy" className="text-primary font-bold hover:underline">Privacy Policy</Link>.
+                                I verify that I have reviewed the appointment
+                                details and agree to the{" "}
+                                <Link
+                                  to="/terms"
+                                  className="text-primary font-bold hover:underline"
+                                >
+                                  Terms of Service
+                                </Link>{" "}
+                                and{" "}
+                                <Link
+                                  to="/privacy"
+                                  className="text-primary font-bold hover:underline"
+                                >
+                                  Privacy Policy
+                                </Link>
+                                .
                               </Label>
                             </div>
-                            
+
                             {errors.agreeToTerms && (
-                              <motion.p 
+                              <motion.p
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 className="text-sm text-destructive font-black flex items-center gap-2 bg-destructive/5 p-4 rounded-xl"
                               >
                                 <AlertCircle className="h-4 w-4" />
-                                Please accept the terms to complete your booking.
+                                Please accept the terms to complete your
+                                booking.
                               </motion.p>
                             )}
 
@@ -859,7 +1033,6 @@ export default function BookingPage() {
                     </form>
                   </motion.div>
                 )}
-
               </AnimatePresence>
             </div>
 
@@ -872,26 +1045,48 @@ export default function BookingPage() {
                 <Card className="border-none shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)] bg-card/80 backdrop-blur-3xl rounded-[40px] overflow-hidden border border-border/30">
                   <div className="h-32 bg-gradient-to-br from-primary to-blue-600 relative overflow-hidden">
                     <div className="absolute inset-0 opacity-20 mix-blend-overlay">
-                       <svg viewBox="0 0 100 100" className="w-full h-full"><path d="M0 0h100v100H0z" fill="url(#grid)"/><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M10 0v10M0 10h10" stroke="currentColor" strokeOpacity="0.2" fill="none"/></pattern></defs></svg>
+                      <svg viewBox="0 0 100 100" className="w-full h-full">
+                        <path d="M0 0h100v100H0z" fill="url(#grid)" />
+                        <defs>
+                          <pattern
+                            id="grid"
+                            width="10"
+                            height="10"
+                            patternUnits="userSpaceOnUse"
+                          >
+                            <path
+                              d="M10 0v10M0 10h10"
+                              stroke="currentColor"
+                              strokeOpacity="0.2"
+                              fill="none"
+                            />
+                          </pattern>
+                        </defs>
+                      </svg>
                     </div>
                     <div className="absolute -bottom-12 left-8">
-                       <div className="p-1.5 bg-card rounded-[32px] shadow-2xl">
-                          <Avatar className="h-24 w-24 rounded-[28px] border-4 border-card shadow-inner">
-                            <AvatarImage src={teacher.avatar} className="object-cover" />
-                            <AvatarFallback className="text-2xl font-black bg-primary/10 text-primary">
-                              {teacher.name.substring(0, 2)}
-                            </AvatarFallback>
-                          </Avatar>
-                       </div>
+                      <div className="p-1.5 bg-card rounded-[32px] shadow-2xl">
+                        <Avatar className="h-24 w-24 rounded-[28px] border-4 border-card shadow-inner">
+                          <AvatarImage
+                            src={teacher.avatar}
+                            className="object-cover"
+                          />
+                          <AvatarFallback className="text-2xl font-black bg-primary/10 text-primary">
+                            {teacher.name.substring(0, 2)}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
                     </div>
                   </div>
-                  
+
                   <CardContent className="p-10 pt-16 space-y-8">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-2xl font-black tracking-tight">{teacher.name}</h3>
+                        <h3 className="text-2xl font-black tracking-tight">
+                          {teacher.name}
+                        </h3>
                         <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                           <CheckCircle2 className="h-3 w-3 text-primary-foreground" />
+                          <CheckCircle2 className="h-3 w-3 text-primary-foreground" />
                         </div>
                       </div>
                       <p className="text-muted-foreground font-bold text-sm tracking-wide uppercase">
@@ -901,66 +1096,79 @@ export default function BookingPage() {
 
                     <div className="space-y-6">
                       <div className="flex items-center justify-between text-sm">
-                         <span className="font-black uppercase tracking-widest text-muted-foreground/60">Booking Overview</span>
-                         <div className="h-px flex-1 mx-4 bg-black/5" />
+                        <span className="font-black uppercase tracking-widest text-muted-foreground/60">
+                          Booking Overview
+                        </span>
+                        <div className="h-px flex-1 mx-4 bg-black/5" />
                       </div>
-                      
+
                       <div className="space-y-4">
                         <div className="flex items-start gap-4 p-4 rounded-2xl bg-muted/10 hover:bg-card transition-colors group">
                           <div className="w-10 h-10 rounded-xl bg-card shadow-sm flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                             <CalendarIcon className="h-5 w-5" />
+                            <CalendarIcon className="h-5 w-5" />
                           </div>
                           <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-0.5">Date</p>
-                            <p className="font-bold text-sm">{selectedDay || "Selecting..."}</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-0.5">
+                              Date & Time
+                            </p>
+                            <p className="font-bold text-sm">
+                              {selectedDate 
+                                ? new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", { 
+                                    weekday: "short", 
+                                    month: "short", 
+                                    day: "numeric" 
+                                  }) + " at " + (selectedTime || "Select time")
+                                : "Selecting..."}
+                            </p>
                           </div>
                         </div>
 
                         <div className="flex items-start gap-4 p-4 rounded-2xl bg-muted/10 hover:bg-card transition-colors group">
                           <div className="w-10 h-10 rounded-xl bg-card shadow-sm flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                             <Clock className="h-5 w-5" />
+                            <BookOpen className="h-5 w-5" />
                           </div>
                           <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-0.5">Time</p>
-                            <p className="font-bold text-sm">{selectedTime || "Selecting..."}</p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-start gap-4 p-4 rounded-2xl bg-muted/10 hover:bg-card transition-colors group">
-                          <div className="w-10 h-10 rounded-xl bg-card shadow-sm flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                             <BookOpen className="h-5 w-5" />
-                          </div>
-                          <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-0.5">Subject</p>
-                            <p className="font-bold text-sm">{subject || "Not selected"}</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-0.5">
+                              Subject
+                            </p>
+                            <p className="font-bold text-sm">
+                              {subject || "Not selected"}
+                            </p>
                           </div>
                         </div>
                       </div>
                     </div>
 
                     <div className="pt-8 border-t-2 border-dashed border-border/30">
-                        <div className="flex justify-between items-center mb-6">
-                           <span className="text-lg font-black tracking-tight">Investment</span>
-                           <span className="text-3xl font-black text-primary">${grandTotal.toFixed(2)}</span>
-                        </div>
-                        
-                        <div className="p-4 rounded-2xl bg-success/5 border border-success/10 flex items-center gap-3">
-                           <ShieldCheck className="h-4 w-4 text-success" />
-                           <span className="text-[10px] font-black uppercase tracking-widest text-success">Secure Enrollment</span>
-                        </div>
+                      <div className="flex justify-between items-center mb-6">
+                        <span className="text-lg font-black tracking-tight">
+                          Investment
+                        </span>
+                        <span className="text-3xl font-black text-primary">
+                          ${grandTotal.toFixed(2)}
+                        </span>
+                      </div>
+
+                      <div className="p-4 rounded-2xl bg-success/5 border border-success/10 flex items-center gap-3">
+                        <ShieldCheck className="h-4 w-4 text-success" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-success">
+                          Secure Enrollment
+                        </span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
 
                 {/* Helpful Tip */}
                 <div className="p-8 rounded-[32px] bg-primary text-primary-foreground shadow-2xl relative overflow-hidden group">
-                   <div className="absolute top-0 right-0 p-8 opacity-10 scale-150 rotate-12 group-hover:rotate-45 transition-transform duration-1000">
-                      <Sparkles className="w-24 h-24" />
-                   </div>
-                   <h4 className="font-black text-lg mb-2 relative">Pro Tip</h4>
-                   <p className="text-primary-foreground/60 text-sm font-medium leading-relaxed relative">
-                      Prepare a list of questions before your session to maximize your learning time with {teacher.name.split(' ')[0]}.
-                   </p>
+                  <div className="absolute top-0 right-0 p-8 opacity-10 scale-150 rotate-12 group-hover:rotate-45 transition-transform duration-1000">
+                    <Sparkles className="w-24 h-24" />
+                  </div>
+                  <h4 className="font-black text-lg mb-2 relative">Pro Tip</h4>
+                  <p className="text-primary-foreground/60 text-sm font-medium leading-relaxed relative">
+                    Prepare a list of questions before your session to maximize
+                    your learning time with {teacher.name.split(" ")[0]}.
+                  </p>
                 </div>
               </motion.div>
             </div>

@@ -2,6 +2,7 @@ import authReducer from "./authSlice";
 import userInfoReducer from "./userInfoSlice";
 import gigInfoReducer from "./gigSlice";
 import bookingReducer from "./bookingSlice";
+import dashboardReducer from "./dashboardSlice";
 
 import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
@@ -12,11 +13,11 @@ export const store = configureStore({
     info: userInfoReducer,
     gig: gigInfoReducer,
     booking: bookingReducer,
+    dashboard: dashboardReducer,
   },
 
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      // disable strict serializable checks for e.g. non-serializable values (tokens etc.)
       serializableCheck: false,
     }),
   devTools: import.meta.env.MODE !== "production",

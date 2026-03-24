@@ -15,6 +15,7 @@ import { ScrollArea } from '../components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { mockSessions, currentStudent } from '../data/mockData';
 import { motion, AnimatePresence } from 'motion/react';
+import type { Session, ChatMessage } from '../../types';
 
 const containerVariants = {
   hidden: { opacity: 0 },

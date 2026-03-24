@@ -1,54 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { getGigs } from "../api/getGigs";
-
-export interface Subject {
-  name: string;
-}
-
-export interface Language {
-  id: string;
-  name: string;
-}
-
-export interface Availability {
-  day: string;
-  slots: string[];
-}
-
-export interface Teacher {
-  id: string;
-  name: string;
-  avatar: string;
-  bio: string;
-  education: string;
-  hourlyRate: number;
-  experience: string;
-  rating: number;
-  reviewCount: number;
-  totalStudents: number;
-  totalHours: number;
-  responseTime: number | null;
-  verified: boolean;
-  availability: Availability[];
-  languages: Language[];
-  subjects: Subject[];
-}
-
-export interface Gig {
-  id: string;
-  title: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-  teacherId: string;
-  teacher: Teacher;
-}
-
-export interface GigInfoState {
-  gigs: Gig[];
-  loading: boolean;
-  error: string | null;
-}
+import type { Subject, Language, DayAvailability, Teacher, Gig, GigInfoState } from "../../types";
 
 const initialGigInfoState: GigInfoState = {
   gigs: [],
