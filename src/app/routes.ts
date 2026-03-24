@@ -1,24 +1,24 @@
 import { createBrowserRouter } from "react-router";
-import LandingPage from "./pages/LandingPage";
-import LoginPage from "./pages/LoginPage";
-import SignupPage from "./pages/SignupPage";
-import StudentDashboard from "./pages/StudentDashboard";
-import TeacherDashboard from "./pages/TeacherDashboard";
-import TeacherProfile from "./pages/TeacherProfile/components/TeacherProfile";
-import SearchTeachers from "./pages/SearchTeachers";
-import BookingPage from "./pages/BookingPage";
-import ChatPage from "./pages/ChatPage";
-import VideoConference from "./pages/VideoConference";
-import NotificationsPage from "./pages/NotificationsPage";
-import AdminDashboard from "./pages/AdminDashboard";
-import AboutPage from "./pages/About";
-import StudentProfile from "./pages/studentProfile";
-import ManageProfile from "./pages/manageProfile/index";
-import PublishGig from "./pages/publishGig/index";
+import LandingPage from "./features/landing/LandingPage";
+import LoginPage from "./features/auth/LoginPage";
+import SignupPage from "./features/auth/SignupPage";
+import StudentDashboard from "./features/dashboard/student/index";
+import TeacherDashboard from "./features/dashboard/teacher/TeacherDashboard";
+import TeacherProfile from "./features/profile/teacher/TeacherProfile/components/TeacherProfile";
+import SearchTeachers from "./features/search/SearchTeachers";
+import BookingPage from "./features/booking/BookingPage";
+import ChatPage from "./features/chat/ChatPage";
+import VideoConference from "./features/video/VideoConference";
+import NotificationsPage from "./features/notifications/NotificationsPage";
+import AdminDashboard from "./features/admin/AdminDashboard";
+import AboutPage from "./features/about/About";
+import StudentProfile from "./features/profile/student/studentProfile";
+import ManageProfile from "./features/profile/teacher/manageProfile/index";
+import PublishGig from "./features/profile/teacher/publishGig/index";
 import IsAuthenticated from "./components/helper/Authenticated";
 import IsNotAuthenticated from "./components/helper/IsNotAuthenticated";
-import MainLayout from "./components/MainLayout";
-import ReturnPage from "./pages/return";
+import MainLayout from "./components/layout/MainLayout";
+import ReturnPage from "./features/booking/return";
 
 
 export const router = createBrowserRouter([
@@ -45,9 +45,8 @@ export const router = createBrowserRouter([
         ],
       },
       {
-        // All protected routes go under this parent
         path: "/",
-        Component: IsAuthenticated, // wrapper component
+        Component: IsAuthenticated,
         children: [
           { path: "student/dashboard", Component: StudentDashboard },
           { path: "student/:id", Component: StudentProfile },

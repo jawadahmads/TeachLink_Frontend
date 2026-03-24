@@ -2,7 +2,7 @@ import { RouterProvider } from "react-router";
 import { router } from "./routes";
 import { store } from "./redux/store";
 import { Provider } from "react-redux";
-import { AutoRefresh } from "./components/ui/autoRefrest";
+import { AutoRefresh } from "./hooks/autoRefrest";
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import LoadingScreen from "./components/ui/LoadingScreen";
@@ -13,7 +13,6 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate initial loading time
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1000);
