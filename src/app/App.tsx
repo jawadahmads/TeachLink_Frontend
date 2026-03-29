@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from "motion/react";
 import LoadingScreen from "./components/ui/LoadingScreen";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/react";
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -41,6 +42,7 @@ export default function App() {
             )}
           </AnimatePresence>
         </AutoRefresh>
+        <Analytics />
       </ThemeProvider>
     </Provider>
   );
